@@ -34,6 +34,8 @@ namespace PreviewToy
 
             layouts = new Dictionary<IntPtr, Dictionary<IntPtr, Point>>();
 
+            ignoring_size_sync = new Stopwatch();
+
             InitializeComponent();
             init_options();
 
@@ -43,7 +45,7 @@ namespace PreviewToy
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimer.Start();
 
-            ignoring_size_sync = new Stopwatch();
+           
 
             is_initialized = true;
         }
