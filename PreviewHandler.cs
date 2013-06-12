@@ -146,7 +146,7 @@ namespace PreviewToy
         }
 
 
-        private void manage_thumbnail_size_and_position(IntPtr last_known_active_window, IntPtr sys_activeWindow, bool active_window_is_right_type)
+        private void hide_show_move_thumbnails(IntPtr last_known_active_window, IntPtr sys_activeWindow, bool active_window_is_right_type)
         {
             // hide, show, resize and move
             foreach (KeyValuePair<IntPtr, Preview> entry in thumbnails)
@@ -198,7 +198,9 @@ namespace PreviewToy
             }
             
             bool active_window_is_right_type = is_active_window_right_type(sys_activeWindow);
-            manage_thumbnail_size_and_position(last_known_active_window_, sys_activeWindow, active_window_is_right_type);
+            hide_show_move_thumbnails(last_known_active_window_, sys_activeWindow, active_window_is_right_type);
+
+            if (ignoring_size_sync.ElapsedMilliseconds > 500) { ignoring_size_sync.Stop(); };
         }
 
 
