@@ -12,7 +12,7 @@ namespace PreviewToy
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);
-            Application.Run(new PreviewToyMain());
+            Application.Run(new PreviewToyHandler());
         }
     }
 }

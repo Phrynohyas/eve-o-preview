@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace PreviewToy
 {
-    partial class PreviewToyMain
+    partial class PreviewToyHandler
     {
         /// <summary>
         /// Required designer variable.
@@ -37,13 +37,11 @@ namespace PreviewToy
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreviewToyMain));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreviewToyHandler));
             this.option_hide_active = new System.Windows.Forms.CheckBox();
             this.option_hide_all_if_not_right_type = new System.Windows.Forms.CheckBox();
             this.option_unique_layout = new System.Windows.Forms.CheckBox();
             this.option_sync_size = new System.Windows.Forms.CheckBox();
-            this.list_running_clients = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.option_always_on_top = new System.Windows.Forms.CheckBox();
             this.option_show_thumbnail_frames = new System.Windows.Forms.CheckBox();
             this.forum_url = new System.Windows.Forms.LinkLabel();
@@ -106,24 +104,6 @@ namespace PreviewToy
             this.option_sync_size.UseVisualStyleBackColor = true;
             this.option_sync_size.CheckedChanged += new System.EventHandler(this.option_sync_size_CheckedChanged);
             // 
-            // list_running_clients
-            // 
-            this.list_running_clients.FormattingEnabled = true;
-            this.list_running_clients.Location = new System.Drawing.Point(12, 164);
-            this.list_running_clients.Name = "list_running_clients";
-            this.list_running_clients.Size = new System.Drawing.Size(303, 108);
-            this.list_running_clients.TabIndex = 6;
-            this.list_running_clients.SelectedIndexChanged += new System.EventHandler(this.list_running_clients_SelectedIndexChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 147);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Running Clients:";
-            // 
             // option_always_on_top
             // 
             this.option_always_on_top.AutoSize = true;
@@ -155,7 +135,7 @@ namespace PreviewToy
             // forum_url
             // 
             this.forum_url.AutoSize = true;
-            this.forum_url.Location = new System.Drawing.Point(9, 278);
+            this.forum_url.Location = new System.Drawing.Point(9, 210);
             this.forum_url.Name = "forum_url";
             this.forum_url.Size = new System.Drawing.Size(94, 13);
             this.forum_url.TabIndex = 10;
@@ -165,7 +145,7 @@ namespace PreviewToy
             // 
             // previewToyMainBindingSource
             // 
-            this.previewToyMainBindingSource.DataSource = typeof(PreviewToy.PreviewToyMain);
+            this.previewToyMainBindingSource.CurrentChanged += new System.EventHandler(this.previewToyMainBindingSource_CurrentChanged);
             // 
             // option_sync_size_x
             // 
@@ -183,18 +163,16 @@ namespace PreviewToy
             this.option_sync_size_y.TabIndex = 12;
             this.option_sync_size_y.TextChanged += new System.EventHandler(this.option_sync_size_y_TextChanged);
             // 
-            // PreviewToyMain
+            // PreviewToyHandler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(327, 300);
+            this.ClientSize = new System.Drawing.Size(246, 232);
             this.Controls.Add(this.option_sync_size_y);
             this.Controls.Add(this.option_sync_size_x);
             this.Controls.Add(this.forum_url);
             this.Controls.Add(this.option_show_thumbnail_frames);
             this.Controls.Add(this.option_always_on_top);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.list_running_clients);
             this.Controls.Add(this.option_sync_size);
             this.Controls.Add(this.option_unique_layout);
             this.Controls.Add(this.option_hide_all_if_not_right_type);
@@ -203,7 +181,7 @@ namespace PreviewToy
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(0);
             this.MaximizeBox = false;
-            this.Name = "PreviewToyMain";
+            this.Name = "PreviewToyHandler";
             this.Text = "EVE Online previewer";
             this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
@@ -220,8 +198,6 @@ namespace PreviewToy
         private CheckBox option_hide_all_if_not_right_type;
         private CheckBox option_unique_layout;
         private CheckBox option_sync_size;
-        private ListBox list_running_clients;
-        private Label label1;
         private BindingSource previewToyMainBindingSource;
         private CheckBox option_always_on_top;
         private CheckBox option_show_thumbnail_frames;

@@ -14,19 +14,22 @@ namespace PreviewToy
         public IntPtr sourceWindow;
         private DwmApi.DWM_THUMBNAIL_PROPERTIES m_ThumbnailProperties;
         private bool has_been_set_up = false;
-        private PreviewToyMain spawner;
+        private PreviewToyHandler spawner;
 
-        public Preview(IntPtr sourceWindow, String title, PreviewToyMain spawner, Size size) 
+        public Preview(IntPtr sourceWindow, String title, PreviewToyHandler spawner, Size size) 
         {
+            has_been_set_up = false;
 
             this.sourceWindow = sourceWindow;
-            this.spawner = spawner;
-            this.Size = size;
+            this.spawner = spawner; 
 
             InitializeComponent(); 
             SetUp();
 
             this.Text = title;
+
+            has_been_set_up = true;
+
         }
 
         protected override void OnResize(EventArgs e)
@@ -69,18 +72,12 @@ namespace PreviewToy
             m_ThumbnailProperties.rcDestination = new DwmApi.RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
             
             DwmApi.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
-
-            has_been_set_up = true;
+            
         }
 
         private void Preview_Load(object sender, EventArgs e)
         {
 
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            bring_client_to_foreground();
         }
 
         public void bring_client_to_foreground()
@@ -95,6 +92,16 @@ namespace PreviewToy
             {
                 DwmApi.ShowWindowAsync(sourceWindow, DwmApi.SW_SHOWNORMAL);
             }
+        }
+
+        private void render_area_Click(object sender, EventArgs e)
+        {
+            bring_client_to_foreground();
+        }
+
+        public void set_render_area_size(Size size)
+        {
+            this.Size = size;
         }
 
     }

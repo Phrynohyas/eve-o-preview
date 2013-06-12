@@ -14,28 +14,31 @@ namespace PreviewToy
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.render_area = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.render_area)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // render_area
             // 
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(304, 190);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.render_area.BackColor = System.Drawing.Color.Black;
+            this.render_area.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.render_area.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.render_area.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.render_area.Location = new System.Drawing.Point(0, 0);
+            this.render_area.Margin = new System.Windows.Forms.Padding(0);
+            this.render_area.Name = "render_area";
+            this.render_area.Size = new System.Drawing.Size(48, 30);
+            this.render_area.TabIndex = 0;
+            this.render_area.TabStop = false;
+            this.render_area.Click += new System.EventHandler(this.render_area_Click);
             // 
             // Preview
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(304, 190);
+            this.ClientSize = new System.Drawing.Size(48, 30);
             this.ControlBox = false;
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.render_area);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -46,14 +49,14 @@ namespace PreviewToy
             this.Text = "Preview";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.Preview_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.render_area)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox render_area;
 
 
     }
