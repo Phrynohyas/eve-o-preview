@@ -63,6 +63,8 @@ namespace PreviewToy
             option_hide_all_if_not_right_type.Checked = Properties.Settings.Default.hide_all;
             option_unique_layout.Checked = Properties.Settings.Default.unique_layout;
             option_sync_size.Checked = Properties.Settings.Default.sync_resize;
+            option_sync_size_x.Text = Properties.Settings.Default.sync_resize_x.ToString();
+            option_sync_size_y.Text = Properties.Settings.Default.sync_resize_y.ToString();
             option_show_thumbnail_frames.Checked = Properties.Settings.Default.show_thumb_frames;
         }
 
