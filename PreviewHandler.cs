@@ -14,10 +14,10 @@ namespace PreviewToy
 {
     public partial class PreviewToyHandler : Form
     {
-        private Dictionary<IntPtr, Preview> thumbnails;
+        private Dictionary<IntPtr, Preview> previews;
         private DispatcherTimer dispatcherTimer;
 
-        private IntPtr last_known_active_window_;
+        private IntPtr active_client;
 
         private Dictionary<IntPtr, Dictionary<IntPtr, Point>> layouts;
 
@@ -30,11 +30,12 @@ namespace PreviewToy
         {
             is_initialized = false;
 
-            thumbnails = new Dictionary<IntPtr, Preview>();
+            previews = new Dictionary<IntPtr, Preview>();
 
             layouts = new Dictionary<IntPtr, Dictionary<IntPtr, Point>>();
 
             ignoring_size_sync = new Stopwatch();
+            ignoring_size_sync.Start();
 
             InitializeComponent();
             init_options();
@@ -44,8 +45,6 @@ namespace PreviewToy
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimer.Start();
-
-           
 
             is_initialized = true;
         }
@@ -85,20 +84,20 @@ namespace PreviewToy
                 sync_size.Width = (int)Properties.Settings.Default.sync_resize_x;
                 sync_size.Height = (int)Properties.Settings.Default.sync_resize_y;
 
-                if (!thumbnails.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != "")
+                if (!previews.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != "")
                 {
-                    thumbnails[process.MainWindowHandle] = new Preview(process.MainWindowHandle, "...", this, sync_size);
-                    thumbnails[process.MainWindowHandle].set_render_area_size(sync_size);
+                    previews[process.MainWindowHandle] = new Preview(process.MainWindowHandle, "...", this, sync_size);
+                    previews[process.MainWindowHandle].set_render_area_size(sync_size);
  
                     // apply more thumbnail specific options
-                    thumbnails[process.MainWindowHandle].TopMost = Properties.Settings.Default.always_on_top;
-                    set_thumbnail_frame_style(thumbnails[process.MainWindowHandle], Properties.Settings.Default.show_thumb_frames);
+                    previews[process.MainWindowHandle].TopMost = Properties.Settings.Default.always_on_top;
+                    set_thumbnail_frame_style(previews[process.MainWindowHandle], Properties.Settings.Default.show_thumb_frames);
 
                 }
 
-                else if (thumbnails.ContainsKey(process.MainWindowHandle)) //or update the preview titles
+                else if (previews.ContainsKey(process.MainWindowHandle)) //or update the preview titles
                 {
-                    thumbnails[process.MainWindowHandle].Text = "-> " + process.MainWindowTitle + " <-";
+                    previews[process.MainWindowHandle].Text = "-> " + process.MainWindowTitle + " <-";
                 }
 
             }
@@ -107,7 +106,7 @@ namespace PreviewToy
             // clean up old previews
 
             List<IntPtr> to_be_pruned = new List<IntPtr>();
-            foreach (IntPtr processHandle in thumbnails.Keys)
+            foreach (IntPtr processHandle in previews.Keys)
             {
                 if (!(processHandles.Contains(processHandle)))
                 {
@@ -117,8 +116,8 @@ namespace PreviewToy
 
             foreach (IntPtr processHandle in to_be_pruned)
             {
-                thumbnails[processHandle].Close();
-                thumbnails.Remove(processHandle);
+                previews[processHandle].Close();
+                previews.Remove(processHandle);
                 layouts.Remove(processHandle);
             }
         }
@@ -147,39 +146,12 @@ namespace PreviewToy
             }
         }
 
-
-        private void hide_show_move_thumbnails(IntPtr last_known_active_window, IntPtr sys_activeWindow, bool active_window_is_right_type)
+        private bool window_is_preview_or_client(IntPtr window)
         {
-            // hide, show, resize and move
-            foreach (KeyValuePair<IntPtr, Preview> entry in thumbnails)
-            {
-                if (!active_window_is_right_type && option_hide_all_if_not_right_type.Checked)
-                {
-                    entry.Value.Hide();
-                }
-                else if (entry.Key == last_known_active_window && option_hide_active.Checked)
-                {
-                    entry.Value.Hide();
-                }
-                else
-                {
-                    entry.Value.Show();
-
-                    if (option_unique_layout.Checked)
-                    {
-                        handle_unique_layout(entry.Value, last_known_active_window);
-                    }
-                }
-            }
-        }
-
-        private bool is_active_window_right_type(IntPtr sys_activeWindow)
-        {
-            // is the active window an eve window?
             bool active_window_is_right_type = false;
-            foreach (KeyValuePair<IntPtr, Preview> entry in thumbnails)
+            foreach (KeyValuePair<IntPtr, Preview> entry in previews)
             {
-                if (entry.Key == sys_activeWindow || entry.Value.Handle == sys_activeWindow || this.Handle == sys_activeWindow)
+                if (entry.Key == window || entry.Value.Handle == window || this.Handle == window)
                 {
                     active_window_is_right_type = true;
                 }
@@ -190,34 +162,51 @@ namespace PreviewToy
 
         private void refresh_thumbnails()
         {
-            spawn_and_kill_previews();
 
-            IntPtr sys_activeWindow = DwmApi.GetForegroundWindow();
-            Preview poo;
-            if( thumbnails.TryGetValue(sys_activeWindow, out poo) )
-            {
-                last_known_active_window_ = sys_activeWindow;
-            }
+            IntPtr active_window = DwmApi.GetForegroundWindow();
             
-            bool active_window_is_right_type = is_active_window_right_type(sys_activeWindow);
-            hide_show_move_thumbnails(last_known_active_window_, sys_activeWindow, active_window_is_right_type);
+            Preview poo;
+            if (previews.TryGetValue(active_window, out poo)){
+                active_client = active_window;}
 
-            if (ignoring_size_sync.ElapsedMilliseconds > 500) { ignoring_size_sync.Stop(); };
+            // hide, show, resize and move
+            foreach (KeyValuePair<IntPtr, Preview> entry in previews)
+            {
+                if (!window_is_preview_or_client(active_window) && Properties.Settings.Default.hide_all)
+                {
+                    entry.Value.Hide();
+                }
+                else if (entry.Key == active_client && Properties.Settings.Default.hide_active)
+                {
+                    entry.Value.Hide();
+                }
+                else
+                {
+                    entry.Value.Show();
+
+                    if (Properties.Settings.Default.unique_layout)
+                    {
+                        handle_unique_layout(entry.Value, active_client);
+                    }
+                }
+            }
         }
 
 
-        public void set_sync_size(Size sync_size)
+        public void syncronize_preview_size(Size sync_size)
         {
             if (!is_initialized) { return; }
 
-            if (option_sync_size.Checked && option_show_thumbnail_frames.Checked && ignoring_size_sync.ElapsedMilliseconds > 500)
+            if (Properties.Settings.Default.sync_resize && 
+                Properties.Settings.Default.show_thumb_frames && 
+                ignoring_size_sync.ElapsedMilliseconds > 500)
             {
                 ignoring_size_sync.Stop();
 
                 option_sync_size_x.Text = sync_size.Width.ToString();
                 option_sync_size_y.Text = sync_size.Height.ToString();
 
-                foreach (KeyValuePair<IntPtr, Preview> entry in thumbnails)
+                foreach (KeyValuePair<IntPtr, Preview> entry in previews)
                 {
                     if (entry.Value.Handle != DwmApi.GetForegroundWindow())
                     {
@@ -230,23 +219,26 @@ namespace PreviewToy
         }
 
 
-        public void set_preview_position(IntPtr preview_handle, Point position)
+        public void register_preview_position(IntPtr preview_handle, Point position)
         {
             Dictionary<IntPtr, Point> layout;
-            if (layouts.TryGetValue(last_known_active_window_, out layout))
+            if (layouts.TryGetValue(active_client, out layout))
             {
                 layout[preview_handle] = position;
             }
-            else if ((int)last_known_active_window_ != 0)
+            else if ((int)active_client != 0)
             {
-                layouts[last_known_active_window_] = new Dictionary<IntPtr, Point>();
-                layouts[last_known_active_window_][preview_handle] = position;
+                layouts[active_client] = new Dictionary<IntPtr, Point>();
+                layouts[active_client][preview_handle] = position;
             }
         }
 
+
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
+            spawn_and_kill_previews();
             refresh_thumbnails();
+            if (ignoring_size_sync.ElapsedMilliseconds > 500) { ignoring_size_sync.Stop(); };
         }
 
 
@@ -281,46 +273,44 @@ namespace PreviewToy
             refresh_thumbnails();
         }
 
-        private bool try_save_size_xy()
+
+        private void parse_size_entry()
         {
-            if (Properties.Settings.Default.sync_resize)
+            UInt32 x = 0, y = 0;
+
+            try
             {
-                UInt32 x = 0, y = 0;
-
-                try
-                {
-                    y = Convert.ToUInt32(option_sync_size_y.Text);
-                    x = Convert.ToUInt32(option_sync_size_x.Text);
-                }
-                catch (System.FormatException)
-                {
-                    return false;
-                }
-
-                if (y < 64 || x < 64)
-                {
-                    return false;
-                }
-
-                Properties.Settings.Default.sync_resize_y = y;
-                Properties.Settings.Default.sync_resize_x = x;
-                Properties.Settings.Default.Save();
-
-                set_sync_size(new Size((int)x, (int)y));
+                y = Convert.ToUInt32(option_sync_size_y.Text);
+                x = Convert.ToUInt32(option_sync_size_x.Text);
             }
-            return true;
+            catch (System.FormatException) {
+                return;
+            }
+
+            if (x < 64 || y < 64)
+            {
+                return;
+            }
+
+            Properties.Settings.Default.sync_resize_y = y;
+            Properties.Settings.Default.sync_resize_x = x;
+            Properties.Settings.Default.Save();
+
+            // resize
+            syncronize_preview_size(new Size((int)Properties.Settings.Default.sync_resize_x,
+                                             (int)Properties.Settings.Default.sync_resize_y));
         }
 
 
         private void option_sync_size_x_TextChanged(object sender, EventArgs e)
         {
-            if (try_save_size_xy()) { }
+            parse_size_entry();
         }
 
 
         private void option_sync_size_y_TextChanged(object sender, EventArgs e)
         {
-            if (try_save_size_xy()) { }
+            parse_size_entry();
         }
         
 
@@ -328,21 +318,18 @@ namespace PreviewToy
         {
             Properties.Settings.Default.always_on_top = option_always_on_top.Checked;
             Properties.Settings.Default.Save();
-            foreach (var thumbnail in thumbnails)
+            foreach (var thumbnail in previews)
             {
                 thumbnail.Value.TopMost = Properties.Settings.Default.always_on_top;
             }
         }
 
 
-        private void set_thumbnail_frame_style(Preview preview, bool show_frames)
+        void set_thumbnail_frame_style(Preview preview, bool show_frames)
         {
             if (show_frames)
             {
                 preview.FormBorderStyle = FormBorderStyle.SizableToolWindow;
-                ignoring_size_sync.Stop();
-                ignoring_size_sync.Reset();
-                ignoring_size_sync.Start();
             }
             else
             {
@@ -350,15 +337,23 @@ namespace PreviewToy
             }
         }
 
-
         private void option_show_thumbnail_frames_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.show_thumb_frames = option_show_thumbnail_frames.Checked;
             Properties.Settings.Default.Save();
-            foreach (var thumbnail in thumbnails)
+
+            if (Properties.Settings.Default.show_thumb_frames)
+            {
+                ignoring_size_sync.Stop();
+                ignoring_size_sync.Reset();
+                ignoring_size_sync.Start();
+            }
+
+            foreach (var thumbnail in previews)
             {
                 set_thumbnail_frame_style(thumbnail.Value, Properties.Settings.Default.show_thumb_frames);
             }
+
         }
 
 

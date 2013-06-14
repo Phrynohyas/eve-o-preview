@@ -38,14 +38,14 @@ namespace PreviewToy
             base.OnResize(e);
             if (has_been_set_up)
             {
-                this.spawner.set_sync_size(this.Size);
+                this.spawner.syncronize_preview_size(this.Size);
             }
         }
 
         protected override void OnMove(EventArgs e)
         {
             base.OnMove(e);
-            this.spawner.set_preview_position(this.Handle, this.Location);
+            this.spawner.register_preview_position(this.Handle, this.Location);
         }
 
         protected void RefreshPreview()
