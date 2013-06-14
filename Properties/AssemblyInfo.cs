@@ -2,11 +2,11 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("DWM")]
+[assembly: AssemblyTitle("PreviewToy")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("DWM")]
+[assembly: AssemblyCompany("?")]
+[assembly: AssemblyProduct("PreviewToy")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

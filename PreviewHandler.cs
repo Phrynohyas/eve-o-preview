@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Drawing.Text;
 using System.Windows.Threading;
+using System.Xml.Linq;
+using System.Linq;
 
 namespace PreviewToy
 {
@@ -17,13 +19,13 @@ namespace PreviewToy
         private Dictionary<IntPtr, Preview> previews;
         private DispatcherTimer dispatcherTimer;
 
-        private IntPtr active_client;
+        private IntPtr active_client_handle = (IntPtr)0;
+        private String active_client_title = "";
 
-        private Dictionary<IntPtr, Dictionary<IntPtr, Point>> layouts;
+        private Dictionary<String, Dictionary<String, Point>> layouts;
 
         private bool is_initialized;
 
-        private bool frames_were_hidden = false;
         private Stopwatch ignoring_size_sync;
 
         public PreviewToyHandler()
@@ -32,7 +34,7 @@ namespace PreviewToy
 
             previews = new Dictionary<IntPtr, Preview>();
 
-            layouts = new Dictionary<IntPtr, Dictionary<IntPtr, Point>>();
+            layouts = new Dictionary<String, Dictionary<String, Point>>();
 
             ignoring_size_sync = new Stopwatch();
             ignoring_size_sync.Start();
@@ -66,6 +68,8 @@ namespace PreviewToy
             option_sync_size_x.Text = Properties.Settings.Default.sync_resize_x.ToString();
             option_sync_size_y.Text = Properties.Settings.Default.sync_resize_y.ToString();
             option_show_thumbnail_frames.Checked = Properties.Settings.Default.show_thumb_frames;
+
+            load_layout();
         }
 
 
@@ -102,6 +106,12 @@ namespace PreviewToy
                     previews[process.MainWindowHandle].Text = "-> " + process.MainWindowTitle + " <-";
                 }
 
+                if (process.MainWindowHandle == DwmApi.GetForegroundWindow())
+                {
+                    active_client_handle = process.MainWindowHandle;
+                    active_client_title = process.MainWindowTitle;
+                }
+
             }
 
 
@@ -120,31 +130,80 @@ namespace PreviewToy
             {
                 previews[processHandle].Close();
                 previews.Remove(processHandle);
-                layouts.Remove(processHandle);
             }
         }
 
-        private void handle_unique_layout(Preview preview, IntPtr last_known_active_window)
+        private void load_layout()
         {
-            Dictionary<IntPtr, Point> layout;
+            try
+            {
+                XElement rootElement = XElement.Load("config.xml");
+                foreach (var el in rootElement.Elements())
+                {
+                    Dictionary<String, Point> inner = new Dictionary<String, Point>();
+                    foreach (var inner_el in el.Elements())
+                    {
+                        inner["-> " + inner_el.Name.ToString().Replace("_", " ") + " <-"] = new Point(Convert.ToInt32(inner_el.Element("x").Value),
+                                                                                                      Convert.ToInt32(inner_el.Element("y").Value));
+                    }
+                    layouts[el.Name.ToString().Replace("_", " ")] = inner;
+                }
+            }
+            catch
+            {
+                // do nothing
+            }  
+        }
+
+        private void store_layout()
+        {
+            XElement el = new XElement("layouts");
+            foreach (var client in layouts.Keys)
+            {
+                if (client == "")
+                {
+                    continue;
+                }
+                XElement layout = new XElement(client.Replace(" ", "_"));
+                foreach (var thumbnail_ in layouts[client])
+                {
+                    String thumbnail = thumbnail_.Key.Replace("-> ", "").Replace(" <-", "").Replace(" ", "_");
+                    if (thumbnail == "")
+                    {
+                        continue;
+                    }
+                    XElement position = new XElement(thumbnail);
+                    position.Add(new XElement("x", thumbnail_.Value.X));
+                    position.Add(new XElement("y", thumbnail_.Value.Y));
+                    layout.Add(position);
+                }
+                el.Add(layout);
+            }
+
+            el.Save("config.xml");
+        }
+
+        private void handle_unique_layout(Preview preview, String last_known_active_window)
+        {
+            Dictionary<String, Point> layout;
             if (layouts.TryGetValue(last_known_active_window, out layout))
             {
                 Point new_loc;
-                if (layout.TryGetValue(preview.Handle, out new_loc))
+                if ( Properties.Settings.Default.unique_layout && layout.TryGetValue(preview.Text, out new_loc))
                 {
-                    preview.Location = new_loc;
+                        preview.Location = new_loc;
                 }
                 else
                 {
                     // create inner dict
-                    layout[preview.Handle] = preview.Location;
+                    layout[preview.Text] = preview.Location;
                 }
             }
-            else if ((int)last_known_active_window != 0)
+            else if (last_known_active_window != "")
             {
                 // create outer dict
-                layouts[last_known_active_window] = new Dictionary<IntPtr, Point>();
-                layouts[last_known_active_window][preview.Handle] = preview.Location;
+                layouts[last_known_active_window] = new Dictionary<String, Point>();
+                layouts[last_known_active_window][preview.Text] = preview.Location;
             }
         }
 
@@ -167,10 +226,6 @@ namespace PreviewToy
 
             IntPtr active_window = DwmApi.GetForegroundWindow();
             
-            Preview poo;
-            if (previews.TryGetValue(active_window, out poo)){
-                active_client = active_window;}
-
             // hide, show, resize and move
             foreach (KeyValuePair<IntPtr, Preview> entry in previews)
             {
@@ -178,18 +233,14 @@ namespace PreviewToy
                 {
                     entry.Value.Hide();
                 }
-                else if (entry.Key == active_client && Properties.Settings.Default.hide_active)
+                else if (entry.Key == active_client_handle && Properties.Settings.Default.hide_active)
                 {
                     entry.Value.Hide();
                 }
                 else
                 {
                     entry.Value.Show();
-
-                    if (Properties.Settings.Default.unique_layout)
-                    {
-                        handle_unique_layout(entry.Value, active_client);
-                    }
+                    handle_unique_layout(entry.Value, active_client_title);
                 }
             }
         }
@@ -221,18 +272,19 @@ namespace PreviewToy
         }
 
 
-        public void register_preview_position(IntPtr preview_handle, Point position)
+        public void register_preview_position(String preview_handle, Point position)
         {
-            Dictionary<IntPtr, Point> layout;
-            if (layouts.TryGetValue(active_client, out layout))
+            Dictionary<String, Point> layout;
+            if (layouts.TryGetValue(active_client_title, out layout))
             {
                 layout[preview_handle] = position;
             }
-            else if ((int)active_client != 0)
+            else if (active_client_title == "")
             {
-                layouts[active_client] = new Dictionary<IntPtr, Point>();
-                layouts[active_client][preview_handle] = position;
+                layouts[active_client_title] = new Dictionary<String, Point>();
+                layouts[active_client_title][preview_handle] = position;
             }
+            store_layout();
         }
 
 

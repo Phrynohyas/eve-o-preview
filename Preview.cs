@@ -45,7 +45,7 @@ namespace PreviewToy
         protected override void OnMove(EventArgs e)
         {
             base.OnMove(e);
-            this.spawner.register_preview_position(this.Handle, this.Location);
+            this.spawner.register_preview_position(this.Text, this.Location);
         }
 
         protected void RefreshPreview()
