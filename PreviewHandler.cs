@@ -137,7 +137,7 @@ namespace PreviewToy
         {
             try
             {
-                XElement rootElement = XElement.Load("config.xml");
+                XElement rootElement = XElement.Load("layout.xml");
                 foreach (var el in rootElement.Elements())
                 {
                     Dictionary<String, Point> inner = new Dictionary<String, Point>();
@@ -153,6 +153,11 @@ namespace PreviewToy
             {
                 // do nothing
             }  
+        }
+
+        public void preview_did_switch()
+        {
+            store_layout();
         }
 
         private void store_layout()
@@ -180,7 +185,7 @@ namespace PreviewToy
                 el.Add(layout);
             }
 
-            el.Save("config.xml");
+            el.Save("layout.xml");
         }
 
         private void handle_unique_layout(Preview preview, String last_known_active_window)

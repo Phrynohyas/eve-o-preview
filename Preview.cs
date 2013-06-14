@@ -97,6 +97,7 @@ namespace PreviewToy
         private void render_area_Click(object sender, EventArgs e)
         {
             bring_client_to_foreground();
+            spawner.preview_did_switch();
         }
 
         public void set_render_area_size(Size size)
