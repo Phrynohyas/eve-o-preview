@@ -28,7 +28,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.6.0.0</ApplicationVersion>
+    <ApplicationVersion>1.7.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -83,6 +83,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -99,11 +100,20 @@
     <Compile Include="PreviewHandler.Designer.cs">
       <DependentUpon>PreviewHandler.cs</DependentUpon>
     </Compile>
+    <Compile Include="PreviewOverlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PreviewOverlay.Designer.cs">
+      <DependentUpon>PreviewOverlay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="PreviewHandler.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PreviewHandler.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PreviewOverlay.resx">
+      <DependentUpon>PreviewOverlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

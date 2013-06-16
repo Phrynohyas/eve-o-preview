@@ -27,7 +27,7 @@ namespace PreviewToy
         private bool is_initialized;
 
         private Stopwatch ignoring_size_sync;
-
+        
         public PreviewToyHandler()
         {
             is_initialized = false;
@@ -68,6 +68,8 @@ namespace PreviewToy
             option_sync_size_x.Text = Properties.Settings.Default.sync_resize_x.ToString();
             option_sync_size_y.Text = Properties.Settings.Default.sync_resize_y.ToString();
             option_show_thumbnail_frames.Checked = Properties.Settings.Default.show_thumb_frames;
+            option_zoom_on_hover.Checked = Properties.Settings.Default.zoom_on_hover;
+            option_show_overlay.Checked = Properties.Settings.Default.show_overlay;
 
             load_layout();
         }
@@ -103,7 +105,7 @@ namespace PreviewToy
 
                 else if (previews.ContainsKey(process.MainWindowHandle)) //or update the preview titles
                 {
-                    previews[process.MainWindowHandle].Text = "-> " + process.MainWindowTitle + " <-";
+                    previews[process.MainWindowHandle].SetLabel(process.MainWindowTitle);
                 }
 
                 if (process.MainWindowHandle == DwmApi.GetForegroundWindow())
@@ -229,7 +231,7 @@ namespace PreviewToy
             bool active_window_is_right_type = false;
             foreach (KeyValuePair<IntPtr, Preview> entry in previews)
             {
-                if (entry.Key == window || entry.Value.Handle == window || this.Handle == window)
+                if (entry.Key == window || entry.Value.Handle == window || this.Handle == window || entry.Value.overlay.Handle == window)
                 {
                     active_window_is_right_type = true;
                 }
@@ -259,6 +261,9 @@ namespace PreviewToy
                     entry.Value.Show();
                     handle_unique_layout(entry.Value, active_client_title);
                 }
+
+                entry.Value.hover_zoom = Properties.Settings.Default.zoom_on_hover;
+                entry.Value.show_overlay = Properties.Settings.Default.show_overlay;
             }
         }
 
@@ -438,6 +443,20 @@ namespace PreviewToy
         private void previewToyMainBindingSource_CurrentChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void option_zoom_on_hover_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.zoom_on_hover = option_zoom_on_hover.Checked;
+            Properties.Settings.Default.Save();
+            refresh_thumbnails();
+        }
+
+        private void option_show_overlay_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.show_overlay = option_show_overlay.Checked;
+            Properties.Settings.Default.Save();
+            refresh_thumbnails();
         }
 
 

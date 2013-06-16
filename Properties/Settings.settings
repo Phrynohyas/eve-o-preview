@@ -29,5 +29,14 @@
     <Setting Name="sync_resize_y" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">128</Value>
     </Setting>
+    <Setting Name="show_overlay" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="zoom_on_hover" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="zoom_amount" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

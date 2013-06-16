@@ -48,6 +48,8 @@ namespace PreviewToy
             this.previewToyMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.option_sync_size_x = new System.Windows.Forms.TextBox();
             this.option_sync_size_y = new System.Windows.Forms.TextBox();
+            this.option_zoom_on_hover = new System.Windows.Forms.CheckBox();
+            this.option_show_overlay = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -163,11 +165,41 @@ namespace PreviewToy
             this.option_sync_size_y.TabIndex = 12;
             this.option_sync_size_y.TextChanged += new System.EventHandler(this.option_sync_size_y_TextChanged);
             // 
+            // option_zoom_on_hover
+            // 
+            this.option_zoom_on_hover.AutoSize = true;
+            this.option_zoom_on_hover.Checked = true;
+            this.option_zoom_on_hover.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.option_zoom_on_hover.Location = new System.Drawing.Point(12, 150);
+            this.option_zoom_on_hover.Name = "option_zoom_on_hover";
+            this.option_zoom_on_hover.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.option_zoom_on_hover.Size = new System.Drawing.Size(98, 17);
+            this.option_zoom_on_hover.TabIndex = 13;
+            this.option_zoom_on_hover.Text = "Zoom on hover";
+            this.option_zoom_on_hover.UseVisualStyleBackColor = true;
+            this.option_zoom_on_hover.CheckedChanged += new System.EventHandler(this.option_zoom_on_hover_CheckedChanged);
+            // 
+            // option_show_overlay
+            // 
+            this.option_show_overlay.AutoSize = true;
+            this.option_show_overlay.Checked = true;
+            this.option_show_overlay.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.option_show_overlay.Location = new System.Drawing.Point(12, 173);
+            this.option_show_overlay.Name = "option_show_overlay";
+            this.option_show_overlay.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.option_show_overlay.Size = new System.Drawing.Size(90, 17);
+            this.option_show_overlay.TabIndex = 14;
+            this.option_show_overlay.Text = "Show overlay";
+            this.option_show_overlay.UseVisualStyleBackColor = true;
+            this.option_show_overlay.CheckedChanged += new System.EventHandler(this.option_show_overlay_CheckedChanged);
+            // 
             // PreviewToyHandler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(246, 232);
+            this.Controls.Add(this.option_show_overlay);
+            this.Controls.Add(this.option_zoom_on_hover);
             this.Controls.Add(this.option_sync_size_y);
             this.Controls.Add(this.option_sync_size_x);
             this.Controls.Add(this.forum_url);
@@ -204,6 +236,8 @@ namespace PreviewToy
         private LinkLabel forum_url;
         private TextBox option_sync_size_x;
         private TextBox option_sync_size_y;
+        private CheckBox option_zoom_on_hover;
+        private CheckBox option_show_overlay;
 
 
     }

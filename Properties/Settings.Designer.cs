@@ -130,5 +130,41 @@ namespace PreviewToy.Properties {
                 this["sync_resize_y"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool show_overlay {
+            get {
+                return ((bool)(this["show_overlay"]));
+            }
+            set {
+                this["show_overlay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool zoom_on_hover {
+            get {
+                return ((bool)(this["zoom_on_hover"]));
+            }
+            set {
+                this["zoom_on_hover"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public float zoom_amount {
+            get {
+                return ((float)(this["zoom_amount"]));
+            }
+            set {
+                this["zoom_amount"] = value;
+            }
+        }
     }
 }
