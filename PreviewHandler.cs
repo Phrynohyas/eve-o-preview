@@ -158,34 +158,46 @@ namespace PreviewToy
         public void preview_did_switch()
         {
             store_layout();
+            foreach (KeyValuePair<IntPtr, Preview> entry in previews)
+            {
+                entry.Value.TopMost = Properties.Settings.Default.always_on_top;
+            }
         }
 
         private void store_layout()
         {
-            XElement el = new XElement("layouts");
-            foreach (var client in layouts.Keys)
+            //todo: check if it actually changed ...
+            try
             {
-                if (client == "")
+                XElement el = new XElement("layouts");
+                foreach (var client in layouts.Keys)
                 {
-                    continue;
-                }
-                XElement layout = new XElement(client.Replace(" ", "_"));
-                foreach (var thumbnail_ in layouts[client])
-                {
-                    String thumbnail = thumbnail_.Key.Replace("-> ", "").Replace(" <-", "").Replace(" ", "_");
-                    if (thumbnail == "")
+                    if (client == "")
                     {
                         continue;
                     }
-                    XElement position = new XElement(thumbnail);
-                    position.Add(new XElement("x", thumbnail_.Value.X));
-                    position.Add(new XElement("y", thumbnail_.Value.Y));
-                    layout.Add(position);
+                    XElement layout = new XElement(client.Replace(" ", "_"));
+                    foreach (var thumbnail_ in layouts[client])
+                    {
+                        String thumbnail = thumbnail_.Key.Replace("-> ", "").Replace(" <-", "").Replace(" ", "_");
+                        if (thumbnail == "")
+                        {
+                            continue;
+                        }
+                        XElement position = new XElement(thumbnail);
+                        position.Add(new XElement("x", thumbnail_.Value.X));
+                        position.Add(new XElement("y", thumbnail_.Value.Y));
+                        layout.Add(position);
+                    }
+                    el.Add(layout);
                 }
-                el.Add(layout);
-            }
 
-            el.Save("layout.xml");
+                el.Save("layout.xml");
+            }
+            catch
+            {
+                //
+            }
         }
 
         private void handle_unique_layout(Preview preview, String last_known_active_window)
@@ -289,7 +301,6 @@ namespace PreviewToy
                 layouts[active_client_title] = new Dictionary<String, Point>();
                 layouts[active_client_title][preview_handle] = position;
             }
-            store_layout();
         }
 
 
@@ -377,10 +388,7 @@ namespace PreviewToy
         {
             Properties.Settings.Default.always_on_top = option_always_on_top.Checked;
             Properties.Settings.Default.Save();
-            foreach (var thumbnail in previews)
-            {
-                thumbnail.Value.TopMost = Properties.Settings.Default.always_on_top;
-            }
+            refresh_thumbnails();
         }
 
 
