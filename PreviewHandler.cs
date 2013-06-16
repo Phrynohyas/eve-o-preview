@@ -22,7 +22,8 @@ namespace PreviewToy
         private IntPtr active_client_handle = (IntPtr)0;
         private String active_client_title = "";
 
-        private Dictionary<String, Dictionary<String, Point>> layouts;
+        private Dictionary<String, Dictionary<String, Point>> unique_layouts;
+        private Dictionary<String, Point> flat_layout;
 
         private bool is_initialized;
 
@@ -34,7 +35,8 @@ namespace PreviewToy
 
             previews = new Dictionary<IntPtr, Preview>();
 
-            layouts = new Dictionary<String, Dictionary<String, Point>>();
+            unique_layouts = new Dictionary<String, Dictionary<String, Point>>();
+            flat_layout = new Dictionary<String, Point>();
 
             ignoring_size_sync = new Stopwatch();
             ignoring_size_sync.Start();
@@ -116,7 +118,6 @@ namespace PreviewToy
 
             }
 
-
             // clean up old previews
 
             List<IntPtr> to_be_pruned = new List<IntPtr>();
@@ -148,18 +149,33 @@ namespace PreviewToy
                         inner["-> " + inner_el.Name.ToString().Replace("_", " ") + " <-"] = new Point(Convert.ToInt32(inner_el.Element("x").Value),
                                                                                                       Convert.ToInt32(inner_el.Element("y").Value));
                     }
-                    layouts[el.Name.ToString().Replace("_", " ")] = inner;
+                    unique_layouts[el.Name.ToString().Replace("_", " ")] = inner;
                 }
             }
             catch
             {
                 // do nothing
-            }  
+            }
+
+            try
+            {
+                XElement rootElement = XElement.Load("flat_layout.xml");
+                foreach (var el in rootElement.Elements())
+                {
+                    flat_layout["-> " + el.Name.ToString().Replace("_", " ") + " <-"] = new Point(Convert.ToInt32(el.Element("x").Value),
+                                                                                  Convert.ToInt32(el.Element("y").Value));
+                }
+            }
+            catch
+            {
+                // do nothing
+            }
+
         }
 
         public void preview_did_switch()
         {
-            store_layout();
+            store_layout(); //todo: check if it actually changed ...
             foreach (KeyValuePair<IntPtr, Preview> entry in previews)
             {
                 entry.Value.TopMost = Properties.Settings.Default.always_on_top;
@@ -168,44 +184,52 @@ namespace PreviewToy
 
         private void store_layout()
         {
-            //todo: check if it actually changed ...
-            try
+            XElement el = new XElement("layouts");
+            foreach (var client in unique_layouts.Keys)
             {
-                XElement el = new XElement("layouts");
-                foreach (var client in layouts.Keys)
+                if (client == "")
                 {
-                    if (client == "")
+                    continue;
+                }
+                XElement layout = new XElement(client.Replace(" ", "_"));
+                foreach (var thumbnail_ in unique_layouts[client])
+                {
+                    String thumbnail = thumbnail_.Key.Replace("-> ", "").Replace(" <-", "").Replace(" ", "_");
+                    if (thumbnail == "" || thumbnail == "...")
                     {
                         continue;
                     }
-                    XElement layout = new XElement(client.Replace(" ", "_"));
-                    foreach (var thumbnail_ in layouts[client])
-                    {
-                        String thumbnail = thumbnail_.Key.Replace("-> ", "").Replace(" <-", "").Replace(" ", "_");
-                        if (thumbnail == "")
-                        {
-                            continue;
-                        }
-                        XElement position = new XElement(thumbnail);
-                        position.Add(new XElement("x", thumbnail_.Value.X));
-                        position.Add(new XElement("y", thumbnail_.Value.Y));
-                        layout.Add(position);
-                    }
-                    el.Add(layout);
+                    XElement position = new XElement(thumbnail);
+                    position.Add(new XElement("x", thumbnail_.Value.X));
+                    position.Add(new XElement("y", thumbnail_.Value.Y));
+                    layout.Add(position);
                 }
+                el.Add(layout);
+            }
 
-                el.Save("layout.xml");
-            }
-            catch
+            el.Save("layout.xml");
+
+            XElement el2 = new XElement("flat_layout");
+            foreach (var clientKV in flat_layout)
             {
-                //
+                if (clientKV.Key == "" || clientKV.Key == "..." )
+                {
+                    continue;
+                }
+                XElement layout = new XElement(clientKV.Key.Replace("-> ", "").Replace(" <-", "").Replace(" ", "_"));
+                layout.Add(new XElement("x", clientKV.Value.X));
+                layout.Add(new XElement("y", clientKV.Value.Y));
+                el2.Add(layout);
             }
+
+            el2.Save("flat_layout.xml");
+
         }
 
         private void handle_unique_layout(Preview preview, String last_known_active_window)
         {
             Dictionary<String, Point> layout;
-            if (layouts.TryGetValue(last_known_active_window, out layout))
+            if (unique_layouts.TryGetValue(last_known_active_window, out layout))
             {
                 Point new_loc;
                 if ( Properties.Settings.Default.unique_layout && layout.TryGetValue(preview.Text, out new_loc))
@@ -221,8 +245,21 @@ namespace PreviewToy
             else if (last_known_active_window != "")
             {
                 // create outer dict
-                layouts[last_known_active_window] = new Dictionary<String, Point>();
-                layouts[last_known_active_window][preview.Text] = preview.Location;
+                unique_layouts[last_known_active_window] = new Dictionary<String, Point>();
+                unique_layouts[last_known_active_window][preview.Text] = preview.Location;
+            }
+        }
+
+        private void handle_flat_layout(Preview preview)
+        {
+            Point layout;
+            if (flat_layout.TryGetValue(preview.Text, out layout))
+            {
+                preview.Location = layout;
+            }
+            else if (preview.Text != "")
+            {
+                flat_layout[preview.Text] = preview.Location;
             }
         }
 
@@ -259,9 +296,15 @@ namespace PreviewToy
                 else
                 {
                     entry.Value.Show();
-                    handle_unique_layout(entry.Value, active_client_title);
+                    if (Properties.Settings.Default.unique_layout)
+                    {
+                        handle_unique_layout(entry.Value, active_client_title);
+                    }
+                    else
+                    {
+                        handle_flat_layout(entry.Value);
+                    }
                 }
-
                 entry.Value.hover_zoom = Properties.Settings.Default.zoom_on_hover;
                 entry.Value.show_overlay = Properties.Settings.Default.show_overlay;
             }
@@ -294,18 +337,27 @@ namespace PreviewToy
         }
 
 
-        public void register_preview_position(String preview_handle, Point position)
+        public void register_preview_position(String preview_title, Point position)
         {
-            Dictionary<String, Point> layout;
-            if (layouts.TryGetValue(active_client_title, out layout))
+            
+            if (Properties.Settings.Default.unique_layout)
             {
-                layout[preview_handle] = position;
+                Dictionary<String, Point> layout;
+                if (unique_layouts.TryGetValue(active_client_title, out layout))
+                {
+                    layout[preview_title] = position;
+                }
+                else if (active_client_title == "")
+                {
+                    unique_layouts[active_client_title] = new Dictionary<String, Point>();
+                    unique_layouts[active_client_title][preview_title] = position;
+                }
             }
-            else if (active_client_title == "")
+            else
             {
-                layouts[active_client_title] = new Dictionary<String, Point>();
-                layouts[active_client_title][preview_handle] = position;
+                flat_layout[preview_title] = position;
             }
+             
         }
 
 
