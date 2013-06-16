@@ -40,15 +40,15 @@ namespace PreviewToy
 
             this.overlay = new PreviewOverlay(this);
 
-            this.MouseHover += new System.EventHandler(this.preview_MouseHover);
+//            this.MouseHover += new System.EventHandler(this.preview_MouseHover);
             this.render_area.MouseHover += new System.EventHandler(this.preview_MouseHover);
-            this.overlay.MouseHover += new System.EventHandler(this.preview_MouseHover);
-            this.overlay.overlay_area.MouseHover += new System.EventHandler(this.preview_MouseHover);
+//            this.overlay.MouseHover += new System.EventHandler(this.preview_MouseHover);
+//            this.overlay.overlay_area.MouseHover += new System.EventHandler(this.preview_MouseHover);
 
-            this.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
+//            this.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
             this.render_area.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
-            this.overlay.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
-            this.overlay.overlay_area.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
+//            this.overlay.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
+//            this.overlay.overlay_area.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
 
             old_size = this.Size;
 
@@ -60,6 +60,7 @@ namespace PreviewToy
         {
             if (!mouse_over_lock)
             {
+                mouse_over_lock = true;
                 if (hover_zoom)
                 {
                     old_size = Size;
@@ -68,7 +69,7 @@ namespace PreviewToy
                 }
                 TopMost = true;
                 overlay.TopMost = true;
-                mouse_over_lock = true;
+
             }
             RefreshPreview();
         }
@@ -90,7 +91,7 @@ namespace PreviewToy
         {
             RefreshPreview();
             base.OnResize(e);
-            if (has_been_set_up)
+            if (has_been_set_up && !mouse_over_lock)
             {
                 this.spawner.syncronize_preview_size(this.Size);
             }
