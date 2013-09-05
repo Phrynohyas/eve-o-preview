@@ -14,6 +14,7 @@ using System.Linq;
 
 namespace PreviewToy
 {
+
     public partial class PreviewToyHandler : Form
     {
         private Dictionary<IntPtr, Preview> previews;
@@ -28,12 +29,36 @@ namespace PreviewToy
         private bool is_initialized;
 
         private Stopwatch ignoring_size_sync;
+
+        Dictionary<string, string> xml_bad_to_ok_chars;
+
+        public enum zoom_anchor_t
+        {
+            NW = 0,
+            N,
+            NE,
+            W,
+            C,
+            E,
+            SW,
+            S,
+            SE
+        };
+
+        private Dictionary<zoom_anchor_t, RadioButton> zoom_anchor_button_map;
         
         public PreviewToyHandler()
         {
             is_initialized = false;
 
             previews = new Dictionary<IntPtr, Preview>();
+
+            xml_bad_to_ok_chars = new Dictionary<string, string>();
+            xml_bad_to_ok_chars.Add("<", "&lt");
+            xml_bad_to_ok_chars.Add("&", "&amp");
+            xml_bad_to_ok_chars.Add(">", "&gt");
+            xml_bad_to_ok_chars.Add("\"", "&quot");
+            xml_bad_to_ok_chars.Add("'", "&apos");
 
             unique_layouts = new Dictionary<String, Dictionary<String, Point>>();
             flat_layout = new Dictionary<String, Point>();
@@ -51,6 +76,9 @@ namespace PreviewToy
             dispatcherTimer.Start();
 
             is_initialized = true;
+
+            previews_check_listbox.DisplayMember = "Text";
+
         }
 
 
@@ -62,15 +90,32 @@ namespace PreviewToy
 
         private void init_options()
         {
+            option_zoom_on_hover.Checked = Properties.Settings.Default.zoom_on_hover;
+            zoom_anchor_button_map = new Dictionary<zoom_anchor_t,RadioButton>();
+            zoom_anchor_button_map[zoom_anchor_t.NW] = option_zoom_anchor_NW;
+            zoom_anchor_button_map[zoom_anchor_t.N] = option_zoom_anchor_N;
+            zoom_anchor_button_map[zoom_anchor_t.NE] = option_zoom_anchor_NE;
+            zoom_anchor_button_map[zoom_anchor_t.W] = option_zoom_anchor_W;
+            zoom_anchor_button_map[zoom_anchor_t.C] = option_zoom_anchor_C;
+            zoom_anchor_button_map[zoom_anchor_t.E] = option_zoom_anchor_E;
+            zoom_anchor_button_map[zoom_anchor_t.SW] = option_zoom_anchor_SW;
+            zoom_anchor_button_map[zoom_anchor_t.S] = option_zoom_anchor_S;
+            zoom_anchor_button_map[zoom_anchor_t.SE] = option_zoom_anchor_SE;
+            zoom_anchor_button_map[(zoom_anchor_t)Properties.Settings.Default.zoom_anchor].Checked = true;
+            option_zoom_factor.Text = Properties.Settings.Default.zoom_amount.ToString();
+                        
             option_always_on_top.Checked = Properties.Settings.Default.always_on_top;
             option_hide_active.Checked = Properties.Settings.Default.hide_active;
             option_hide_all_if_not_right_type.Checked = Properties.Settings.Default.hide_all;
+            
             option_unique_layout.Checked = Properties.Settings.Default.unique_layout;
+            
             option_sync_size.Checked = Properties.Settings.Default.sync_resize;
             option_sync_size_x.Text = Properties.Settings.Default.sync_resize_x.ToString();
             option_sync_size_y.Text = Properties.Settings.Default.sync_resize_y.ToString();
+            
             option_show_thumbnail_frames.Checked = Properties.Settings.Default.show_thumb_frames;
-            option_zoom_on_hover.Checked = Properties.Settings.Default.zoom_on_hover;
+                      
             option_show_overlay.Checked = Properties.Settings.Default.show_overlay;
 
             load_layout();
@@ -100,9 +145,13 @@ namespace PreviewToy
                     previews[process.MainWindowHandle].set_render_area_size(sync_size);
  
                     // apply more thumbnail specific options
-                    previews[process.MainWindowHandle].TopMost = Properties.Settings.Default.always_on_top;
+                    previews[process.MainWindowHandle].MakeTopMost(Properties.Settings.Default.always_on_top);
                     set_thumbnail_frame_style(previews[process.MainWindowHandle], Properties.Settings.Default.show_thumb_frames);
 
+                    // add a preview also
+                    previews_check_listbox.BeginUpdate();
+                    previews_check_listbox.Items.Add(previews[process.MainWindowHandle]);
+                    previews_check_listbox.EndUpdate();
                 }
 
                 else if (previews.ContainsKey(process.MainWindowHandle)) //or update the preview titles
@@ -119,7 +168,6 @@ namespace PreviewToy
             }
 
             // clean up old previews
-
             List<IntPtr> to_be_pruned = new List<IntPtr>();
             foreach (IntPtr processHandle in previews.Keys)
             {
@@ -131,54 +179,64 @@ namespace PreviewToy
 
             foreach (IntPtr processHandle in to_be_pruned)
             {
+                previews_check_listbox.BeginUpdate();
+                previews_check_listbox.Items.Remove(previews[processHandle]);
+                previews_check_listbox.EndUpdate();
+
                 previews[processHandle].Close();
                 previews.Remove(processHandle);
             }
+
+            previews_check_listbox.Update();
+
+        }
+
+
+        private string remove_nonconform_xml_characters(string entry)
+        {
+            foreach(var kv in xml_bad_to_ok_chars)
+            {
+                entry.Replace(kv.Key, kv.Value);
+            }
+            return entry;
+        }
+
+        private string restore_nonconform_xml_characters(string entry)
+        {
+            foreach (var kv in xml_bad_to_ok_chars)
+            {
+                entry.Replace(kv.Value, kv.Key);
+            }
+            return entry;
+        }
+
+        private XElement MakeXElement(string input)
+        {
+            return new XElement(remove_nonconform_xml_characters(input).Replace(" ", "_"));
+        }
+
+        private string ParseXElement(XElement input)
+        {
+            return restore_nonconform_xml_characters(input.Name.ToString()).Replace("_", " ");
         }
 
         private void load_layout()
         {
-            try
+            XElement rootElement = XElement.Load("layout.xml");
+            foreach (var el in rootElement.Elements())
             {
-                XElement rootElement = XElement.Load("layout.xml");
-                foreach (var el in rootElement.Elements())
+                Dictionary<String, Point> inner = new Dictionary<String, Point>();
+                foreach (var inner_el in el.Elements())
                 {
-                    Dictionary<String, Point> inner = new Dictionary<String, Point>();
-                    foreach (var inner_el in el.Elements())
-                    {
-                        inner["-> " + inner_el.Name.ToString().Replace("_", " ") + " <-"] = new Point(Convert.ToInt32(inner_el.Element("x").Value),
-                                                                                                      Convert.ToInt32(inner_el.Element("y").Value));
-                    }
-                    unique_layouts[el.Name.ToString().Replace("_", " ")] = inner;
+                    inner[ParseXElement(inner_el)] = new Point(Convert.ToInt32(inner_el.Element("x").Value), Convert.ToInt32(inner_el.Element("y").Value));
                 }
-            }
-            catch
-            {
-                // do nothing
+                unique_layouts[ParseXElement(el)] = inner;
             }
 
-            try
+            rootElement = XElement.Load("flat_layout.xml");
+            foreach (var el in rootElement.Elements())
             {
-                XElement rootElement = XElement.Load("flat_layout.xml");
-                foreach (var el in rootElement.Elements())
-                {
-                    flat_layout["-> " + el.Name.ToString().Replace("_", " ") + " <-"] = new Point(Convert.ToInt32(el.Element("x").Value),
-                                                                                  Convert.ToInt32(el.Element("y").Value));
-                }
-            }
-            catch
-            {
-                // do nothing
-            }
-
-        }
-
-        public void preview_did_switch()
-        {
-            store_layout(); //todo: check if it actually changed ...
-            foreach (KeyValuePair<IntPtr, Preview> entry in previews)
-            {
-                entry.Value.TopMost = Properties.Settings.Default.always_on_top;
+                flat_layout[ParseXElement(el)] = new Point(Convert.ToInt32(el.Element("x").Value), Convert.ToInt32(el.Element("y").Value));
             }
         }
 
@@ -191,15 +249,15 @@ namespace PreviewToy
                 {
                     continue;
                 }
-                XElement layout = new XElement(client.Replace(" ", "_"));
+                XElement layout = MakeXElement(client);
                 foreach (var thumbnail_ in unique_layouts[client])
                 {
-                    String thumbnail = thumbnail_.Key.Replace("-> ", "").Replace(" <-", "").Replace(" ", "_");
+                    String thumbnail = thumbnail_.Key;
                     if (thumbnail == "" || thumbnail == "...")
                     {
                         continue;
                     }
-                    XElement position = new XElement(thumbnail);
+                    XElement position = MakeXElement(thumbnail);
                     position.Add(new XElement("x", thumbnail_.Value.X));
                     position.Add(new XElement("y", thumbnail_.Value.Y));
                     layout.Add(position);
@@ -216,14 +274,13 @@ namespace PreviewToy
                 {
                     continue;
                 }
-                XElement layout = new XElement(clientKV.Key.Replace("-> ", "").Replace(" <-", "").Replace(" ", "_"));
+                XElement layout = MakeXElement(clientKV.Key);
                 layout.Add(new XElement("x", clientKV.Value.X));
                 layout.Add(new XElement("y", clientKV.Value.Y));
                 el2.Add(layout);
             }
 
             el2.Save("flat_layout.xml");
-
         }
 
         private void handle_unique_layout(Preview preview, String last_known_active_window)
@@ -234,7 +291,7 @@ namespace PreviewToy
                 Point new_loc;
                 if ( Properties.Settings.Default.unique_layout && layout.TryGetValue(preview.Text, out new_loc))
                 {
-                        preview.Location = new_loc;
+                    preview.doMove(new_loc);
                 }
                 else
                 {
@@ -250,12 +307,23 @@ namespace PreviewToy
             }
         }
 
+
+        public void preview_did_switch()
+        {
+            store_layout(); //todo: check if it actually changed ...
+            foreach (KeyValuePair<IntPtr, Preview> entry in previews)
+            {
+                entry.Value.MakeTopMost(Properties.Settings.Default.always_on_top);
+            }
+        }
+
+
         private void handle_flat_layout(Preview preview)
         {
             Point layout;
             if (flat_layout.TryGetValue(preview.Text, out layout))
             {
-                preview.Location = layout;
+                 preview.doMove( layout );
             }
             else if (preview.Text != "")
             {
@@ -511,6 +579,61 @@ namespace PreviewToy
             refresh_thumbnails();
         }
 
+
+        private void handle_zoom_anchor_setting()
+        {
+            foreach (var kv in zoom_anchor_button_map)
+            {
+                if (kv.Value.Checked == true)
+                    Properties.Settings.Default.zoom_anchor = (byte)kv.Key;
+            }
+        }
+
+        private void option_zoom_anchor_X_CheckedChanged(object sender, EventArgs e)
+        {
+            handle_zoom_anchor_setting();
+            Properties.Settings.Default.Save();
+        }
+
+        private void option_zoom_factor_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                float tmp = (float)Convert.ToDouble(option_zoom_factor.Text);
+                if(tmp < 1)
+                {
+                    tmp = 1;
+                }
+                else if(tmp > 10)
+                {
+                    tmp = 10;
+                }
+                Properties.Settings.Default.zoom_amount = tmp;
+                option_zoom_factor.Text = tmp.ToString();
+                Properties.Settings.Default.Save();
+            }
+            catch
+            {
+                // do naught
+            }
+        }
+
+        private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            refresh_thumbnails();
+        }
+
+        private void checkedListBox1_SelectedIndexChanged2(object sender, EventArgs e)
+        {
+            System.Windows.Forms.ItemCheckEventArgs arg = (System.Windows.Forms.ItemCheckEventArgs)e;
+            ((Preview)this.previews_check_listbox.Items[arg.Index]).MakeHidden(arg.NewValue == System.Windows.Forms.CheckState.Checked);
+            refresh_thumbnails();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
 
     }
 }

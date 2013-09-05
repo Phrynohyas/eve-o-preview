@@ -38,5 +38,11 @@
     <Setting Name="zoom_amount" Type="System.Single" Scope="User">
       <Value Profile="(Default)">3</Value>
     </Setting>
+    <Setting Name="previews_dock" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="zoom_anchor" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

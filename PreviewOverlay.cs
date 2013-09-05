@@ -13,11 +13,12 @@ namespace PreviewToy
     public partial class PreviewOverlay : Form
     {
         private Preview parent;
-
+        private Color original_color;
         public PreviewOverlay(Preview parent)
         {
             this.parent = parent;
             InitializeComponent();
+            original_color = overlay_area.BackColor;
         }
 
         private void PreviewOverlay_Load(object sender, EventArgs e)
@@ -25,7 +26,7 @@ namespace PreviewToy
 
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void pictureBox1_Click(object sender, MouseEventArgs e)
         {
             this.parent.render_area_Click(sender, e);
         }

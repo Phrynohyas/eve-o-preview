@@ -43,7 +43,7 @@
             this.overlay_area.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.overlay_area.TabIndex = 0;
             this.overlay_area.TabStop = false;
-            this.overlay_area.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.overlay_area.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_Click);
             // 
             // client_label
             // 

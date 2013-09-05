@@ -28,7 +28,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.8.0.0</ApplicationVersion>
+    <ApplicationVersion>1.11.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -66,7 +66,7 @@
     <ManifestKeyFile>preview toy_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
+    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -131,7 +131,6 @@
     </Compile>
     <None Include="app.config" />
     <None Include="preview toy_TemporaryKey.pfx" />
-    <None Include="Properties\app.manifest" />
     <None Include="Properties\DataSources\PreviewToyMain.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

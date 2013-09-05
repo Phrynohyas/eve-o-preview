@@ -31,10 +31,11 @@ namespace PreviewToy
             this.render_area.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.render_area.TabIndex = 0;
             this.render_area.TabStop = false;
-            this.render_area.Click += new System.EventHandler(this.render_area_Click);
+            this.render_area.MouseUp += new System.Windows.Forms.MouseEventHandler(this.render_area_Click);
             // 
             // Preview
             // 
+            this.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(153, 89);

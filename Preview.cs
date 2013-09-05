@@ -13,10 +13,11 @@ namespace PreviewToy
     {
         public bool show_overlay = true;
         public bool hover_zoom = true;
-        public float hover_zoom_factor = 3.0f;
+        public bool is_zoomed = false;
 
         private bool mouse_over_lock = false;
         private Size old_size;
+        private Point old_position;
 
         private IntPtr m_hThumbnail;
         public IntPtr sourceWindow;
@@ -24,7 +25,24 @@ namespace PreviewToy
         private bool has_been_set_up = false;
         private PreviewToyHandler spawner;
 
+        private bool hide = false;
+
         public PreviewOverlay overlay;
+
+        public void MakeHidden(bool wha)
+        {
+            hide = wha;
+        }
+
+        public override string ToString()
+        {
+            return this.Text;
+        }
+
+        public void MakeTopMost(bool topmost)
+        {
+            this.TopMost = topmost && !(this.hide);
+        }
 
         public Preview(IntPtr sourceWindow, String title, PreviewToyHandler spawner, Size size) 
         {
@@ -40,20 +58,13 @@ namespace PreviewToy
 
             this.overlay = new PreviewOverlay(this);
 
-//            this.MouseHover += new System.EventHandler(this.preview_MouseHover);
             this.render_area.MouseHover += new System.EventHandler(this.preview_MouseHover);
-//            this.overlay.MouseHover += new System.EventHandler(this.preview_MouseHover);
-//            this.overlay.overlay_area.MouseHover += new System.EventHandler(this.preview_MouseHover);
-
-//            this.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
             this.render_area.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
-//            this.overlay.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
-//            this.overlay.overlay_area.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
 
-            old_size = this.Size;
+            this.old_size = this.Size;
+            this.old_position = this.Location;
 
             has_been_set_up = true;
-
         }
 
         public void preview_MouseHover(object sender, System.EventArgs e)
@@ -62,16 +73,69 @@ namespace PreviewToy
             {
                 mouse_over_lock = true;
                 if (hover_zoom)
-                {
-                    old_size = Size;
-                    Size = new Size((int)(hover_zoom_factor * (float)Size.Width),
-                                    (int)(hover_zoom_factor * (float)Size.Height));
-                }
+                    doZoom();
+
                 TopMost = true;
                 overlay.TopMost = true;
-
             }
             RefreshPreview();
+        }
+
+        public void doZoom()
+        {
+            if (is_zoomed)
+                return;
+               
+            is_zoomed = true;
+
+            float hover_zoom_factor = Properties.Settings.Default.zoom_amount;
+
+            old_size = Size;
+            old_position = Location;
+
+            Size = new Size((int)(hover_zoom_factor * (float)Size.Width), (int)(hover_zoom_factor * (float)Size.Height));
+
+            switch ((PreviewToyHandler.zoom_anchor_t)Properties.Settings.Default.zoom_anchor)
+            {
+                case (PreviewToyHandler.zoom_anchor_t.NW):
+                    break;
+                case (PreviewToyHandler.zoom_anchor_t.N):
+                    Location = new Point(Location.X - Size.Width / 2 + old_size.Width / 2, Location.Y);
+                    break;
+                case (PreviewToyHandler.zoom_anchor_t.NE):
+                    Location = new Point(Location.X - Size.Width + old_size.Width, Location.Y);
+                    break;
+
+                case (PreviewToyHandler.zoom_anchor_t.W):
+                    Location = new Point(Location.X, Location.Y - Size.Height / 2 + old_size.Height / 2);
+                    break;
+                case (PreviewToyHandler.zoom_anchor_t.C):
+                    Location = new Point(Location.X - Size.Width / 2 + old_size.Width / 2, Location.Y - Size.Height / 2 + old_size.Height / 2);
+                    break;
+                case (PreviewToyHandler.zoom_anchor_t.E):
+                    Location = new Point(Location.X - Size.Width + old_size.Width, Location.Y - Size.Height / 2 + old_size.Height / 2);
+                    break;
+
+                case (PreviewToyHandler.zoom_anchor_t.SW):
+                    Location = new Point(Location.X, Location.Y - Size.Height + old_size.Height);
+                    break;
+                case (PreviewToyHandler.zoom_anchor_t.S):
+                    Location = new Point(Location.X - Size.Width / 2 + old_size.Width / 2, Location.Y - Size.Height + old_size.Height);
+                    break;
+                case (PreviewToyHandler.zoom_anchor_t.SE):
+                    Location = new Point(Location.X - Size.Width + old_size.Width, Location.Y - Size.Height + old_size.Height);
+                    break;
+            }
+        }
+
+        public void restoreZoom()
+        {
+            if (!is_zoomed)
+                return;
+
+            Size = old_size;
+            Location = old_position;
+            is_zoomed = false;
         }
 
         public void preview_MouseLeave(object sender, System.EventArgs e)
@@ -80,7 +144,7 @@ namespace PreviewToy
             {
                 if (hover_zoom)
                 {
-                    Size = old_size;
+                    restoreZoom();
                 }
                 mouse_over_lock = false;
             }
@@ -92,21 +156,29 @@ namespace PreviewToy
             RefreshPreview();
             base.OnResize(e);
             if (has_been_set_up && !mouse_over_lock)
-            {
                 this.spawner.syncronize_preview_size(this.Size);
-            }
         }
 
         protected override void OnMove(EventArgs e)
         {
             base.OnMove(e);
-            this.spawner.register_preview_position(this.Text, this.Location);
+            if (has_been_set_up && !mouse_over_lock)
+                this.spawner.register_preview_position(this.Text, this.Location);
+
+            RefreshPreview();
+        }
+
+        public void doMove(Point position)
+        {
+            if (has_been_set_up && !mouse_over_lock)
+                Location = position;
+
             RefreshPreview();
         }
 
         public void SetLabel(String label)
         {
-            this.Text = "-> " + label + " <-";
+            this.Text = label;
             this.overlay.client_label.Text = label;
         }
 
@@ -131,20 +203,24 @@ namespace PreviewToy
             }
         }
 
-        public void Show()
+        new public void Show()
         {
-            base.Show();
-            if (show_overlay)
+            if (!hide)
             {
-                this.overlay.Show();
+                base.Show();
+                if (show_overlay)
+                    this.overlay.Show();
+                else
+                    this.overlay.Hide();
             }
             else
             {
+                this.Hide();
                 this.overlay.Hide();
             }
         }
 
-        public void Hide()
+        new public void Hide()
         {
             base.Hide();
             this.overlay.Hide();
@@ -187,10 +263,21 @@ namespace PreviewToy
             }
         }
 
-        public void render_area_Click(object sender, EventArgs e)
+        public void render_area_Click(object sender, MouseEventArgs e)
         {
-            bring_client_to_foreground();
-            spawner.preview_did_switch();
+            if (e.Button == MouseButtons.Left)
+            {
+                bring_client_to_foreground();
+                spawner.preview_did_switch();
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                // do smth cool?
+            }
+            if (e.Button == MouseButtons.Middle)
+            {
+                // do smth cool?
+            }
         }
 
         public void set_render_area_size(Size size)
