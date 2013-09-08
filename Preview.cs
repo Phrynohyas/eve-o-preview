@@ -23,6 +23,7 @@ namespace PreviewToy
         public IntPtr sourceWindow;
         private DwmApi.DWM_THUMBNAIL_PROPERTIES m_ThumbnailProperties;
         private bool has_been_set_up = false;
+        private bool thumbnail_has_been_set_up = false;
         private PreviewToyHandler spawner;
 
         private bool hide = false;
@@ -52,7 +53,6 @@ namespace PreviewToy
             this.spawner = spawner; 
 
             InitializeComponent(); 
-            SetUp();
 
             this.Text = title;
 
@@ -186,20 +186,32 @@ namespace PreviewToy
         {
             if (has_been_set_up)
             {
-                m_ThumbnailProperties.rcDestination = new DwmApi.RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
-                DwmApi.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
+                if (DwmApi.DwmIsCompositionEnabled())
+                {
+                    if (thumbnail_has_been_set_up == false)
+                    {
+                        this.SetUpThumbnail();
+                    }
+                    m_ThumbnailProperties.rcDestination = new DwmApi.RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
+                    DwmApi.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
+                }
+                else
+                {
+                    thumbnail_has_been_set_up = false;
+                }
 
                 Size overlay_size = this.render_area.Size;
-                overlay_size.Width -= 2*5;
-                overlay_size.Height -= 2*5;
+                overlay_size.Width -= 2 * 5;
+                overlay_size.Height -= 2 * 5;
 
                 Point overlay_location = this.Location;
-                overlay_location.X += 5 + (this.Size.Width - this.render_area.Size.Width)/2;
-                overlay_location.Y += 5 + (this.Size.Height - this.render_area.Size.Height) - (this.Size.Width - this.render_area.Size.Width)/2;
+                overlay_location.X += 5 + (this.Size.Width - this.render_area.Size.Width) / 2;
+                overlay_location.Y += 5 + (this.Size.Height - this.render_area.Size.Height) - (this.Size.Width - this.render_area.Size.Width) / 2;
 
                 this.overlay.Size = overlay_size;
                 this.overlay.Location = overlay_location;
                 this.overlay.TopMost = this.TopMost;
+
             }
         }
 
@@ -226,22 +238,26 @@ namespace PreviewToy
             this.overlay.Hide();
         }
 
-        public void SetUp()
+        private void SetUpThumbnail()
         {
-            m_hThumbnail = DwmApi.DwmRegisterThumbnail(this.Handle, sourceWindow);
+            if (DwmApi.DwmIsCompositionEnabled() && !thumbnail_has_been_set_up)
+            {
+                m_hThumbnail = DwmApi.DwmRegisterThumbnail(this.Handle, sourceWindow);
 
-            m_ThumbnailProperties = new DwmApi.DWM_THUMBNAIL_PROPERTIES();
-            m_ThumbnailProperties.dwFlags = DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_VISIBLE
-                + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_OPACITY
-                + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_RECTDESTINATION
-                + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_SOURCECLIENTAREAONLY;
-            m_ThumbnailProperties.opacity = 255;
-            m_ThumbnailProperties.fVisible = true;
-            m_ThumbnailProperties.fSourceClientAreaOnly = true;
-            m_ThumbnailProperties.rcDestination = new DwmApi.RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
-            
-            DwmApi.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
-            
+                m_ThumbnailProperties = new DwmApi.DWM_THUMBNAIL_PROPERTIES();
+                m_ThumbnailProperties.dwFlags = DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_VISIBLE
+                    + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_OPACITY
+                    + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_RECTDESTINATION
+                    + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_SOURCECLIENTAREAONLY;
+                m_ThumbnailProperties.opacity = 255;
+                m_ThumbnailProperties.fVisible = true;
+                m_ThumbnailProperties.fSourceClientAreaOnly = true;
+                m_ThumbnailProperties.rcDestination = new DwmApi.RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
+
+                DwmApi.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
+
+                thumbnail_has_been_set_up = true;
+            }
         }
 
         private void Preview_Load(object sender, EventArgs e)

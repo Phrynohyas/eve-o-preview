@@ -12,6 +12,8 @@ using System.Windows.Threading;
 using System.Xml.Linq;
 using System.Linq;
 
+using System.IO;
+
 namespace PreviewToy
 {
 
@@ -118,6 +120,13 @@ namespace PreviewToy
                       
             option_show_overlay.Checked = Properties.Settings.Default.show_overlay;
 
+            // disable/enable zoom suboptions
+            option_zoom_factor.Enabled = Properties.Settings.Default.zoom_on_hover;
+            foreach (var kv in zoom_anchor_button_map)
+            {
+                kv.Value.Enabled = Properties.Settings.Default.zoom_on_hover;
+            }
+
             load_layout();
         }
 
@@ -222,21 +231,27 @@ namespace PreviewToy
 
         private void load_layout()
         {
-            XElement rootElement = XElement.Load("layout.xml");
-            foreach (var el in rootElement.Elements())
+            if (File.Exists("layout.xml"))
             {
-                Dictionary<String, Point> inner = new Dictionary<String, Point>();
-                foreach (var inner_el in el.Elements())
+                XElement rootElement = XElement.Load("layout.xml");
+                foreach (var el in rootElement.Elements())
                 {
-                    inner[ParseXElement(inner_el)] = new Point(Convert.ToInt32(inner_el.Element("x").Value), Convert.ToInt32(inner_el.Element("y").Value));
+                    Dictionary<String, Point> inner = new Dictionary<String, Point>();
+                    foreach (var inner_el in el.Elements())
+                    {
+                        inner[ParseXElement(inner_el)] = new Point(Convert.ToInt32(inner_el.Element("x").Value), Convert.ToInt32(inner_el.Element("y").Value));
+                    }
+                    unique_layouts[ParseXElement(el)] = inner;
                 }
-                unique_layouts[ParseXElement(el)] = inner;
             }
 
-            rootElement = XElement.Load("flat_layout.xml");
-            foreach (var el in rootElement.Elements())
+            if (File.Exists("flat_layout.xml"))
             {
-                flat_layout[ParseXElement(el)] = new Point(Convert.ToInt32(el.Element("x").Value), Convert.ToInt32(el.Element("y").Value));
+                XElement rootElement = XElement.Load("flat_layout.xml");
+                foreach (var el in rootElement.Elements())
+                {
+                    flat_layout[ParseXElement(el)] = new Point(Convert.ToInt32(el.Element("x").Value), Convert.ToInt32(el.Element("y").Value));
+                }
             }
         }
 
@@ -376,6 +391,8 @@ namespace PreviewToy
                 entry.Value.hover_zoom = Properties.Settings.Default.zoom_on_hover;
                 entry.Value.show_overlay = Properties.Settings.Default.show_overlay;
             }
+
+            DwmApi.DwmIsCompositionEnabled();
         }
 
 
@@ -434,6 +451,17 @@ namespace PreviewToy
             spawn_and_kill_previews();
             refresh_thumbnails();
             if (ignoring_size_sync.ElapsedMilliseconds > 500) { ignoring_size_sync.Stop(); };
+
+            if(DwmApi.DwmIsCompositionEnabled())
+            {
+                aero_status_label.Text = "AERO is ON";
+                aero_status_label.ForeColor = Color.Black;
+            }
+            else{
+                aero_status_label.Text = "AERO is OFF";
+                aero_status_label.ForeColor = Color.Red;
+            }
+            
         }
 
 
@@ -570,6 +598,14 @@ namespace PreviewToy
             Properties.Settings.Default.zoom_on_hover = option_zoom_on_hover.Checked;
             Properties.Settings.Default.Save();
             refresh_thumbnails();
+            option_zoom_factor.Enabled = Properties.Settings.Default.zoom_on_hover;
+            if (is_initialized)
+            {
+                foreach (var kv in zoom_anchor_button_map)
+                {
+                    kv.Value.Enabled = Properties.Settings.Default.zoom_on_hover;
+                }
+            }
         }
 
         private void option_show_overlay_CheckedChanged(object sender, EventArgs e)
@@ -628,11 +664,6 @@ namespace PreviewToy
             System.Windows.Forms.ItemCheckEventArgs arg = (System.Windows.Forms.ItemCheckEventArgs)e;
             ((Preview)this.previews_check_listbox.Items[arg.Index]).MakeHidden(arg.NewValue == System.Windows.Forms.CheckState.Checked);
             refresh_thumbnails();
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
 
     }

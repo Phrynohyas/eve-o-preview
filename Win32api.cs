@@ -43,7 +43,7 @@ namespace PreviewToy
 
         [DllImport("dwmapi.dll", PreserveSig = false)]
         public static extern void DwmQueryThumbnailSourceSize(IntPtr hThumbnail, out Size size);
-
+        
         [StructLayout(LayoutKind.Sequential)]
         public class DWM_THUMBNAIL_PROPERTIES
         {

@@ -63,16 +63,21 @@ namespace PreviewToy
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
+            this.zoom_anchor_lable = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
             this.previews_check_listbox = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.aero_status_label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel5.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // option_hide_active
@@ -82,9 +87,9 @@ namespace PreviewToy
             this.option_hide_active.CheckState = System.Windows.Forms.CheckState.Checked;
             this.option_hide_active.Location = new System.Drawing.Point(3, 3);
             this.option_hide_active.Name = "option_hide_active";
-            this.option_hide_active.Size = new System.Drawing.Size(81, 17);
+            this.option_hide_active.Size = new System.Drawing.Size(184, 17);
             this.option_hide_active.TabIndex = 1;
-            this.option_hide_active.Text = "Hide Active";
+            this.option_hide_active.Text = "Hide preview of active EVE client";
             this.option_hide_active.UseVisualStyleBackColor = true;
             this.option_hide_active.CheckedChanged += new System.EventHandler(this.option_hide_active_CheckedChanged);
             // 
@@ -93,11 +98,11 @@ namespace PreviewToy
             this.option_hide_all_if_not_right_type.AutoSize = true;
             this.option_hide_all_if_not_right_type.Checked = true;
             this.option_hide_all_if_not_right_type.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_hide_all_if_not_right_type.Location = new System.Drawing.Point(3, 26);
+            this.option_hide_all_if_not_right_type.Location = new System.Drawing.Point(3, 49);
             this.option_hide_all_if_not_right_type.Name = "option_hide_all_if_not_right_type";
-            this.option_hide_all_if_not_right_type.Size = new System.Drawing.Size(210, 17);
+            this.option_hide_all_if_not_right_type.Size = new System.Drawing.Size(242, 17);
             this.option_hide_all_if_not_right_type.TabIndex = 2;
-            this.option_hide_all_if_not_right_type.Text = "Hide all if active window not EVE client";
+            this.option_hide_all_if_not_right_type.Text = "Hide previews if active window not EVE client";
             this.option_hide_all_if_not_right_type.UseVisualStyleBackColor = true;
             this.option_hide_all_if_not_right_type.CheckedChanged += new System.EventHandler(this.option_hide_all_if_noneve_CheckedChanged);
             // 
@@ -106,11 +111,11 @@ namespace PreviewToy
             this.option_unique_layout.AutoSize = true;
             this.option_unique_layout.Checked = true;
             this.option_unique_layout.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_unique_layout.Location = new System.Drawing.Point(3, 49);
+            this.option_unique_layout.Location = new System.Drawing.Point(3, 72);
             this.option_unique_layout.Name = "option_unique_layout";
-            this.option_unique_layout.Size = new System.Drawing.Size(161, 17);
+            this.option_unique_layout.Size = new System.Drawing.Size(185, 17);
             this.option_unique_layout.TabIndex = 3;
-            this.option_unique_layout.Text = "Unique layout for each client";
+            this.option_unique_layout.Text = "Unique layout for each EVE client";
             this.option_unique_layout.UseVisualStyleBackColor = true;
             this.option_unique_layout.CheckedChanged += new System.EventHandler(this.option_unique_layout_CheckedChanged);
             // 
@@ -122,9 +127,9 @@ namespace PreviewToy
             this.option_sync_size.Location = new System.Drawing.Point(1, 3);
             this.option_sync_size.Name = "option_sync_size";
             this.option_sync_size.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.option_sync_size.Size = new System.Drawing.Size(113, 17);
+            this.option_sync_size.Size = new System.Drawing.Size(108, 17);
             this.option_sync_size.TabIndex = 4;
-            this.option_sync_size.Text = "Syncronize Resize";
+            this.option_sync_size.Text = "Syncronize resize";
             this.option_sync_size.UseVisualStyleBackColor = true;
             this.option_sync_size.CheckedChanged += new System.EventHandler(this.option_sync_size_CheckedChanged);
             // 
@@ -133,12 +138,12 @@ namespace PreviewToy
             this.option_always_on_top.AutoSize = true;
             this.option_always_on_top.Checked = true;
             this.option_always_on_top.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_always_on_top.Location = new System.Drawing.Point(90, 3);
+            this.option_always_on_top.Location = new System.Drawing.Point(3, 26);
             this.option_always_on_top.Name = "option_always_on_top";
             this.option_always_on_top.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.option_always_on_top.Size = new System.Drawing.Size(92, 17);
+            this.option_always_on_top.Size = new System.Drawing.Size(137, 17);
             this.option_always_on_top.TabIndex = 8;
-            this.option_always_on_top.Text = "Always on top";
+            this.option_always_on_top.Text = "Previews always on top";
             this.option_always_on_top.UseVisualStyleBackColor = true;
             this.option_always_on_top.CheckedChanged += new System.EventHandler(this.option_always_on_top_CheckedChanged);
             // 
@@ -147,19 +152,19 @@ namespace PreviewToy
             this.option_show_thumbnail_frames.AutoSize = true;
             this.option_show_thumbnail_frames.Checked = true;
             this.option_show_thumbnail_frames.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_show_thumbnail_frames.Location = new System.Drawing.Point(99, 172);
+            this.option_show_thumbnail_frames.Location = new System.Drawing.Point(99, 195);
             this.option_show_thumbnail_frames.Name = "option_show_thumbnail_frames";
             this.option_show_thumbnail_frames.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.option_show_thumbnail_frames.Size = new System.Drawing.Size(142, 17);
+            this.option_show_thumbnail_frames.Size = new System.Drawing.Size(127, 17);
             this.option_show_thumbnail_frames.TabIndex = 9;
-            this.option_show_thumbnail_frames.Text = "Show Thumbnail Frames";
+            this.option_show_thumbnail_frames.Text = "Show preview frames";
             this.option_show_thumbnail_frames.UseVisualStyleBackColor = true;
             this.option_show_thumbnail_frames.CheckedChanged += new System.EventHandler(this.option_show_thumbnail_frames_CheckedChanged);
             // 
             // forum_url
             // 
             this.forum_url.AutoSize = true;
-            this.forum_url.Location = new System.Drawing.Point(3, 305);
+            this.forum_url.Location = new System.Drawing.Point(149, 4);
             this.forum_url.Name = "forum_url";
             this.forum_url.Size = new System.Drawing.Size(94, 13);
             this.forum_url.TabIndex = 10;
@@ -206,7 +211,7 @@ namespace PreviewToy
             this.option_show_overlay.AutoSize = true;
             this.option_show_overlay.Checked = true;
             this.option_show_overlay.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_show_overlay.Location = new System.Drawing.Point(3, 172);
+            this.option_show_overlay.Location = new System.Drawing.Point(3, 195);
             this.option_show_overlay.Name = "option_show_overlay";
             this.option_show_overlay.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.option_show_overlay.Size = new System.Drawing.Size(90, 17);
@@ -316,7 +321,7 @@ namespace PreviewToy
             // 
             // option_zoom_factor
             // 
-            this.option_zoom_factor.Location = new System.Drawing.Point(3, 22);
+            this.option_zoom_factor.Location = new System.Drawing.Point(9, 28);
             this.option_zoom_factor.Name = "option_zoom_factor";
             this.option_zoom_factor.Size = new System.Drawing.Size(28, 20);
             this.option_zoom_factor.TabIndex = 24;
@@ -332,13 +337,12 @@ namespace PreviewToy
             this.flowLayoutPanel1.Controls.Add(this.panel2);
             this.flowLayoutPanel1.Controls.Add(this.option_show_overlay);
             this.flowLayoutPanel1.Controls.Add(this.option_show_thumbnail_frames);
-            this.flowLayoutPanel1.Controls.Add(this.label1);
-            this.flowLayoutPanel1.Controls.Add(this.previews_check_listbox);
-            this.flowLayoutPanel1.Controls.Add(this.forum_url);
+            this.flowLayoutPanel1.Controls.Add(this.panel5);
+            this.flowLayoutPanel1.Controls.Add(this.panel4);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(252, 328);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(252, 349);
             this.flowLayoutPanel1.TabIndex = 25;
             // 
             // panel1
@@ -346,40 +350,40 @@ namespace PreviewToy
             this.panel1.Controls.Add(this.option_sync_size);
             this.panel1.Controls.Add(this.option_sync_size_x);
             this.panel1.Controls.Add(this.option_sync_size_y);
-            this.panel1.Location = new System.Drawing.Point(3, 72);
+            this.panel1.Location = new System.Drawing.Point(3, 95);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(246, 26);
             this.panel1.TabIndex = 26;
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.panel3);
+            this.panel2.Controls.Add(this.zoom_anchor_lable);
             this.panel2.Controls.Add(this.option_zoom_on_hover);
             this.panel2.Controls.Add(this.option_zoom_factor);
-            this.panel2.Location = new System.Drawing.Point(3, 104);
+            this.panel2.Location = new System.Drawing.Point(3, 127);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(246, 62);
             this.panel2.TabIndex = 27;
             // 
-            // label3
+            // zoom_anchor_lable
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(132, 25);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(40, 13);
-            this.label3.TabIndex = 30;
-            this.label3.Text = "anchor";
+            this.zoom_anchor_lable.AutoSize = true;
+            this.zoom_anchor_lable.Location = new System.Drawing.Point(134, 31);
+            this.zoom_anchor_lable.Name = "zoom_anchor_lable";
+            this.zoom_anchor_lable.Size = new System.Drawing.Size(41, 13);
+            this.zoom_anchor_lable.TabIndex = 30;
+            this.zoom_anchor_lable.Text = "Anchor";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(37, 25);
+            this.label2.Location = new System.Drawing.Point(43, 31);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(64, 13);
+            this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 29;
-            this.label2.Text = "Zoom factor";
+            this.label2.Text = "Factor";
             // 
             // panel3
             // 
@@ -392,17 +396,26 @@ namespace PreviewToy
             this.panel3.Controls.Add(this.option_zoom_anchor_S);
             this.panel3.Controls.Add(this.option_zoom_anchor_E);
             this.panel3.Controls.Add(this.option_zoom_anchor_SW);
-            this.panel3.Location = new System.Drawing.Point(178, 3);
+            this.panel3.Location = new System.Drawing.Point(182, 3);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(60, 57);
             this.panel3.TabIndex = 28;
             // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.previews_check_listbox);
+            this.panel5.Controls.Add(this.label1);
+            this.panel5.Location = new System.Drawing.Point(3, 218);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(246, 100);
+            this.panel5.TabIndex = 31;
+            // 
             // previews_check_listbox
             // 
             this.previews_check_listbox.FormattingEnabled = true;
-            this.previews_check_listbox.Location = new System.Drawing.Point(3, 208);
+            this.previews_check_listbox.Location = new System.Drawing.Point(3, 18);
             this.previews_check_listbox.Name = "previews_check_listbox";
-            this.previews_check_listbox.Size = new System.Drawing.Size(246, 94);
+            this.previews_check_listbox.Size = new System.Drawing.Size(240, 79);
             this.previews_check_listbox.TabIndex = 28;
             this.previews_check_listbox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox1_SelectedIndexChanged2);
             this.previews_check_listbox.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
@@ -410,18 +423,35 @@ namespace PreviewToy
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 192);
+            this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(151, 13);
             this.label1.TabIndex = 29;
             this.label1.Text = "Previews (check to force hide)";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.aero_status_label);
+            this.panel4.Controls.Add(this.forum_url);
+            this.panel4.Location = new System.Drawing.Point(3, 324);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(246, 21);
+            this.panel4.TabIndex = 30;
+            // 
+            // aero_status_label
+            // 
+            this.aero_status_label.AutoSize = true;
+            this.aero_status_label.Location = new System.Drawing.Point(3, 4);
+            this.aero_status_label.Name = "aero_status_label";
+            this.aero_status_label.Size = new System.Drawing.Size(35, 13);
+            this.aero_status_label.TabIndex = 0;
+            this.aero_status_label.Text = "label4";
             // 
             // PreviewToyHandler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(252, 328);
+            this.ClientSize = new System.Drawing.Size(252, 349);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -441,6 +471,10 @@ namespace PreviewToy
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -474,9 +508,12 @@ namespace PreviewToy
         private Panel panel2;
         private Label label2;
         private Panel panel3;
-        private Label label3;
+        private Label zoom_anchor_lable;
         private CheckedListBox previews_check_listbox;
         private Label label1;
+        private Panel panel4;
+        private Label aero_status_label;
+        private Panel panel5;
 
 
     }
