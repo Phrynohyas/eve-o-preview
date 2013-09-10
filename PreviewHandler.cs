@@ -56,11 +56,13 @@ namespace PreviewToy
             previews = new Dictionary<IntPtr, Preview>();
 
             xml_bad_to_ok_chars = new Dictionary<string, string>();
-            xml_bad_to_ok_chars.Add("<", "&lt");
-            xml_bad_to_ok_chars.Add("&", "&amp");
-            xml_bad_to_ok_chars.Add(">", "&gt");
-            xml_bad_to_ok_chars.Add("\"", "&quot");
-            xml_bad_to_ok_chars.Add("'", "&apos");
+            xml_bad_to_ok_chars["<"] = "---lt---";
+            xml_bad_to_ok_chars["&"] = "---amp---";
+            xml_bad_to_ok_chars[">"] = "---gt---";
+            xml_bad_to_ok_chars["\""] = "---quot---";
+            xml_bad_to_ok_chars["\'"] = "---apos---";
+            xml_bad_to_ok_chars[","] = "---comma---";
+            xml_bad_to_ok_chars["."] = "---dot---";
 
             unique_layouts = new Dictionary<String, Dictionary<String, Point>>();
             flat_layout = new Dictionary<String, Point>();
@@ -205,7 +207,7 @@ namespace PreviewToy
         {
             foreach(var kv in xml_bad_to_ok_chars)
             {
-                entry.Replace(kv.Key, kv.Value);
+                entry = entry.Replace(kv.Key, kv.Value);
             }
             return entry;
         }
@@ -214,14 +216,15 @@ namespace PreviewToy
         {
             foreach (var kv in xml_bad_to_ok_chars)
             {
-                entry.Replace(kv.Value, kv.Key);
+                entry = entry.Replace(kv.Value, kv.Key);
             }
             return entry;
         }
 
         private XElement MakeXElement(string input)
         {
-            return new XElement(remove_nonconform_xml_characters(input).Replace(" ", "_"));
+            string clean = remove_nonconform_xml_characters(input).Replace(" ", "_");
+            return new XElement(clean);
         }
 
         private string ParseXElement(XElement input)
