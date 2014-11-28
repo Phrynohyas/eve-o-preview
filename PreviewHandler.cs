@@ -27,12 +27,27 @@ namespace PreviewToy
 
         private Dictionary<String, Dictionary<String, Point>> unique_layouts;
         private Dictionary<String, Point> flat_layout;
+        private Dictionary<String, RECT> client_layout;
 
         private bool is_initialized;
 
         private Stopwatch ignoring_size_sync;
 
         Dictionary<string, string> xml_bad_to_ok_chars;
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowRect(IntPtr hwnd, out RECT rect);
+
+        [DllImport("user32.dll")]
+        public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
+        private struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
 
         public enum zoom_anchor_t
         {
@@ -66,6 +81,7 @@ namespace PreviewToy
 
             unique_layouts = new Dictionary<String, Dictionary<String, Point>>();
             flat_layout = new Dictionary<String, Point>();
+            client_layout = new Dictionary<String, RECT>();
 
             ignoring_size_sync = new Stopwatch();
             ignoring_size_sync.Start();
@@ -122,6 +138,8 @@ namespace PreviewToy
                       
             option_show_overlay.Checked = Properties.Settings.Default.show_overlay;
 
+            option_track_client_windows.Checked = Properties.Settings.Default.track_client_positions;
+
             // disable/enable zoom suboptions
             option_zoom_factor.Enabled = Properties.Settings.Default.zoom_on_hover;
             foreach (var kv in zoom_anchor_button_map)
@@ -163,6 +181,25 @@ namespace PreviewToy
                     previews_check_listbox.BeginUpdate();
                     previews_check_listbox.Items.Add(previews[process.MainWindowHandle]);
                     previews_check_listbox.EndUpdate();
+
+                    if (client_layout.ContainsKey(process.MainWindowTitle))
+                    {
+                        int left = Math.Abs(client_layout[process.MainWindowTitle].Left);
+                        int right = Math.Abs(client_layout[process.MainWindowTitle].Right);
+                        int client_width = Math.Abs(left - right);
+
+                        int top = Math.Abs(client_layout[process.MainWindowTitle].Top);
+                        int bottom = Math.Abs(client_layout[process.MainWindowTitle].Bottom);
+                        int client_height = Math.Abs(top - bottom);
+
+                        MoveWindow(
+                            process.MainWindowHandle,
+                            client_layout[process.MainWindowTitle].Left,
+                            client_layout[process.MainWindowTitle].Top,
+                            client_width,
+                            client_height,
+                            true);
+                    }
                 }
 
                 else if (previews.ContainsKey(process.MainWindowHandle)) //or update the preview titles
@@ -256,6 +293,21 @@ namespace PreviewToy
                     flat_layout[ParseXElement(el)] = new Point(Convert.ToInt32(el.Element("x").Value), Convert.ToInt32(el.Element("y").Value));
                 }
             }
+
+            if (File.Exists("client_layout.xml"))
+            {
+                XElement rootElement = XElement.Load("client_layout.xml");
+                foreach (var el in rootElement.Elements())
+                {
+                    RECT rect   = new RECT();
+                    rect.Left   = Convert.ToInt32(el.Element("x1").Value);
+                    rect.Top    = Convert.ToInt32(el.Element("y1").Value);
+                    rect.Right  = Convert.ToInt32(el.Element("x2").Value);
+                    rect.Bottom = Convert.ToInt32(el.Element("y2").Value);
+
+                    client_layout[ParseXElement(el)] = rect;
+                }
+            }
         }
 
         private void store_layout()
@@ -288,7 +340,7 @@ namespace PreviewToy
             XElement el2 = new XElement("flat_layout");
             foreach (var clientKV in flat_layout)
             {
-                if (clientKV.Key == "" || clientKV.Key == "..." )
+                if (clientKV.Key == "" || clientKV.Key == "...")
                 {
                     continue;
                 }
@@ -299,6 +351,23 @@ namespace PreviewToy
             }
 
             el2.Save("flat_layout.xml");
+
+            XElement el3 = new XElement("client_layout");
+            foreach (var clientKV in client_layout)
+            {
+                if (clientKV.Key == "" || clientKV.Key == "...")
+                {
+                    continue;
+                }
+                XElement layout = MakeXElement(clientKV.Key);
+                layout.Add(new XElement("x1", clientKV.Value.Left));
+                layout.Add(new XElement("y1", clientKV.Value.Top));
+                layout.Add(new XElement("x2", clientKV.Value.Right));
+                layout.Add(new XElement("y2", clientKV.Value.Bottom));
+                el3.Add(layout);
+            }
+
+            el3.Save("client_layout.xml");
         }
 
         private void handle_unique_layout(Preview preview, String last_known_active_window)
@@ -326,8 +395,24 @@ namespace PreviewToy
         }
 
 
+        private void update_client_locations()
+        {
+            Process[] processes = Process.GetProcessesByName("ExeFile");
+            List<IntPtr> processHandles = new List<IntPtr>();
+
+            foreach (Process process in processes)
+            {
+                RECT rect = new RECT();
+                GetWindowRect(process.MainWindowHandle, out rect);
+
+                client_layout[process.MainWindowTitle] = rect;
+            }
+        }
+
+
         public void preview_did_switch()
         {
+            update_client_locations();
             store_layout(); //todo: check if it actually changed ...
             foreach (KeyValuePair<IntPtr, Preview> entry in previews)
             {
@@ -667,6 +752,16 @@ namespace PreviewToy
             System.Windows.Forms.ItemCheckEventArgs arg = (System.Windows.Forms.ItemCheckEventArgs)e;
             ((Preview)this.previews_check_listbox.Items[arg.Index]).MakeHidden(arg.NewValue == System.Windows.Forms.CheckState.Checked);
             refresh_thumbnails();
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
 
     }
