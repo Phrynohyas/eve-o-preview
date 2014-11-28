@@ -44,7 +44,7 @@
     <Setting Name="zoom_anchor" Type="System.Byte" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="track_client_positions" Type="System.Boolean" Scope="User">
+    <Setting Name="track_client_windows" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

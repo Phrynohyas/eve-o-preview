@@ -27,7 +27,7 @@ namespace PreviewToy
 
         private Dictionary<String, Dictionary<String, Point>> unique_layouts;
         private Dictionary<String, Point> flat_layout;
-        private Dictionary<String, RECT> client_layout;
+        private Dictionary<String, ClientLocation> client_layout;
 
         private bool is_initialized;
 
@@ -36,17 +36,25 @@ namespace PreviewToy
         Dictionary<string, string> xml_bad_to_ok_chars;
 
         [DllImport("user32.dll")]
-        private static extern int GetWindowRect(IntPtr hwnd, out RECT rect);
+        private static extern int GetWindowRect(IntPtr hwnd, out Rect rect);
 
         [DllImport("user32.dll")]
         public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
-        private struct RECT
+        private struct Rect
         {
             public int Left;
             public int Top;
             public int Right;
             public int Bottom;
+        }
+
+        private struct ClientLocation
+        {
+            public int X;
+            public int Y;
+            public int Width;
+            public int Height;
         }
 
         public enum zoom_anchor_t
@@ -81,7 +89,7 @@ namespace PreviewToy
 
             unique_layouts = new Dictionary<String, Dictionary<String, Point>>();
             flat_layout = new Dictionary<String, Point>();
-            client_layout = new Dictionary<String, RECT>();
+            client_layout = new Dictionary<String, ClientLocation>();
 
             ignoring_size_sync = new Stopwatch();
             ignoring_size_sync.Start();
@@ -138,7 +146,7 @@ namespace PreviewToy
                       
             option_show_overlay.Checked = Properties.Settings.Default.show_overlay;
 
-            option_track_client_windows.Checked = Properties.Settings.Default.track_client_positions;
+            option_track_client_windows.Checked = Properties.Settings.Default.track_client_windows;
 
             // disable/enable zoom suboptions
             option_zoom_factor.Enabled = Properties.Settings.Default.zoom_on_hover;
@@ -182,29 +190,13 @@ namespace PreviewToy
                     previews_check_listbox.Items.Add(previews[process.MainWindowHandle]);
                     previews_check_listbox.EndUpdate();
 
-                    if (client_layout.ContainsKey(process.MainWindowTitle))
-                    {
-                        int left = Math.Abs(client_layout[process.MainWindowTitle].Left);
-                        int right = Math.Abs(client_layout[process.MainWindowTitle].Right);
-                        int client_width = Math.Abs(left - right);
-
-                        int top = Math.Abs(client_layout[process.MainWindowTitle].Top);
-                        int bottom = Math.Abs(client_layout[process.MainWindowTitle].Bottom);
-                        int client_height = Math.Abs(top - bottom);
-
-                        MoveWindow(
-                            process.MainWindowHandle,
-                            client_layout[process.MainWindowTitle].Left,
-                            client_layout[process.MainWindowTitle].Top,
-                            client_width,
-                            client_height,
-                            true);
-                    }
+                    refresh_client_window_locations(process);
                 }
 
-                else if (previews.ContainsKey(process.MainWindowHandle)) //or update the preview titles
+                else if (previews.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != previews[process.MainWindowHandle].Text) //or update the preview titles
                 {
                     previews[process.MainWindowHandle].SetLabel(process.MainWindowTitle);
+                    refresh_client_window_locations(process);
                 }
 
                 if (process.MainWindowHandle == DwmApi.GetForegroundWindow())
@@ -237,6 +229,20 @@ namespace PreviewToy
 
             previews_check_listbox.Update();
 
+        }
+
+        private void refresh_client_window_locations(Process process)
+        {
+            if (Properties.Settings.Default.track_client_windows && client_layout.ContainsKey(process.MainWindowTitle))
+            {
+                MoveWindow(
+                    process.MainWindowHandle,
+                    client_layout[process.MainWindowTitle].X,
+                    client_layout[process.MainWindowTitle].Y,
+                    client_layout[process.MainWindowTitle].Width,
+                    client_layout[process.MainWindowTitle].Height,
+                    true);
+            }
         }
 
 
@@ -299,13 +305,13 @@ namespace PreviewToy
                 XElement rootElement = XElement.Load("client_layout.xml");
                 foreach (var el in rootElement.Elements())
                 {
-                    RECT rect   = new RECT();
-                    rect.Left   = Convert.ToInt32(el.Element("x1").Value);
-                    rect.Top    = Convert.ToInt32(el.Element("y1").Value);
-                    rect.Right  = Convert.ToInt32(el.Element("x2").Value);
-                    rect.Bottom = Convert.ToInt32(el.Element("y2").Value);
+                    ClientLocation clientLocation = new ClientLocation();
+                    clientLocation.X = Convert.ToInt32(el.Element("x").Value);
+                    clientLocation.Y = Convert.ToInt32(el.Element("y").Value);
+                    clientLocation.Width = Convert.ToInt32(el.Element("width").Value);
+                    clientLocation.Height = Convert.ToInt32(el.Element("height").Value);
 
-                    client_layout[ParseXElement(el)] = rect;
+                    client_layout[ParseXElement(el)] = clientLocation;
                 }
             }
         }
@@ -360,10 +366,10 @@ namespace PreviewToy
                     continue;
                 }
                 XElement layout = MakeXElement(clientKV.Key);
-                layout.Add(new XElement("x1", clientKV.Value.Left));
-                layout.Add(new XElement("y1", clientKV.Value.Top));
-                layout.Add(new XElement("x2", clientKV.Value.Right));
-                layout.Add(new XElement("y2", clientKV.Value.Bottom));
+                layout.Add(new XElement("x", clientKV.Value.X));
+                layout.Add(new XElement("y", clientKV.Value.Y));
+                layout.Add(new XElement("width", clientKV.Value.Width));
+                layout.Add(new XElement("height", clientKV.Value.Height));
                 el3.Add(layout);
             }
 
@@ -402,10 +408,25 @@ namespace PreviewToy
 
             foreach (Process process in processes)
             {
-                RECT rect = new RECT();
+                Rect rect = new Rect();
                 GetWindowRect(process.MainWindowHandle, out rect);
 
-                client_layout[process.MainWindowTitle] = rect;
+                int left = Math.Abs(rect.Left);
+                int right = Math.Abs(rect.Right);
+                int client_width = Math.Abs(left - right);
+
+                int top = Math.Abs(rect.Top);
+                int bottom = Math.Abs(rect.Bottom);
+                int client_height = Math.Abs(top - bottom);
+
+                ClientLocation clientLocation = new ClientLocation();
+                clientLocation.X = rect.Left;
+                clientLocation.Y = rect.Top;
+                clientLocation.Width = client_width;
+                clientLocation.Height = client_height;
+
+
+                client_layout[process.MainWindowTitle] = clientLocation;
             }
         }
 
@@ -761,7 +782,9 @@ namespace PreviewToy
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-
+            Properties.Settings.Default.track_client_windows = option_track_client_windows.Checked;
+            Properties.Settings.Default.Save();
+            refresh_thumbnails();
         }
 
     }
