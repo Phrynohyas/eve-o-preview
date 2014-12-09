@@ -1,5 +1,3 @@
-# README #
+Created to aid playing with multiple clients in CCP game EVE-Online.
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-However, this time it doesn't.
+It's essentially a nice task switcher, it does not relay any keyboard/mouse events and suchlike.
