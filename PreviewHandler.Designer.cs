@@ -45,7 +45,6 @@ namespace PreviewToy
             this.option_always_on_top = new System.Windows.Forms.CheckBox();
             this.option_show_thumbnail_frames = new System.Windows.Forms.CheckBox();
             this.forum_url = new System.Windows.Forms.LinkLabel();
-            this.previewToyMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.option_sync_size_x = new System.Windows.Forms.TextBox();
             this.option_sync_size_y = new System.Windows.Forms.TextBox();
             this.option_zoom_on_hover = new System.Windows.Forms.CheckBox();
@@ -80,7 +79,7 @@ namespace PreviewToy
             this.contextMenuStrip_notifyIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem_restore = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_exit = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).BeginInit();
+            this.previewToyMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.flowLayoutPanel1.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -89,6 +88,7 @@ namespace PreviewToy
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
             this.contextMenuStrip_notifyIcon.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // option_hide_active
@@ -182,10 +182,6 @@ namespace PreviewToy
             this.forum_url.TabStop = true;
             this.forum_url.Text = "https://bitbucket.org/ulph/eve-o-preview-git";
             this.forum_url.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            // 
-            // previewToyMainBindingSource
-            // 
-            this.previewToyMainBindingSource.CurrentChanged += new System.EventHandler(this.previewToyMainBindingSource_CurrentChanged);
             // 
             // option_sync_size_x
             // 
@@ -555,6 +551,10 @@ namespace PreviewToy
             this.toolStripMenuItem_exit.Text = "Exit";
             this.toolStripMenuItem_exit.Click += new System.EventHandler(this.toolStripMenuItem_exit_Click);
             // 
+            // previewToyMainBindingSource
+            // 
+            this.previewToyMainBindingSource.CurrentChanged += new System.EventHandler(this.previewToyMainBindingSource_CurrentChanged);
+            // 
             // PreviewToyHandler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -571,7 +571,6 @@ namespace PreviewToy
             this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.Load += new System.EventHandler(this.GlassForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.panel6.ResumeLayout(false);
@@ -587,6 +586,7 @@ namespace PreviewToy
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             this.contextMenuStrip_notifyIcon.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
