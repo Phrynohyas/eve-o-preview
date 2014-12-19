@@ -210,7 +210,6 @@ namespace PreviewToy
 
                 this.overlay.Size = overlay_size;
                 this.overlay.Location = overlay_location;
-                this.overlay.TopMost = this.TopMost;
 
             }
         }
