@@ -35,6 +35,7 @@
             // 
             // overlay_area
             // 
+            this.overlay_area.BackColor = System.Drawing.Color.Transparent;
             this.overlay_area.Cursor = System.Windows.Forms.Cursors.Hand;
             this.overlay_area.Dock = System.Windows.Forms.DockStyle.Fill;
             this.overlay_area.Location = new System.Drawing.Point(0, 0);

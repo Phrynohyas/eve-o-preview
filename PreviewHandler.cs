@@ -155,6 +155,8 @@ namespace PreviewToy
                 kv.Value.Enabled = Properties.Settings.Default.zoom_on_hover;
             }
 
+            opacity_bar.Value = Math.Min(100, (int)(100.0*Properties.Settings.Default.opacity));
+
             load_layout();
         }
 
@@ -499,6 +501,10 @@ namespace PreviewToy
                 }
                 entry.Value.hover_zoom = Properties.Settings.Default.zoom_on_hover;
                 entry.Value.show_overlay = Properties.Settings.Default.show_overlay;
+                if (!entry.Value.is_hovered_over)
+                {
+                    entry.Value.Opacity = Properties.Settings.Default.opacity;
+                }
             }
 
             DwmApi.DwmIsCompositionEnabled();
@@ -601,7 +607,7 @@ namespace PreviewToy
         private void option_sync_size_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.sync_resize = option_sync_size.Checked;
-            Properties.Settings.Default.Save();        
+            Properties.Settings.Default.Save();
             refresh_thumbnails();
         }
 
@@ -691,7 +697,7 @@ namespace PreviewToy
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string url = "https://forums.eveonline.com/default.aspx?g=posts&t=246157";
+            string url = "https://bitbucket.org/ulph/eve-o-preview-git";
             ProcessStartInfo sInfo = new ProcessStartInfo(new Uri(url).AbsoluteUri);
             Process.Start(sInfo);
         }
@@ -783,6 +789,19 @@ namespace PreviewToy
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.track_client_windows = option_track_client_windows.Checked;
+            Properties.Settings.Default.Save();
+            refresh_thumbnails();
+        }
+
+        private void opacityCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void opacity_bar_Scroll(object sender, ScrollEventArgs e)
+        {
+            // fire off opacity change
+            Properties.Settings.Default.opacity = Math.Min((float)e.NewValue / 100.0f, 1.0f);
             Properties.Settings.Default.Save();
             refresh_thumbnails();
         }

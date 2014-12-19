@@ -20,7 +20,7 @@ namespace PreviewToy
             // 
             // render_area
             // 
-            this.render_area.BackColor = System.Drawing.Color.Black;
+            this.render_area.BackColor = System.Drawing.Color.Transparent;
             this.render_area.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.render_area.Cursor = System.Windows.Forms.Cursors.Hand;
             this.render_area.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -46,6 +46,7 @@ namespace PreviewToy
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(64, 64);
             this.Name = "Preview";
+            this.Opacity = 0.1D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Preview";

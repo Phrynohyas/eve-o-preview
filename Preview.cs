@@ -14,6 +14,7 @@ namespace PreviewToy
         public bool show_overlay = true;
         public bool hover_zoom = true;
         public bool is_zoomed = false;
+        public bool is_hovered_over = false;
 
         private bool mouse_over_lock = false;
         private Size old_size;
@@ -78,6 +79,8 @@ namespace PreviewToy
                 TopMost = true;
                 overlay.TopMost = true;
             }
+            this.Opacity = 1.0f;
+            this.is_hovered_over = true;
             RefreshPreview();
         }
 
@@ -148,6 +151,8 @@ namespace PreviewToy
                 }
                 mouse_over_lock = false;
             }
+            this.is_hovered_over = false;
+            this.Opacity = Properties.Settings.Default.opacity;
             RefreshPreview();
         }
 
