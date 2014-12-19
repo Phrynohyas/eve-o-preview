@@ -74,7 +74,12 @@ namespace PreviewToy
             this.previews_check_listbox = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.option_minimizeToTray = new System.Windows.Forms.CheckBox();
             this.aero_status_label = new System.Windows.Forms.Label();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip_notifyIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem_restore = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_exit = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -83,6 +88,7 @@ namespace PreviewToy
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
+            this.contextMenuStrip_notifyIcon.SuspendLayout();
             this.SuspendLayout();
             // 
             // option_hide_active
@@ -492,11 +498,23 @@ namespace PreviewToy
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.option_minimizeToTray);
             this.panel4.Controls.Add(this.aero_status_label);
             this.panel4.Location = new System.Drawing.Point(3, 379);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(246, 21);
             this.panel4.TabIndex = 30;
+            // 
+            // option_minimizeToTray
+            // 
+            this.option_minimizeToTray.AutoSize = true;
+            this.option_minimizeToTray.Location = new System.Drawing.Point(140, 2);
+            this.option_minimizeToTray.Name = "option_minimizeToTray";
+            this.option_minimizeToTray.Size = new System.Drawing.Size(102, 17);
+            this.option_minimizeToTray.TabIndex = 1;
+            this.option_minimizeToTray.Text = "Minimize to Tray";
+            this.option_minimizeToTray.UseVisualStyleBackColor = true;
+            this.option_minimizeToTray.CheckedChanged += new System.EventHandler(this.option_minimizeToTray_CheckedChanged);
             // 
             // aero_status_label
             // 
@@ -506,6 +524,36 @@ namespace PreviewToy
             this.aero_status_label.Size = new System.Drawing.Size(35, 13);
             this.aero_status_label.TabIndex = 0;
             this.aero_status_label.Text = "label4";
+            // 
+            // notifyIcon
+            // 
+            this.notifyIcon.ContextMenuStrip = this.contextMenuStrip_notifyIcon;
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "notifyIcon";
+            this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
+            // 
+            // contextMenuStrip_notifyIcon
+            // 
+            this.contextMenuStrip_notifyIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_restore,
+            this.toolStripMenuItem_exit});
+            this.contextMenuStrip_notifyIcon.Name = "contextMenuStrip_notifyIcon";
+            this.contextMenuStrip_notifyIcon.Size = new System.Drawing.Size(114, 48);
+            // 
+            // toolStripMenuItem_restore
+            // 
+            this.toolStripMenuItem_restore.Name = "toolStripMenuItem_restore";
+            this.toolStripMenuItem_restore.Size = new System.Drawing.Size(113, 22);
+            this.toolStripMenuItem_restore.Text = "Restore";
+            this.toolStripMenuItem_restore.Click += new System.EventHandler(this.toolStripMenuItem_restore_Click);
+            // 
+            // toolStripMenuItem_exit
+            // 
+            this.toolStripMenuItem_exit.Name = "toolStripMenuItem_exit";
+            this.toolStripMenuItem_exit.Size = new System.Drawing.Size(113, 22);
+            this.toolStripMenuItem_exit.Text = "Exit";
+            this.toolStripMenuItem_exit.Click += new System.EventHandler(this.toolStripMenuItem_exit_Click);
             // 
             // PreviewToyHandler
             // 
@@ -538,6 +586,7 @@ namespace PreviewToy
             this.panel5.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
+            this.contextMenuStrip_notifyIcon.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -581,6 +630,11 @@ namespace PreviewToy
         private Panel panel6;
         private Label opacity_label;
         private HScrollBar opacity_bar;
+        private NotifyIcon notifyIcon;
+        private ContextMenuStrip contextMenuStrip_notifyIcon;
+        private ToolStripMenuItem toolStripMenuItem_restore;
+        private ToolStripMenuItem toolStripMenuItem_exit;
+        private CheckBox option_minimizeToTray;
 
 
     }

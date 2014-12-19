@@ -50,5 +50,8 @@
     <Setting Name="opacity" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0.9</Value>
     </Setting>
+    <Setting Name="minimizeToTray" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
