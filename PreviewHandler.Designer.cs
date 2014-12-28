@@ -73,12 +73,7 @@ namespace PreviewToy
             this.previews_check_listbox = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.option_minimizeToTray = new System.Windows.Forms.CheckBox();
             this.aero_status_label = new System.Windows.Forms.Label();
-            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.contextMenuStrip_notifyIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItem_restore = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_exit = new System.Windows.Forms.ToolStripMenuItem();
             this.previewToyMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.flowLayoutPanel1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -87,7 +82,6 @@ namespace PreviewToy
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
-            this.contextMenuStrip_notifyIcon.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -185,7 +179,7 @@ namespace PreviewToy
             // 
             // option_sync_size_x
             // 
-            this.option_sync_size_x.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.option_sync_size_x.BackColor = System.Drawing.SystemColors.Window;
             this.option_sync_size_x.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.option_sync_size_x.Location = new System.Drawing.Point(137, 3);
             this.option_sync_size_x.Name = "option_sync_size_x";
@@ -195,7 +189,7 @@ namespace PreviewToy
             // 
             // option_sync_size_y
             // 
-            this.option_sync_size_y.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.option_sync_size_y.BackColor = System.Drawing.SystemColors.Window;
             this.option_sync_size_y.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.option_sync_size_y.Location = new System.Drawing.Point(196, 3);
             this.option_sync_size_y.Name = "option_sync_size_y";
@@ -332,7 +326,7 @@ namespace PreviewToy
             // 
             // option_zoom_factor
             // 
-            this.option_zoom_factor.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.option_zoom_factor.BackColor = System.Drawing.SystemColors.Window;
             this.option_zoom_factor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.option_zoom_factor.Location = new System.Drawing.Point(9, 28);
             this.option_zoom_factor.Name = "option_zoom_factor";
@@ -342,7 +336,7 @@ namespace PreviewToy
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.Control;
             this.flowLayoutPanel1.Controls.Add(this.panel6);
             this.flowLayoutPanel1.Controls.Add(this.option_track_client_windows);
             this.flowLayoutPanel1.Controls.Add(this.option_hide_active);
@@ -415,7 +409,7 @@ namespace PreviewToy
             // 
             // panel2
             // 
-            this.panel2.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.panel2.BackColor = System.Drawing.SystemColors.Control;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.panel3);
@@ -473,7 +467,7 @@ namespace PreviewToy
             // 
             // previews_check_listbox
             // 
-            this.previews_check_listbox.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.previews_check_listbox.BackColor = System.Drawing.SystemColors.Window;
             this.previews_check_listbox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.previews_check_listbox.FormattingEnabled = true;
             this.previews_check_listbox.Location = new System.Drawing.Point(3, 18);
@@ -494,23 +488,11 @@ namespace PreviewToy
             // 
             // panel4
             // 
-            this.panel4.Controls.Add(this.option_minimizeToTray);
             this.panel4.Controls.Add(this.aero_status_label);
             this.panel4.Location = new System.Drawing.Point(3, 379);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(246, 21);
             this.panel4.TabIndex = 30;
-            // 
-            // option_minimizeToTray
-            // 
-            this.option_minimizeToTray.AutoSize = true;
-            this.option_minimizeToTray.Location = new System.Drawing.Point(140, 2);
-            this.option_minimizeToTray.Name = "option_minimizeToTray";
-            this.option_minimizeToTray.Size = new System.Drawing.Size(102, 17);
-            this.option_minimizeToTray.TabIndex = 1;
-            this.option_minimizeToTray.Text = "Minimize to Tray";
-            this.option_minimizeToTray.UseVisualStyleBackColor = true;
-            this.option_minimizeToTray.CheckedChanged += new System.EventHandler(this.option_minimizeToTray_CheckedChanged);
             // 
             // aero_status_label
             // 
@@ -520,36 +502,6 @@ namespace PreviewToy
             this.aero_status_label.Size = new System.Drawing.Size(35, 13);
             this.aero_status_label.TabIndex = 0;
             this.aero_status_label.Text = "label4";
-            // 
-            // notifyIcon
-            // 
-            this.notifyIcon.ContextMenuStrip = this.contextMenuStrip_notifyIcon;
-            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-            this.notifyIcon.Text = "notifyIcon";
-            this.notifyIcon.Visible = true;
-            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
-            // 
-            // contextMenuStrip_notifyIcon
-            // 
-            this.contextMenuStrip_notifyIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem_restore,
-            this.toolStripMenuItem_exit});
-            this.contextMenuStrip_notifyIcon.Name = "contextMenuStrip_notifyIcon";
-            this.contextMenuStrip_notifyIcon.Size = new System.Drawing.Size(114, 48);
-            // 
-            // toolStripMenuItem_restore
-            // 
-            this.toolStripMenuItem_restore.Name = "toolStripMenuItem_restore";
-            this.toolStripMenuItem_restore.Size = new System.Drawing.Size(113, 22);
-            this.toolStripMenuItem_restore.Text = "Restore";
-            this.toolStripMenuItem_restore.Click += new System.EventHandler(this.toolStripMenuItem_restore_Click);
-            // 
-            // toolStripMenuItem_exit
-            // 
-            this.toolStripMenuItem_exit.Name = "toolStripMenuItem_exit";
-            this.toolStripMenuItem_exit.Size = new System.Drawing.Size(113, 22);
-            this.toolStripMenuItem_exit.Text = "Exit";
-            this.toolStripMenuItem_exit.Click += new System.EventHandler(this.toolStripMenuItem_exit_Click);
             // 
             // previewToyMainBindingSource
             // 
@@ -585,7 +537,6 @@ namespace PreviewToy
             this.panel5.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
-            this.contextMenuStrip_notifyIcon.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).EndInit();
             this.ResumeLayout(false);
 
@@ -630,11 +581,6 @@ namespace PreviewToy
         private Panel panel6;
         private Label opacity_label;
         private HScrollBar opacity_bar;
-        private NotifyIcon notifyIcon;
-        private ContextMenuStrip contextMenuStrip_notifyIcon;
-        private ToolStripMenuItem toolStripMenuItem_restore;
-        private ToolStripMenuItem toolStripMenuItem_exit;
-        private CheckBox option_minimizeToTray;
 
 
     }

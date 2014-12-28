@@ -113,7 +113,6 @@ namespace PreviewToy
         private void GlassForm_Load(object sender, EventArgs e)
         {
             refresh_thumbnails();
-            this.Resize += PreviewToyHandler_Resize;
         }
 
         private void init_options()
@@ -147,8 +146,6 @@ namespace PreviewToy
             option_show_overlay.Checked = Properties.Settings.Default.show_overlay;
 
             option_track_client_windows.Checked = Properties.Settings.Default.track_client_windows;
-
-            option_minimizeToTray.Checked = Properties.Settings.Default.minimizeToTray;
 
             // disable/enable zoom suboptions
             option_zoom_factor.Enabled = Properties.Settings.Default.zoom_on_hover;
@@ -808,20 +805,6 @@ namespace PreviewToy
             refresh_thumbnails();
         }
 
-        private void PreviewToyHandler_Resize(object sender, EventArgs e)
-        {
-            if (option_minimizeToTray.Checked)
-            {
-                this.Hide();
-            }
-        }
-
-        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            this.Show();
-            Form.ActiveForm.WindowState = FormWindowState.Normal;
-        }
-
         private void toolStripMenuItem_exit_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -831,13 +814,7 @@ namespace PreviewToy
         {
             this.Show();
             Form.ActiveForm.WindowState = FormWindowState.Normal;
+            Form.ActiveForm.BringToFront();
         }
-
-        private void option_minimizeToTray_CheckedChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.minimizeToTray = option_minimizeToTray.Checked;
-            Properties.Settings.Default.Save();
-        }
-
     }
 }
