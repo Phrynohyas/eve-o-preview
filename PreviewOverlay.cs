@@ -31,6 +31,11 @@ namespace PreviewToy
             this.parent.render_area_Click(sender, e);
         }
 
+        public void makeTopMost()
+        {
+            this.TopMost = true;
+        }
+
         private void client_label_Click(object sender, EventArgs e)
         {
 

@@ -439,6 +439,8 @@ namespace PreviewToy
             foreach (KeyValuePair<IntPtr, Preview> entry in previews)
             {
                 entry.Value.MakeTopMost(Properties.Settings.Default.always_on_top);
+                //makes the PreviewOverlay topmost
+                entry.Value.overlay.makeTopMost();
             }
         }
 
@@ -500,6 +502,8 @@ namespace PreviewToy
                 }
                 entry.Value.hover_zoom = Properties.Settings.Default.zoom_on_hover;
                 entry.Value.show_overlay = Properties.Settings.Default.show_overlay;
+                //makes the PreviewOverlay TopMost
+                entry.Value.overlay.makeTopMost();
                 if (!entry.Value.is_hovered_over)
                 {
                     entry.Value.Opacity = Properties.Settings.Default.opacity;
