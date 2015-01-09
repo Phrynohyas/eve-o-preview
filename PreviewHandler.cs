@@ -224,6 +224,7 @@ namespace PreviewToy
                 previews_check_listbox.Items.Remove(previews[processHandle]);
                 previews_check_listbox.EndUpdate();
 
+                previews[processHandle].overlay.Close();
                 previews[processHandle].Close();
                 previews.Remove(processHandle);
             }
