@@ -19,6 +19,18 @@ namespace PreviewToy
 
     public partial class PreviewToyHandler : Form
     {
+        private const int WM_SIZE = 5;
+        private const int SIZE_RESTORED = 0;
+        private const int SIZE_MINIMIZED = 1;
+        private const int SIZE_MAXIMIZED = 2;
+        private const int SIZE_MAXSHOW = 3;
+        private const int SIZE_MAXHIDE = 4;
+
+        public event EventHandler Minimized;
+        public event EventHandler Maximized;
+        public event EventHandler Restored;
+
+
         private Dictionary<IntPtr, Preview> previews;
         private DispatcherTimer dispatcherTimer;
 
@@ -72,7 +84,7 @@ namespace PreviewToy
         };
 
         private Dictionary<zoom_anchor_t, RadioButton> zoom_anchor_button_map;
-        
+
         public PreviewToyHandler()
         {
             is_initialized = false;
@@ -119,8 +131,10 @@ namespace PreviewToy
 
         private void init_options()
         {
+            this.Minimized += new EventHandler(MainForm_Minimized);
+
             option_zoom_on_hover.Checked = Properties.Settings.Default.zoom_on_hover;
-            zoom_anchor_button_map = new Dictionary<zoom_anchor_t,RadioButton>();
+            zoom_anchor_button_map = new Dictionary<zoom_anchor_t, RadioButton>();
             zoom_anchor_button_map[zoom_anchor_t.NW] = option_zoom_anchor_NW;
             zoom_anchor_button_map[zoom_anchor_t.N] = option_zoom_anchor_N;
             zoom_anchor_button_map[zoom_anchor_t.NE] = option_zoom_anchor_NE;
@@ -132,22 +146,24 @@ namespace PreviewToy
             zoom_anchor_button_map[zoom_anchor_t.SE] = option_zoom_anchor_SE;
             zoom_anchor_button_map[(zoom_anchor_t)Properties.Settings.Default.zoom_anchor].Checked = true;
             option_zoom_factor.Text = Properties.Settings.Default.zoom_amount.ToString();
-                        
+
             option_always_on_top.Checked = Properties.Settings.Default.always_on_top;
             option_hide_active.Checked = Properties.Settings.Default.hide_active;
             option_hide_all_if_not_right_type.Checked = Properties.Settings.Default.hide_all;
-            
+
             option_unique_layout.Checked = Properties.Settings.Default.unique_layout;
-            
+
             option_sync_size.Checked = Properties.Settings.Default.sync_resize;
             option_sync_size_x.Text = Properties.Settings.Default.sync_resize_x.ToString();
             option_sync_size_y.Text = Properties.Settings.Default.sync_resize_y.ToString();
-            
+
             option_show_thumbnail_frames.Checked = Properties.Settings.Default.show_thumb_frames;
-                      
+
             option_show_overlay.Checked = Properties.Settings.Default.show_overlay;
 
             option_track_client_windows.Checked = Properties.Settings.Default.track_client_windows;
+
+            option_minToTray.Checked = Properties.Settings.Default.minimizeToTray;
 
             // disable/enable zoom suboptions
             option_zoom_factor.Enabled = Properties.Settings.Default.zoom_on_hover;
@@ -156,7 +172,7 @@ namespace PreviewToy
                 kv.Value.Enabled = Properties.Settings.Default.zoom_on_hover;
             }
 
-            opacity_bar.Value = Math.Min(100, (int)(100.0*Properties.Settings.Default.opacity));
+            opacity_bar.Value = Math.Min(100, (int)(100.0 * Properties.Settings.Default.opacity));
 
             load_layout();
         }
@@ -183,7 +199,7 @@ namespace PreviewToy
                 {
                     previews[process.MainWindowHandle] = new Preview(process.MainWindowHandle, "...", this, sync_size);
                     previews[process.MainWindowHandle].set_render_area_size(sync_size);
- 
+
                     // apply more thumbnail specific options
                     previews[process.MainWindowHandle].MakeTopMost(Properties.Settings.Default.always_on_top);
                     set_thumbnail_frame_style(previews[process.MainWindowHandle], Properties.Settings.Default.show_thumb_frames);
@@ -201,7 +217,8 @@ namespace PreviewToy
                     previews[process.MainWindowHandle].SetLabel(process.MainWindowTitle);
                     string key = previews[process.MainWindowHandle].Text;
                     string value;
-                    if (flat_layout_shortcuts.TryGetValue(key, out value)){
+                    if (flat_layout_shortcuts.TryGetValue(key, out value))
+                    {
                         previews[process.MainWindowHandle].registerShortcut(value);
                     }
                     refresh_client_window_locations(process);
@@ -257,7 +274,7 @@ namespace PreviewToy
 
         private string remove_nonconform_xml_characters(string entry)
         {
-            foreach(var kv in xml_bad_to_ok_chars)
+            foreach (var kv in xml_bad_to_ok_chars)
             {
                 entry = entry.Replace(kv.Key, kv.Value);
             }
@@ -370,7 +387,8 @@ namespace PreviewToy
                 layout.Add(new XElement("y", clientKV.Value.Y));
 
                 string shortcut;
-                if (flat_layout_shortcuts.TryGetValue(clientKV.Key, out shortcut)){
+                if (flat_layout_shortcuts.TryGetValue(clientKV.Key, out shortcut))
+                {
                     layout.Add(new XElement("shortcut", shortcut));
                 }
                 el2.Add(layout);
@@ -402,7 +420,7 @@ namespace PreviewToy
             if (unique_layouts.TryGetValue(last_known_active_window, out layout))
             {
                 Point new_loc;
-                if ( Properties.Settings.Default.unique_layout && layout.TryGetValue(preview.Text, out new_loc))
+                if (Properties.Settings.Default.unique_layout && layout.TryGetValue(preview.Text, out new_loc))
                 {
                     preview.doMove(new_loc);
                 }
@@ -469,7 +487,7 @@ namespace PreviewToy
             Point layout;
             if (flat_layout.TryGetValue(preview.Text, out layout))
             {
-                 preview.doMove( layout );
+                preview.doMove(layout);
             }
             else if (preview.Text != "")
             {
@@ -495,7 +513,7 @@ namespace PreviewToy
         {
 
             IntPtr active_window = DwmApi.GetForegroundWindow();
-            
+
             // hide, show, resize and move
             foreach (KeyValuePair<IntPtr, Preview> entry in previews)
             {
@@ -537,8 +555,8 @@ namespace PreviewToy
         {
             if (!is_initialized) { return; }
 
-            if (Properties.Settings.Default.sync_resize && 
-                Properties.Settings.Default.show_thumb_frames && 
+            if (Properties.Settings.Default.sync_resize &&
+                Properties.Settings.Default.show_thumb_frames &&
                 ignoring_size_sync.ElapsedMilliseconds > 500)
             {
                 ignoring_size_sync.Stop();
@@ -561,7 +579,7 @@ namespace PreviewToy
 
         public void register_preview_position(String preview_title, Point position)
         {
-            
+
             if (Properties.Settings.Default.unique_layout)
             {
                 Dictionary<String, Point> layout;
@@ -579,7 +597,7 @@ namespace PreviewToy
             {
                 flat_layout[preview_title] = position;
             }
-             
+
         }
 
 
@@ -589,16 +607,17 @@ namespace PreviewToy
             refresh_thumbnails();
             if (ignoring_size_sync.ElapsedMilliseconds > 500) { ignoring_size_sync.Stop(); };
 
-            if(DwmApi.DwmIsCompositionEnabled())
+            if (DwmApi.DwmIsCompositionEnabled())
             {
                 aero_status_label.Text = "AERO is ON";
                 aero_status_label.ForeColor = Color.Black;
             }
-            else{
+            else
+            {
                 aero_status_label.Text = "AERO is OFF";
                 aero_status_label.ForeColor = Color.Red;
             }
-            
+
         }
 
 
@@ -643,7 +662,8 @@ namespace PreviewToy
                 y = Convert.ToUInt32(option_sync_size_y.Text);
                 x = Convert.ToUInt32(option_sync_size_x.Text);
             }
-            catch (System.FormatException) {
+            catch (System.FormatException)
+            {
                 return;
             }
 
@@ -672,7 +692,7 @@ namespace PreviewToy
         {
             parse_size_entry();
         }
-        
+
 
         private void option_always_on_top_CheckedChanged(object sender, EventArgs e)
         {
@@ -714,7 +734,7 @@ namespace PreviewToy
         }
 
 
-        private void list_running_clients_SelectedIndexChanged(object sender, EventArgs e){}
+        private void list_running_clients_SelectedIndexChanged(object sender, EventArgs e) { }
 
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -773,11 +793,11 @@ namespace PreviewToy
             try
             {
                 float tmp = (float)Convert.ToDouble(option_zoom_factor.Text);
-                if(tmp < 1)
+                if (tmp < 1)
                 {
                     tmp = 1;
                 }
-                else if(tmp > 10)
+                else if (tmp > 10)
                 {
                     tmp = 10;
                 }
@@ -815,10 +835,6 @@ namespace PreviewToy
             refresh_thumbnails();
         }
 
-        private void opacityCheckbox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void opacity_bar_Scroll(object sender, ScrollEventArgs e)
         {
@@ -828,16 +844,105 @@ namespace PreviewToy
             refresh_thumbnails();
         }
 
-        private void toolStripMenuItem_exit_Click(object sender, EventArgs e)
+
+        private void OnMinimized(EventArgs e)
+        {
+            if (Minimized != null && Properties.Settings.Default.minimizeToTray)
+            {
+                this.Hide();
+            }
+            else if (Minimized != null && !Properties.Settings.Default.minimizeToTray)
+            {
+                Minimized(this, e);
+            }
+        }
+
+        private void OnMaximized(EventArgs e)
+        {
+            if (Maximized != null)
+            {
+                Maximized(this, e);
+            }
+        }
+
+        private void OnRestored(EventArgs e)
+        {
+            if (Restored != null)
+            {
+                Restored(this, e);
+            }
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case WM_SIZE:
+                    switch (m.WParam.ToInt32())
+                    {
+                        case SIZE_RESTORED:
+                            OnRestored(EventArgs.Empty);
+                            break;
+                        case SIZE_MINIMIZED:
+                            OnMinimized(EventArgs.Empty);
+                            break;
+                        case SIZE_MAXIMIZED:
+                            OnMaximized(EventArgs.Empty);
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            base.WndProc(ref m);
+        }
+
+        void MainForm_Minimized(object sender, EventArgs e)
+        {
+            // TODO: do something here
+        }
+
+        private void option_minToTray_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.minimizeToTray = option_minToTray.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void toolStripMenuItem_restore_Click(object sender, EventArgs e)
+        private void restoreToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Show();
-            Form.ActiveForm.WindowState = FormWindowState.Normal;
-            Form.ActiveForm.BringToFront();
+            if (!this.Visible)
+            {
+                this.Show();
+            }
+            else if (Restored != null)
+            {
+                Restored(this, e);
+            }
+            else
+            {
+                this.BringToFront();
+            }
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (!this.Visible)
+            {
+                this.Show();
+            }
+            else if (Restored != null)
+            {
+                Restored(this, e);
+            }
+            else
+            {
+                this.BringToFront();
+            }
         }
     }
 }

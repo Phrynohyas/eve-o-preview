@@ -60,6 +60,7 @@ namespace PreviewToy
             this.option_zoom_anchor_SE = new System.Windows.Forms.RadioButton();
             this.option_zoom_factor = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.option_minToTray = new System.Windows.Forms.CheckBox();
             this.panel6 = new System.Windows.Forms.Panel();
             this.opacity_bar = new System.Windows.Forms.HScrollBar();
             this.opacity_label = new System.Windows.Forms.Label();
@@ -75,6 +76,10 @@ namespace PreviewToy
             this.panel4 = new System.Windows.Forms.Panel();
             this.aero_status_label = new System.Windows.Forms.Label();
             this.previewToyMainBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -83,6 +88,7 @@ namespace PreviewToy
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // option_hide_active
@@ -90,7 +96,7 @@ namespace PreviewToy
             this.option_hide_active.AutoSize = true;
             this.option_hide_active.Checked = true;
             this.option_hide_active.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_hide_active.Location = new System.Drawing.Point(3, 58);
+            this.option_hide_active.Location = new System.Drawing.Point(3, 81);
             this.option_hide_active.Name = "option_hide_active";
             this.option_hide_active.Size = new System.Drawing.Size(184, 17);
             this.option_hide_active.TabIndex = 1;
@@ -103,7 +109,7 @@ namespace PreviewToy
             this.option_hide_all_if_not_right_type.AutoSize = true;
             this.option_hide_all_if_not_right_type.Checked = true;
             this.option_hide_all_if_not_right_type.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_hide_all_if_not_right_type.Location = new System.Drawing.Point(3, 104);
+            this.option_hide_all_if_not_right_type.Location = new System.Drawing.Point(3, 127);
             this.option_hide_all_if_not_right_type.Name = "option_hide_all_if_not_right_type";
             this.option_hide_all_if_not_right_type.Size = new System.Drawing.Size(242, 17);
             this.option_hide_all_if_not_right_type.TabIndex = 2;
@@ -116,7 +122,7 @@ namespace PreviewToy
             this.option_unique_layout.AutoSize = true;
             this.option_unique_layout.Checked = true;
             this.option_unique_layout.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_unique_layout.Location = new System.Drawing.Point(3, 127);
+            this.option_unique_layout.Location = new System.Drawing.Point(3, 150);
             this.option_unique_layout.Name = "option_unique_layout";
             this.option_unique_layout.Size = new System.Drawing.Size(185, 17);
             this.option_unique_layout.TabIndex = 3;
@@ -143,7 +149,7 @@ namespace PreviewToy
             this.option_always_on_top.AutoSize = true;
             this.option_always_on_top.Checked = true;
             this.option_always_on_top.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_always_on_top.Location = new System.Drawing.Point(3, 81);
+            this.option_always_on_top.Location = new System.Drawing.Point(3, 104);
             this.option_always_on_top.Name = "option_always_on_top";
             this.option_always_on_top.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.option_always_on_top.Size = new System.Drawing.Size(137, 17);
@@ -157,7 +163,7 @@ namespace PreviewToy
             this.option_show_thumbnail_frames.AutoSize = true;
             this.option_show_thumbnail_frames.Checked = true;
             this.option_show_thumbnail_frames.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_show_thumbnail_frames.Location = new System.Drawing.Point(99, 250);
+            this.option_show_thumbnail_frames.Location = new System.Drawing.Point(99, 277);
             this.option_show_thumbnail_frames.Name = "option_show_thumbnail_frames";
             this.option_show_thumbnail_frames.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.option_show_thumbnail_frames.Size = new System.Drawing.Size(127, 17);
@@ -169,7 +175,7 @@ namespace PreviewToy
             // forum_url
             // 
             this.forum_url.AutoSize = true;
-            this.forum_url.Location = new System.Drawing.Point(3, 403);
+            this.forum_url.Location = new System.Drawing.Point(3, 430);
             this.forum_url.Name = "forum_url";
             this.forum_url.Size = new System.Drawing.Size(216, 13);
             this.forum_url.TabIndex = 10;
@@ -216,7 +222,7 @@ namespace PreviewToy
             this.option_show_overlay.AutoSize = true;
             this.option_show_overlay.Checked = true;
             this.option_show_overlay.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.option_show_overlay.Location = new System.Drawing.Point(3, 250);
+            this.option_show_overlay.Location = new System.Drawing.Point(3, 277);
             this.option_show_overlay.Name = "option_show_overlay";
             this.option_show_overlay.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.option_show_overlay.Size = new System.Drawing.Size(90, 17);
@@ -337,6 +343,7 @@ namespace PreviewToy
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.Control;
+            this.flowLayoutPanel1.Controls.Add(this.option_minToTray);
             this.flowLayoutPanel1.Controls.Add(this.panel6);
             this.flowLayoutPanel1.Controls.Add(this.option_track_client_windows);
             this.flowLayoutPanel1.Controls.Add(this.option_hide_active);
@@ -353,16 +360,27 @@ namespace PreviewToy
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(252, 423);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(252, 448);
             this.flowLayoutPanel1.TabIndex = 25;
             this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
+            // 
+            // option_minToTray
+            // 
+            this.option_minToTray.AutoSize = true;
+            this.option_minToTray.Location = new System.Drawing.Point(3, 3);
+            this.option_minToTray.Name = "option_minToTray";
+            this.option_minToTray.Size = new System.Drawing.Size(139, 17);
+            this.option_minToTray.TabIndex = 34;
+            this.option_minToTray.Text = "Minimize to System Tray";
+            this.option_minToTray.UseVisualStyleBackColor = true;
+            this.option_minToTray.CheckedChanged += new System.EventHandler(this.option_minToTray_CheckedChanged);
             // 
             // panel6
             // 
             this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel6.Controls.Add(this.opacity_bar);
             this.panel6.Controls.Add(this.opacity_label);
-            this.panel6.Location = new System.Drawing.Point(3, 3);
+            this.panel6.Location = new System.Drawing.Point(3, 26);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(246, 26);
             this.panel6.TabIndex = 33;
@@ -388,7 +406,7 @@ namespace PreviewToy
             // option_track_client_windows
             // 
             this.option_track_client_windows.AutoSize = true;
-            this.option_track_client_windows.Location = new System.Drawing.Point(3, 35);
+            this.option_track_client_windows.Location = new System.Drawing.Point(3, 58);
             this.option_track_client_windows.Name = "option_track_client_windows";
             this.option_track_client_windows.Size = new System.Drawing.Size(127, 17);
             this.option_track_client_windows.TabIndex = 32;
@@ -402,9 +420,9 @@ namespace PreviewToy
             this.panel1.Controls.Add(this.option_sync_size);
             this.panel1.Controls.Add(this.option_sync_size_x);
             this.panel1.Controls.Add(this.option_sync_size_y);
-            this.panel1.Location = new System.Drawing.Point(3, 150);
+            this.panel1.Location = new System.Drawing.Point(3, 173);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(246, 26);
+            this.panel1.Size = new System.Drawing.Size(246, 30);
             this.panel1.TabIndex = 26;
             // 
             // panel2
@@ -416,7 +434,7 @@ namespace PreviewToy
             this.panel2.Controls.Add(this.zoom_anchor_lable);
             this.panel2.Controls.Add(this.option_zoom_on_hover);
             this.panel2.Controls.Add(this.option_zoom_factor);
-            this.panel2.Location = new System.Drawing.Point(3, 182);
+            this.panel2.Location = new System.Drawing.Point(3, 209);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(246, 62);
             this.panel2.TabIndex = 27;
@@ -460,7 +478,7 @@ namespace PreviewToy
             this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel5.Controls.Add(this.previews_check_listbox);
             this.panel5.Controls.Add(this.label1);
-            this.panel5.Location = new System.Drawing.Point(3, 273);
+            this.panel5.Location = new System.Drawing.Point(3, 300);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(246, 100);
             this.panel5.TabIndex = 31;
@@ -489,7 +507,7 @@ namespace PreviewToy
             // panel4
             // 
             this.panel4.Controls.Add(this.aero_status_label);
-            this.panel4.Location = new System.Drawing.Point(3, 379);
+            this.panel4.Location = new System.Drawing.Point(3, 406);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(246, 21);
             this.panel4.TabIndex = 30;
@@ -507,12 +525,42 @@ namespace PreviewToy
             // 
             this.previewToyMainBindingSource.CurrentChanged += new System.EventHandler(this.previewToyMainBindingSource_CurrentChanged);
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "EVE-O Preview";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.restoreToolStripMenuItem,
+            this.exitToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(114, 48);
+            // 
+            // restoreToolStripMenuItem
+            // 
+            this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.restoreToolStripMenuItem.Text = "Restore";
+            this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // PreviewToyHandler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(252, 423);
+            this.ClientSize = new System.Drawing.Size(252, 448);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -538,6 +586,7 @@ namespace PreviewToy
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.previewToyMainBindingSource)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -581,6 +630,11 @@ namespace PreviewToy
         private Panel panel6;
         private Label opacity_label;
         private HScrollBar opacity_bar;
+        private CheckBox option_minToTray;
+        private NotifyIcon notifyIcon1;
+        private ContextMenuStrip contextMenuStrip1;
+        private ToolStripMenuItem restoreToolStripMenuItem;
+        private ToolStripMenuItem exitToolStripMenuItem;
 
 
     }
