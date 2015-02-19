@@ -200,7 +200,10 @@ namespace PreviewToy
                 {
                     previews[process.MainWindowHandle].SetLabel(process.MainWindowTitle);
                     string key = previews[process.MainWindowHandle].Text;
-                    previews[process.MainWindowHandle].registerShortcut(flat_layout_shortcuts[key]);
+                    string value;
+                    if (flat_layout_shortcuts.TryGetValue(key, out value)){
+                        previews[process.MainWindowHandle].registerShortcut(value);
+                    }
                     refresh_client_window_locations(process);
                 }
 
