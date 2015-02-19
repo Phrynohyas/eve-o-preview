@@ -368,7 +368,11 @@ namespace PreviewToy
                 XElement layout = MakeXElement(clientKV.Key);
                 layout.Add(new XElement("x", clientKV.Value.X));
                 layout.Add(new XElement("y", clientKV.Value.Y));
-                layout.Add(new XElement("shortcut", flat_layout_shortcuts[clientKV.Key]));
+
+                string shortcut;
+                if (flat_layout_shortcuts.TryGetValue(clientKV.Key, out shortcut)){
+                    layout.Add(new XElement("shortcut", shortcut));
+                }
                 el2.Add(layout);
             }
 
