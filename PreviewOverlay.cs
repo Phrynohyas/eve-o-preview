@@ -41,5 +41,15 @@ namespace PreviewToy
 
         }
 
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var Params = base.CreateParams;
+                Params.ExStyle |= 0x80;
+                return Params;
+            }
+        }
+
     }
 }

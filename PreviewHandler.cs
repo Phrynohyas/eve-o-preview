@@ -27,6 +27,7 @@ namespace PreviewToy
 
         private Dictionary<String, Dictionary<String, Point>> unique_layouts;
         private Dictionary<String, Point> flat_layout;
+        private Dictionary<String, String> flat_layout_shortcuts;
         private Dictionary<String, ClientLocation> client_layout;
 
         private bool is_initialized;
@@ -89,6 +90,7 @@ namespace PreviewToy
 
             unique_layouts = new Dictionary<String, Dictionary<String, Point>>();
             flat_layout = new Dictionary<String, Point>();
+            flat_layout_shortcuts = new Dictionary<String, String>();
             client_layout = new Dictionary<String, ClientLocation>();
 
             ignoring_size_sync = new Stopwatch();
@@ -197,6 +199,8 @@ namespace PreviewToy
                 else if (previews.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != previews[process.MainWindowHandle].Text) //or update the preview titles
                 {
                     previews[process.MainWindowHandle].SetLabel(process.MainWindowTitle);
+                    string key = previews[process.MainWindowHandle].Text;
+                    previews[process.MainWindowHandle].registerShortcut(flat_layout_shortcuts[key]);
                     refresh_client_window_locations(process);
                 }
 
@@ -299,6 +303,12 @@ namespace PreviewToy
                 foreach (var el in rootElement.Elements())
                 {
                     flat_layout[ParseXElement(el)] = new Point(Convert.ToInt32(el.Element("x").Value), Convert.ToInt32(el.Element("y").Value));
+                    flat_layout_shortcuts[ParseXElement(el)] = "";
+
+                    if (el.Element("shortcut") != null)
+                    {
+                        flat_layout_shortcuts[ParseXElement(el)] = el.Element("shortcut").Value;
+                    }
                 }
             }
 
@@ -355,6 +365,7 @@ namespace PreviewToy
                 XElement layout = MakeXElement(clientKV.Key);
                 layout.Add(new XElement("x", clientKV.Value.X));
                 layout.Add(new XElement("y", clientKV.Value.Y));
+                layout.Add(new XElement("shortcut", flat_layout_shortcuts[clientKV.Key]));
                 el2.Add(layout);
             }
 

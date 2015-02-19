@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using MovablePython;
 
 namespace PreviewToy
 {
@@ -26,6 +27,7 @@ namespace PreviewToy
         private bool has_been_set_up = false;
         private bool thumbnail_has_been_set_up = false;
         private PreviewToyHandler spawner;
+        private Hotkey hotkey;
 
         private bool hide = false;
 
@@ -40,6 +42,8 @@ namespace PreviewToy
         {
             return this.Text;
         }
+
+
 
         public void MakeTopMost(bool topmost)
         {
@@ -66,6 +70,8 @@ namespace PreviewToy
             this.old_position = this.Location;
 
             has_been_set_up = true;
+
+
         }
 
         public void preview_MouseHover(object sender, System.EventArgs e)
@@ -82,6 +88,46 @@ namespace PreviewToy
             this.Opacity = 1.0f;
             this.is_hovered_over = true;
             RefreshPreview();
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var Params = base.CreateParams;
+                Params.ExStyle |= 0x80;
+                return Params;
+            }
+        }
+
+        public void registerShortcut(string shortcut)
+        {
+            if (shortcut == "")
+                return;
+            var cvt = new KeysConverter();
+            var key = (Keys)cvt.ConvertFrom(shortcut);
+
+            Hotkey hotkey = new Hotkey();
+
+            if ((key & Keys.Shift) == Keys.Shift)
+            {
+                hotkey.Shift = true;
+            }
+            if ((key & Keys.Alt) == Keys.Alt) 
+            {
+                hotkey.Alt = true;
+            }
+            if ((key & Keys.Control) == Keys.Control) 
+            {
+                hotkey.Control = true;
+            }
+
+            key = key & ~Keys.Shift & ~Keys.Alt & ~Keys.Control;
+            hotkey.KeyCode = key;
+            hotkey.Register(this);
+            hotkey.Pressed += delegate { bring_client_to_foreground(); spawner.preview_did_switch(); };
+
+            this.hotkey = hotkey;
         }
 
         public void doZoom()
