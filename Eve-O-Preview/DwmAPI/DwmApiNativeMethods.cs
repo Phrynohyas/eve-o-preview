@@ -1,14 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Drawing;
-using System.Text;
 
 namespace EveOPreview
 {
     // Desktop Windows Manager APIs
-    internal class DwmApi
+    static class DwmApiNativeMethods
     {
-
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
 
@@ -43,65 +41,8 @@ namespace EveOPreview
 
         [DllImport("dwmapi.dll", PreserveSig = false)]
         public static extern void DwmQueryThumbnailSourceSize(IntPtr hThumbnail, out Size size);
-        
-        [StructLayout(LayoutKind.Sequential)]
-        public class DWM_THUMBNAIL_PROPERTIES
-        {
-            public uint dwFlags;
-            public RECT rcDestination;
-            public RECT rcSource;
-            public byte opacity;
-            [MarshalAs(UnmanagedType.Bool)]
-            public bool fVisible;
-            [MarshalAs(UnmanagedType.Bool)]
-            public bool fSourceClientAreaOnly;
 
-            public const uint DWM_TNP_RECTDESTINATION = 0x00000001;
-            public const uint DWM_TNP_RECTSOURCE = 0x00000002;
-            public const uint DWM_TNP_OPACITY = 0x00000004;
-            public const uint DWM_TNP_VISIBLE = 0x00000008;
-            public const uint DWM_TNP_SOURCECLIENTAREAONLY = 0x00000010;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public class MARGINS
-        {
-            public int cxLeftWidth, cxRightWidth, cyTopHeight, cyBottomHeight;
-
-            public MARGINS(int left, int top, int right, int bottom)
-            {
-                cxLeftWidth = left; cyTopHeight = top;
-                cxRightWidth = right; cyBottomHeight = bottom;
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public class DWM_BLURBEHIND
-        {
-            public uint dwFlags;
-            [MarshalAs(UnmanagedType.Bool)]
-            public bool fEnable;
-            public IntPtr hRegionBlur;
-            [MarshalAs(UnmanagedType.Bool)]
-            public bool fTransitionOnMaximized;
-
-            public const uint DWM_BB_ENABLE = 0x00000001;
-            public const uint DWM_BB_BLURREGION = 0x00000002;
-            public const uint DWM_BB_TRANSITIONONMAXIMIZED = 0x00000004;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int left, top, right, bottom;
-
-            public RECT(int left, int top, int right, int bottom)
-            {
-                this.left = left; this.top = top; this.right = right; this.bottom = bottom;
-            }
-        }
-
-        public const int SW_SHOWNORMAL = 1;
+	    public const int SW_SHOWNORMAL = 1;
         public const int SW_SHOWMINIMIZED = 2;
         public const int SW_SHOWMAXIMIZED = 3;
 
@@ -174,6 +115,5 @@ namespace EveOPreview
         public const UInt32 WS_EX_LAYOUTRTL = 0x00400000; // Right to left mirroring
         public const UInt32 WS_EX_COMPOSITED = 0x02000000;
         public const UInt32 WS_EX_NOACTIVATE = 0x08000000;
-
     }
 }

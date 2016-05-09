@@ -17,7 +17,7 @@ namespace EveOPreview
 
         private IntPtr m_hThumbnail;
         public IntPtr sourceWindow;
-        private DwmApi.DWM_THUMBNAIL_PROPERTIES m_ThumbnailProperties;
+        private DWM_THUMBNAIL_PROPERTIES m_ThumbnailProperties;
         private bool has_been_set_up = false;
         private bool thumbnail_has_been_set_up = false;
         private PreviewToyHandler spawner;
@@ -231,14 +231,14 @@ namespace EveOPreview
         {
             if (has_been_set_up)
             {
-                if (DwmApi.DwmIsCompositionEnabled())
+                if (DwmApiNativeMethods.DwmIsCompositionEnabled())
                 {
                     if (thumbnail_has_been_set_up == false)
                     {
                         this.SetUpThumbnail();
                     }
-                    m_ThumbnailProperties.rcDestination = new DwmApi.RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
-                    DwmApi.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
+                    m_ThumbnailProperties.rcDestination = new RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
+                    DwmApiNativeMethods.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
                 }
                 else
                 {
@@ -284,21 +284,21 @@ namespace EveOPreview
 
         private void SetUpThumbnail()
         {
-            if (DwmApi.DwmIsCompositionEnabled() && !thumbnail_has_been_set_up)
+            if (DwmApiNativeMethods.DwmIsCompositionEnabled() && !thumbnail_has_been_set_up)
             {
-                m_hThumbnail = DwmApi.DwmRegisterThumbnail(this.Handle, sourceWindow);
+                m_hThumbnail = DwmApiNativeMethods.DwmRegisterThumbnail(this.Handle, sourceWindow);
 
-                m_ThumbnailProperties = new DwmApi.DWM_THUMBNAIL_PROPERTIES();
-                m_ThumbnailProperties.dwFlags = DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_VISIBLE
-                    + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_OPACITY
-                    + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_RECTDESTINATION
-                    + DwmApi.DWM_THUMBNAIL_PROPERTIES.DWM_TNP_SOURCECLIENTAREAONLY;
+                m_ThumbnailProperties = new DWM_THUMBNAIL_PROPERTIES();
+                m_ThumbnailProperties.dwFlags = DWM_THUMBNAIL_PROPERTIES.DWM_TNP_VISIBLE
+                    + DWM_THUMBNAIL_PROPERTIES.DWM_TNP_OPACITY
+                    + DWM_THUMBNAIL_PROPERTIES.DWM_TNP_RECTDESTINATION
+                    + DWM_THUMBNAIL_PROPERTIES.DWM_TNP_SOURCECLIENTAREAONLY;
                 m_ThumbnailProperties.opacity = 255;
                 m_ThumbnailProperties.fVisible = true;
                 m_ThumbnailProperties.fSourceClientAreaOnly = true;
-                m_ThumbnailProperties.rcDestination = new DwmApi.RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
+                m_ThumbnailProperties.rcDestination = new RECT(0, 0, ClientRectangle.Right, ClientRectangle.Bottom);
 
-                DwmApi.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
+                DwmApiNativeMethods.DwmUpdateThumbnailProperties(m_hThumbnail, m_ThumbnailProperties);
 
                 thumbnail_has_been_set_up = true;
             }
@@ -311,15 +311,15 @@ namespace EveOPreview
 
         public void bring_client_to_foreground()
         {
-            DwmApi.SetForegroundWindow(sourceWindow);
-            int style = DwmApi.GetWindowLong(sourceWindow, DwmApi.GWL_STYLE);
-            if ((style & DwmApi.WS_MAXIMIZE) == DwmApi.WS_MAXIMIZE)
+            DwmApiNativeMethods.SetForegroundWindow(sourceWindow);
+            int style = DwmApiNativeMethods.GetWindowLong(sourceWindow, DwmApiNativeMethods.GWL_STYLE);
+            if ((style & DwmApiNativeMethods.WS_MAXIMIZE) == DwmApiNativeMethods.WS_MAXIMIZE)
             {
                 //It's maximized
             }
-            else if ((style & DwmApi.WS_MINIMIZE) == DwmApi.WS_MINIMIZE)
+            else if ((style & DwmApiNativeMethods.WS_MINIMIZE) == DwmApiNativeMethods.WS_MINIMIZE)
             {
-                DwmApi.ShowWindowAsync(sourceWindow, DwmApi.SW_SHOWNORMAL);
+                DwmApiNativeMethods.ShowWindowAsync(sourceWindow, DwmApiNativeMethods.SW_SHOWNORMAL);
             }
         }
 

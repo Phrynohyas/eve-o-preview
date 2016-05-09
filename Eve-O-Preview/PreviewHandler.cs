@@ -224,7 +224,7 @@ namespace EveOPreview
                     refresh_client_window_locations(process);
                 }
 
-                if (process.MainWindowHandle == DwmApi.GetForegroundWindow())
+                if (process.MainWindowHandle == DwmApiNativeMethods.GetForegroundWindow())
                 {
                     active_client_handle = process.MainWindowHandle;
                     active_client_title = process.MainWindowTitle;
@@ -512,7 +512,7 @@ namespace EveOPreview
         private void refresh_thumbnails()
         {
 
-            IntPtr active_window = DwmApi.GetForegroundWindow();
+            IntPtr active_window = DwmApiNativeMethods.GetForegroundWindow();
 
             // hide, show, resize and move
             foreach (KeyValuePair<IntPtr, Preview> entry in previews)
@@ -547,7 +547,7 @@ namespace EveOPreview
                 }
             }
 
-            DwmApi.DwmIsCompositionEnabled();
+            DwmApiNativeMethods.DwmIsCompositionEnabled();
         }
 
 
@@ -566,7 +566,7 @@ namespace EveOPreview
 
                 foreach (KeyValuePair<IntPtr, Preview> entry in previews)
                 {
-                    if (entry.Value.Handle != DwmApi.GetForegroundWindow())
+                    if (entry.Value.Handle != DwmApiNativeMethods.GetForegroundWindow())
                     {
                         entry.Value.set_render_area_size(sync_size);
                     }
@@ -607,7 +607,7 @@ namespace EveOPreview
             refresh_thumbnails();
             if (ignoring_size_sync.ElapsedMilliseconds > 500) { ignoring_size_sync.Stop(); };
 
-            if (DwmApi.DwmIsCompositionEnabled())
+            if (DwmApiNativeMethods.DwmIsCompositionEnabled())
             {
                 aero_status_label.Text = "AERO is ON";
                 aero_status_label.ForeColor = Color.Black;
