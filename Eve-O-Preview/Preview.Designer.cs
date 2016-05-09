@@ -1,4 +1,4 @@
-namespace PreviewToy
+namespace EveOPreview
 {
     partial class Preview
     {

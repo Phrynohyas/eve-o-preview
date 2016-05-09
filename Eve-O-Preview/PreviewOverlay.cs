@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PreviewToy
+namespace EveOPreview
 {
     public partial class PreviewOverlay : Form
     {

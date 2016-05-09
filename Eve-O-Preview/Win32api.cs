@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Text;
 
-namespace PreviewToy
+namespace EveOPreview
 {
     // Desktop Windows Manager APIs
     internal class DwmApi

@@ -6,7 +6,7 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace PreviewToy
+namespace EveOPreview
 {
     partial class PreviewToyHandler
     {

@@ -14,7 +14,7 @@ using System.Linq;
 
 using System.IO;
 
-namespace PreviewToy
+namespace EveOPreview
 {
 
     public partial class PreviewToyHandler : Form
