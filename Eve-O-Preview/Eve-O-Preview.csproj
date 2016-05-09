@@ -8,8 +8,8 @@
     <ProjectGuid>{6CA62DF3-8589-484C-8BC8-F763CA66BBB1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PreviewToy</RootNamespace>
-    <AssemblyName>eve-o preview</AssemblyName>
+    <RootNamespace>EveOPreview</RootNamespace>
+    <AssemblyName>Eve-O Preview</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -42,6 +42,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -57,7 +58,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>PreviewToy.Program</StartupObject>
+    <StartupObject>EveOPreview.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>4B29FD125BFAD24FF900FC81CCE0B0AD37464FDB</ManifestCertificateThumbprint>
@@ -95,7 +96,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hotkey.cs" />
+    <Compile Include="Hotkeys\Hotkey.cs" />
+    <Compile Include="Hotkeys\HotkeyNativeMethods.cs" />
     <Compile Include="PreviewHandler.cs">
       <SubType>Form</SubType>
     </Compile>
