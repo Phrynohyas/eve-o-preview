@@ -102,25 +102,25 @@
     <Compile Include="DwmAPI\RECT.cs" />
     <Compile Include="Hotkeys\Hotkey.cs" />
     <Compile Include="Hotkeys\HotkeyNativeMethods.cs" />
-    <Compile Include="PreviewHandler.cs">
+    <Compile Include="GUI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PreviewHandler.Designer.cs">
-      <DependentUpon>PreviewHandler.cs</DependentUpon>
+    <Compile Include="GUI\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PreviewOverlay.cs">
+    <Compile Include="Preview\PreviewOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PreviewOverlay.Designer.cs">
+    <Compile Include="Preview\PreviewOverlay.Designer.cs">
       <DependentUpon>PreviewOverlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="PreviewHandler.resx">
+    <EmbeddedResource Include="GUI\MainForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PreviewHandler.cs</DependentUpon>
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PreviewOverlay.resx">
+    <EmbeddedResource Include="Preview\PreviewOverlay.resx">
       <DependentUpon>PreviewOverlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -128,7 +128,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Preview.resx">
+    <EmbeddedResource Include="Preview\Preview.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Preview.cs</DependentUpon>
     </EmbeddedResource>
@@ -151,10 +151,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Preview.cs">
+    <Compile Include="Preview\Preview.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Preview.Designer.cs">
+    <Compile Include="Preview\Preview.Designer.cs">
       <DependentUpon>Preview.cs</DependentUpon>
     </Compile>
     <Compile Include="DwmAPI\DwmApiNativeMethods.cs" />

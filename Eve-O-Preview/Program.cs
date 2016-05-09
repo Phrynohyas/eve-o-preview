@@ -11,7 +11,7 @@ namespace EveOPreview
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(true);
-			Application.Run(new PreviewToyHandler());
+			Application.Run(new MainForm());
 		}
 	}
 }

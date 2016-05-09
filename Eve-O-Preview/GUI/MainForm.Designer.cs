@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace EveOPreview
 {
-    partial class PreviewToyHandler
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -37,7 +37,7 @@ namespace EveOPreview
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreviewToyHandler));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.option_hide_active = new System.Windows.Forms.CheckBox();
             this.option_hide_all_if_not_right_type = new System.Windows.Forms.CheckBox();
             this.option_unique_layout = new System.Windows.Forms.CheckBox();
@@ -566,7 +566,7 @@ namespace EveOPreview
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(0);
             this.MaximizeBox = false;
-            this.Name = "PreviewToyHandler";
+            this.Name = "MainForm";
             this.Text = "EVE Online previewer";
             this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;

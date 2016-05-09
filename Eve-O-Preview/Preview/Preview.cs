@@ -20,7 +20,7 @@ namespace EveOPreview
         private DWM_THUMBNAIL_PROPERTIES m_ThumbnailProperties;
         private bool has_been_set_up = false;
         private bool thumbnail_has_been_set_up = false;
-        private PreviewToyHandler spawner;
+        private MainForm spawner;
         private Hotkey hotkey;
 
         private bool hide = false;
@@ -44,7 +44,7 @@ namespace EveOPreview
             this.TopMost = topmost && !(this.hide);
         }
 
-        public Preview(IntPtr sourceWindow, String title, PreviewToyHandler spawner, Size size) 
+        public Preview(IntPtr sourceWindow, String title, MainForm spawner, Size size) 
         {
             has_been_set_up = false;
 
@@ -138,34 +138,34 @@ namespace EveOPreview
 
             Size = new Size((int)(hover_zoom_factor * (float)Size.Width), (int)(hover_zoom_factor * (float)Size.Height));
 
-            switch ((PreviewToyHandler.zoom_anchor_t)Properties.Settings.Default.zoom_anchor)
+            switch ((MainForm.zoom_anchor_t)Properties.Settings.Default.zoom_anchor)
             {
-                case (PreviewToyHandler.zoom_anchor_t.NW):
+                case (MainForm.zoom_anchor_t.NW):
                     break;
-                case (PreviewToyHandler.zoom_anchor_t.N):
+                case (MainForm.zoom_anchor_t.N):
                     Location = new Point(Location.X - Size.Width / 2 + old_size.Width / 2, Location.Y);
                     break;
-                case (PreviewToyHandler.zoom_anchor_t.NE):
+                case (MainForm.zoom_anchor_t.NE):
                     Location = new Point(Location.X - Size.Width + old_size.Width, Location.Y);
                     break;
 
-                case (PreviewToyHandler.zoom_anchor_t.W):
+                case (MainForm.zoom_anchor_t.W):
                     Location = new Point(Location.X, Location.Y - Size.Height / 2 + old_size.Height / 2);
                     break;
-                case (PreviewToyHandler.zoom_anchor_t.C):
+                case (MainForm.zoom_anchor_t.C):
                     Location = new Point(Location.X - Size.Width / 2 + old_size.Width / 2, Location.Y - Size.Height / 2 + old_size.Height / 2);
                     break;
-                case (PreviewToyHandler.zoom_anchor_t.E):
+                case (MainForm.zoom_anchor_t.E):
                     Location = new Point(Location.X - Size.Width + old_size.Width, Location.Y - Size.Height / 2 + old_size.Height / 2);
                     break;
 
-                case (PreviewToyHandler.zoom_anchor_t.SW):
+                case (MainForm.zoom_anchor_t.SW):
                     Location = new Point(Location.X, Location.Y - Size.Height + old_size.Height);
                     break;
-                case (PreviewToyHandler.zoom_anchor_t.S):
+                case (MainForm.zoom_anchor_t.S):
                     Location = new Point(Location.X - Size.Width / 2 + old_size.Width / 2, Location.Y - Size.Height + old_size.Height);
                     break;
-                case (PreviewToyHandler.zoom_anchor_t.SE):
+                case (MainForm.zoom_anchor_t.SE):
                     Location = new Point(Location.X - Size.Width + old_size.Width, Location.Y - Size.Height + old_size.Height);
                     break;
             }

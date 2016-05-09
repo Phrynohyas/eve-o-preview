@@ -1,23 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Drawing.Text;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using System.Linq;
-
 using System.IO;
 
 namespace EveOPreview
 {
-
-    public partial class PreviewToyHandler : Form
+    public partial class MainForm : Form
     {
         private const int WM_SIZE = 5;
         private const int SIZE_RESTORED = 0;
@@ -31,11 +24,11 @@ namespace EveOPreview
         public event EventHandler Restored;
 
 
-        private Dictionary<IntPtr, Preview> previews;
-        private DispatcherTimer dispatcherTimer;
+        private readonly Dictionary<IntPtr, Preview> _previews;
+        private DispatcherTimer _dispatcherTimer;
 
-        private IntPtr active_client_handle = (IntPtr)0;
-        private String active_client_title = "";
+        private IntPtr _activeClientHandle;
+        private String _activeClientTitle;
 
         private Dictionary<String, Dictionary<String, Point>> unique_layouts;
         private Dictionary<String, Point> flat_layout;
@@ -85,11 +78,14 @@ namespace EveOPreview
 
         private Dictionary<zoom_anchor_t, RadioButton> zoom_anchor_button_map;
 
-        public PreviewToyHandler()
+        public MainForm()
         {
             is_initialized = false;
 
-            previews = new Dictionary<IntPtr, Preview>();
+			this._activeClientHandle = (IntPtr)0;
+			this._activeClientTitle = "";
+
+		_previews = new Dictionary<IntPtr, Preview>();
 
             xml_bad_to_ok_chars = new Dictionary<string, string>();
             xml_bad_to_ok_chars["<"] = "---lt---";
@@ -112,10 +108,10 @@ namespace EveOPreview
             init_options();
 
             //  DispatcherTimer setup
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            dispatcherTimer.Start();
+            _dispatcherTimer = new DispatcherTimer();
+            _dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            _dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            _dispatcherTimer.Start();
 
             is_initialized = true;
 
@@ -195,46 +191,46 @@ namespace EveOPreview
                 sync_size.Width = (int)Properties.Settings.Default.sync_resize_x;
                 sync_size.Height = (int)Properties.Settings.Default.sync_resize_y;
 
-                if (!previews.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != "")
+                if (!_previews.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != "")
                 {
-                    previews[process.MainWindowHandle] = new Preview(process.MainWindowHandle, "...", this, sync_size);
-                    previews[process.MainWindowHandle].set_render_area_size(sync_size);
+                    _previews[process.MainWindowHandle] = new Preview(process.MainWindowHandle, "...", this, sync_size);
+                    _previews[process.MainWindowHandle].set_render_area_size(sync_size);
 
                     // apply more thumbnail specific options
-                    previews[process.MainWindowHandle].MakeTopMost(Properties.Settings.Default.always_on_top);
-                    set_thumbnail_frame_style(previews[process.MainWindowHandle], Properties.Settings.Default.show_thumb_frames);
+                    _previews[process.MainWindowHandle].MakeTopMost(Properties.Settings.Default.always_on_top);
+                    set_thumbnail_frame_style(_previews[process.MainWindowHandle], Properties.Settings.Default.show_thumb_frames);
 
                     // add a preview also
                     previews_check_listbox.BeginUpdate();
-                    previews_check_listbox.Items.Add(previews[process.MainWindowHandle]);
+                    previews_check_listbox.Items.Add(_previews[process.MainWindowHandle]);
                     previews_check_listbox.EndUpdate();
 
                     refresh_client_window_locations(process);
                 }
 
-                else if (previews.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != previews[process.MainWindowHandle].Text) //or update the preview titles
+                else if (_previews.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != _previews[process.MainWindowHandle].Text) //or update the preview titles
                 {
-                    previews[process.MainWindowHandle].SetLabel(process.MainWindowTitle);
-                    string key = previews[process.MainWindowHandle].Text;
+                    _previews[process.MainWindowHandle].SetLabel(process.MainWindowTitle);
+                    string key = _previews[process.MainWindowHandle].Text;
                     string value;
                     if (flat_layout_shortcuts.TryGetValue(key, out value))
                     {
-                        previews[process.MainWindowHandle].registerShortcut(value);
+                        _previews[process.MainWindowHandle].registerShortcut(value);
                     }
                     refresh_client_window_locations(process);
                 }
 
                 if (process.MainWindowHandle == DwmApiNativeMethods.GetForegroundWindow())
                 {
-                    active_client_handle = process.MainWindowHandle;
-                    active_client_title = process.MainWindowTitle;
+                    _activeClientHandle = process.MainWindowHandle;
+                    _activeClientTitle = process.MainWindowTitle;
                 }
 
             }
 
             // clean up old previews
             List<IntPtr> to_be_pruned = new List<IntPtr>();
-            foreach (IntPtr processHandle in previews.Keys)
+            foreach (IntPtr processHandle in _previews.Keys)
             {
                 if (!(processHandles.Contains(processHandle)))
                 {
@@ -245,12 +241,12 @@ namespace EveOPreview
             foreach (IntPtr processHandle in to_be_pruned)
             {
                 previews_check_listbox.BeginUpdate();
-                previews_check_listbox.Items.Remove(previews[processHandle]);
+                previews_check_listbox.Items.Remove(_previews[processHandle]);
                 previews_check_listbox.EndUpdate();
 
-                previews[processHandle].overlay.Close();
-                previews[processHandle].Close();
-                previews.Remove(processHandle);
+                _previews[processHandle].overlay.Close();
+                _previews[processHandle].Close();
+                _previews.Remove(processHandle);
             }
 
             previews_check_listbox.Update();
@@ -473,7 +469,7 @@ namespace EveOPreview
         {
             update_client_locations();
             store_layout(); //todo: check if it actually changed ...
-            foreach (KeyValuePair<IntPtr, Preview> entry in previews)
+            foreach (KeyValuePair<IntPtr, Preview> entry in _previews)
             {
                 entry.Value.MakeTopMost(Properties.Settings.Default.always_on_top);
                 //makes the PreviewOverlay topmost
@@ -498,7 +494,7 @@ namespace EveOPreview
         private bool window_is_preview_or_client(IntPtr window)
         {
             bool active_window_is_right_type = false;
-            foreach (KeyValuePair<IntPtr, Preview> entry in previews)
+            foreach (KeyValuePair<IntPtr, Preview> entry in _previews)
             {
                 if (entry.Key == window || entry.Value.Handle == window || this.Handle == window || entry.Value.overlay.Handle == window)
                 {
@@ -515,13 +511,13 @@ namespace EveOPreview
             IntPtr active_window = DwmApiNativeMethods.GetForegroundWindow();
 
             // hide, show, resize and move
-            foreach (KeyValuePair<IntPtr, Preview> entry in previews)
+            foreach (KeyValuePair<IntPtr, Preview> entry in _previews)
             {
                 if (!window_is_preview_or_client(active_window) && Properties.Settings.Default.hide_all)
                 {
                     entry.Value.Hide();
                 }
-                else if (entry.Key == active_client_handle && Properties.Settings.Default.hide_active)
+                else if (entry.Key == _activeClientHandle && Properties.Settings.Default.hide_active)
                 {
                     entry.Value.Hide();
                 }
@@ -530,7 +526,7 @@ namespace EveOPreview
                     entry.Value.Show();
                     if (Properties.Settings.Default.unique_layout)
                     {
-                        handle_unique_layout(entry.Value, active_client_title);
+                        handle_unique_layout(entry.Value, _activeClientTitle);
                     }
                     else
                     {
@@ -564,7 +560,7 @@ namespace EveOPreview
                 option_sync_size_x.Text = sync_size.Width.ToString();
                 option_sync_size_y.Text = sync_size.Height.ToString();
 
-                foreach (KeyValuePair<IntPtr, Preview> entry in previews)
+                foreach (KeyValuePair<IntPtr, Preview> entry in _previews)
                 {
                     if (entry.Value.Handle != DwmApiNativeMethods.GetForegroundWindow())
                     {
@@ -583,14 +579,14 @@ namespace EveOPreview
             if (Properties.Settings.Default.unique_layout)
             {
                 Dictionary<String, Point> layout;
-                if (unique_layouts.TryGetValue(active_client_title, out layout))
+                if (unique_layouts.TryGetValue(_activeClientTitle, out layout))
                 {
                     layout[preview_title] = position;
                 }
-                else if (active_client_title == "")
+                else if (_activeClientTitle == "")
                 {
-                    unique_layouts[active_client_title] = new Dictionary<String, Point>();
-                    unique_layouts[active_client_title][preview_title] = position;
+                    unique_layouts[_activeClientTitle] = new Dictionary<String, Point>();
+                    unique_layouts[_activeClientTitle][preview_title] = position;
                 }
             }
             else
@@ -726,7 +722,7 @@ namespace EveOPreview
                 ignoring_size_sync.Start();
             }
 
-            foreach (var thumbnail in previews)
+            foreach (var thumbnail in _previews)
             {
                 set_thumbnail_frame_style(thumbnail.Value, Properties.Settings.Default.show_thumb_frames);
             }
