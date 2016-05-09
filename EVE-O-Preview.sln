@@ -1,11 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "preview toy", "preview toy.csproj", "{6CA62DF3-8589-484C-8BC8-F763CA66BBB1}"
+Microsoft Visual Studio Solution File, Format Version 14.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eve-O-Preview", "Eve-O-Preview\Eve-O-Preview.csproj", "{6CA62DF3-8589-484C-8BC8-F763CA66BBB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExeFile", "ExeFile\ExeFile.csproj", "{BE2C3A13-CC19-4525-895F-381DD71C5833}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eve-O-Mock", "Eve-O-Mock\Eve-O-Mock.csproj", "{BE2C3A13-CC19-4525-895F-381DD71C5833}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
