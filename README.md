@@ -25,3 +25,7 @@ https://forums.eveonline.com/default.aspx?g=posts&t=389086
 **Original thread**
 
 https://forums.eveonline.com/default.aspx?g=posts&t=246157
+
+**Original repository**
+
+https://bitbucket.org/ulph/eve-o-preview-git
