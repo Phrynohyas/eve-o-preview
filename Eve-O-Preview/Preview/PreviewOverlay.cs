@@ -1,55 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace EveOPreview
 {
-    public partial class PreviewOverlay : Form
-    {
-        private Preview parent;
-        private Color original_color;
-        public PreviewOverlay(Preview parent)
-        {
-            this.parent = parent;
-            InitializeComponent();
-            original_color = overlay_area.BackColor;
-        }
+	public partial class PreviewOverlay : Form
+	{
+		private readonly Preview _parent;
 
-        private void PreviewOverlay_Load(object sender, EventArgs e)
-        {
+		public PreviewOverlay(Preview parent)
+		{
+			this._parent = parent;
+			InitializeComponent();
+		}
 
-        }
+		private void OverlayArea_Click(object sender, MouseEventArgs e)
+		{
+			this._parent.render_area_Click(sender, e);
+		}
 
-        private void pictureBox1_Click(object sender, MouseEventArgs e)
-        {
-            this.parent.render_area_Click(sender, e);
-        }
+		public void MakeTopMost()
+		{
+			this.TopMost = true;
+		}
 
-        public void makeTopMost()
-        {
-            this.TopMost = true;
-        }
+		public void SetOverlayLabel(string label)
+		{
+			this.OverlayLabel.Text = label;
+		}
 
-        private void client_label_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                var Params = base.CreateParams;
-                Params.ExStyle |= 0x80;
-                return Params;
-            }
-        }
-
-    }
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				var Params = base.CreateParams;
+				Params.ExStyle |= 0x80;
+				return Params;
+			}
+		}
+	}
 }
