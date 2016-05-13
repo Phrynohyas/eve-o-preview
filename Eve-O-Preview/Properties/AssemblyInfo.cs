@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("EVE-O Preview")]
@@ -16,3 +17,5 @@ using System.Runtime.InteropServices;
 
 // Provide your own key name to build the app locally
 [assembly: AssemblyKeyName("Phrynohyas")]
+
+[assembly: CLSCompliant(true)]
