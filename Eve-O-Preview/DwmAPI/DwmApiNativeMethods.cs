@@ -117,5 +117,18 @@ namespace EveOPreview
         public const UInt32 WS_EX_LAYOUTRTL = 0x00400000; // Right to left mirroring
         public const UInt32 WS_EX_COMPOSITED = 0x02000000;
         public const UInt32 WS_EX_NOACTIVATE = 0x08000000;
-    }
+
+		public const int WM_SIZE = 5;
+		public const int SIZE_RESTORED = 0;
+		public const int SIZE_MINIMIZED = 1;
+		public const int SIZE_MAXIMIZED = 2;
+		public const int SIZE_MAXSHOW = 3;
+		public const int SIZE_MAXHIDE = 4;
+
+		[DllImport("user32.dll")]
+		public static extern int GetWindowRect(IntPtr hwnd, out RECT rect);
+
+		[DllImport("user32.dll")]
+		public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+	}
 }

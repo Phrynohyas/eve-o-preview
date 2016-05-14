@@ -1,25 +1,21 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace EveOPreview
 {
 	public partial class PreviewOverlay : Form
 	{
-		private readonly Preview _parent;
+		private readonly Action<object, MouseEventArgs> _areaClickAction;
 
-		public PreviewOverlay(Preview parent)
+		public PreviewOverlay(Action<object, MouseEventArgs> areaClickAction)
 		{
-			this._parent = parent;
+			this._areaClickAction = areaClickAction;
 			InitializeComponent();
 		}
 
 		private void OverlayArea_Click(object sender, MouseEventArgs e)
 		{
-			this._parent.render_area_Click(sender, e);
-		}
-
-		public void MakeTopMost()
-		{
-			this.TopMost = true;
+			this._areaClickAction(sender, e);
 		}
 
 		public void SetOverlayLabel(string label)
@@ -32,7 +28,7 @@ namespace EveOPreview
 			get
 			{
 				var Params = base.CreateParams;
-				Params.ExStyle |= 0x80;
+				Params.ExStyle |= (int)DwmApiNativeMethods.WS_EX_TOOLWINDOW;
 				return Params;
 			}
 		}

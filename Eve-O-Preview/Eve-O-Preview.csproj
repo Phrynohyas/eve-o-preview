@@ -108,7 +108,6 @@
     <Compile Include="DwmAPI\MARGINS.cs" />
     <Compile Include="DwmAPI\RECT.cs" />
     <Compile Include="GUI\ClientLocation.cs" />
-    <Compile Include="GUI\GuiNativeMethods.cs" />
     <Compile Include="GUI\ZoomAnchor.cs" />
     <Compile Include="Hotkeys\Hotkey.cs" />
     <Compile Include="Hotkeys\HotkeyNativeMethods.cs" />

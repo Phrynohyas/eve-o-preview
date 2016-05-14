@@ -31,6 +31,8 @@ namespace EveOPreview
 			this.RenderAreaPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.RenderAreaPictureBox.TabIndex = 0;
 			this.RenderAreaPictureBox.TabStop = false;
+			this.RenderAreaPictureBox.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
+			this.RenderAreaPictureBox.MouseHover += new System.EventHandler(this.preview_MouseHover);
 			this.RenderAreaPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.render_area_Click);
 			// 
 			// Preview

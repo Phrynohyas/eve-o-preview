@@ -151,8 +151,7 @@ namespace EveOPreview
 
 				if (!_previews.ContainsKey(process.MainWindowHandle) && process.MainWindowTitle != "")
 				{
-					_previews[process.MainWindowHandle] = new Preview(process.MainWindowHandle, "...", this, sync_size);
-					_previews[process.MainWindowHandle].set_render_area_size(sync_size);// TODO Remove
+					_previews[process.MainWindowHandle] = new Preview(this, process.MainWindowHandle, "...", sync_size);
 
 					// apply more thumbnail specific options
 					_previews[process.MainWindowHandle].MakeTopMost(Properties.Settings.Default.always_on_top);
@@ -202,7 +201,6 @@ namespace EveOPreview
 				previews_check_listbox.Items.Remove(_previews[processHandle]);
 				previews_check_listbox.EndUpdate();
 
-				_previews[processHandle].overlay.Close();
 				_previews[processHandle].Close();
 				_previews.Remove(processHandle);
 			}
@@ -215,7 +213,7 @@ namespace EveOPreview
 		{
 			if (Properties.Settings.Default.track_client_windows && _clientLayout.ContainsKey(process.MainWindowTitle))
 			{
-				GuiNativeMethods.MoveWindow(process.MainWindowHandle, _clientLayout[process.MainWindowTitle].X,
+				DwmApiNativeMethods.MoveWindow(process.MainWindowHandle, _clientLayout[process.MainWindowTitle].X,
 					_clientLayout[process.MainWindowTitle].Y, _clientLayout[process.MainWindowTitle].Width,
 					_clientLayout[process.MainWindowTitle].Height, true);
 			}
@@ -397,7 +395,7 @@ namespace EveOPreview
 			foreach (Process process in processes)
 			{
 				RECT rect = new RECT();
-				GuiNativeMethods.GetWindowRect(process.MainWindowHandle, out rect);
+				DwmApiNativeMethods.GetWindowRect(process.MainWindowHandle, out rect);
 
 				int left = Math.Abs(rect.Left);
 				int right = Math.Abs(rect.Right);
@@ -426,8 +424,6 @@ namespace EveOPreview
 			foreach (KeyValuePair<IntPtr, Preview> entry in _previews)
 			{
 				entry.Value.MakeTopMost(Properties.Settings.Default.always_on_top);
-				//makes the PreviewOverlay topmost
-				entry.Value.overlay.MakeTopMost();
 			}
 		}
 
@@ -450,7 +446,7 @@ namespace EveOPreview
 			bool active_window_is_right_type = false;
 			foreach (KeyValuePair<IntPtr, Preview> entry in _previews)
 			{
-				if (entry.Key == window || entry.Value.Handle == window || this.Handle == window || entry.Value.overlay.Handle == window)
+				if (entry.Key == window || entry.Value.IsPreviewHandle(window))
 				{
 					active_window_is_right_type = true;
 				}
@@ -489,8 +485,6 @@ namespace EveOPreview
 				}
 				entry.Value.hover_zoom = Properties.Settings.Default.zoom_on_hover;
 				entry.Value.show_overlay = Properties.Settings.Default.show_overlay;
-				//makes the PreviewOverlay TopMost
-				entry.Value.overlay.MakeTopMost();
 				if (!entry.Value.is_hovered_over)
 				{
 					entry.Value.Opacity = Properties.Settings.Default.opacity;
@@ -518,7 +512,7 @@ namespace EveOPreview
 				{
 					if (entry.Value.Handle != DwmApiNativeMethods.GetForegroundWindow())
 					{
-						entry.Value.set_render_area_size(sync_size);
+						entry.Value.SetSize(sync_size);
 					}
 				}
 
@@ -824,16 +818,16 @@ namespace EveOPreview
 		{
 			switch (m.Msg)
 			{
-				case GuiNativeMethods.WM_SIZE:
+				case DwmApiNativeMethods.WM_SIZE:
 					switch (m.WParam.ToInt32())
 					{
-						case GuiNativeMethods.SIZE_RESTORED:
+						case DwmApiNativeMethods.SIZE_RESTORED:
 							OnRestored(EventArgs.Empty);
 							break;
-						case GuiNativeMethods.SIZE_MINIMIZED:
+						case DwmApiNativeMethods.SIZE_MINIMIZED:
 							OnMinimized(EventArgs.Empty);
 							break;
-						case GuiNativeMethods.SIZE_MAXIMIZED:
+						case DwmApiNativeMethods.SIZE_MAXIMIZED:
 							OnMaximized(EventArgs.Empty);
 							break;
 					}
