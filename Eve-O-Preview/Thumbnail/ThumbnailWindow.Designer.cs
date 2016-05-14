@@ -1,6 +1,6 @@
 namespace EveOPreview
 {
-    partial class Preview
+    partial class ThumbnailWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -31,9 +31,9 @@ namespace EveOPreview
 			this.RenderAreaPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.RenderAreaPictureBox.TabIndex = 0;
 			this.RenderAreaPictureBox.TabStop = false;
-			this.RenderAreaPictureBox.MouseLeave += new System.EventHandler(this.preview_MouseLeave);
-			this.RenderAreaPictureBox.MouseHover += new System.EventHandler(this.preview_MouseHover);
-			this.RenderAreaPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.render_area_Click);
+			this.RenderAreaPictureBox.MouseLeave += new System.EventHandler(this.Preview_MouseLeave);
+			this.RenderAreaPictureBox.MouseHover += new System.EventHandler(this.Preview_MouseHover);
+			this.RenderAreaPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Preview_Click);
 			// 
 			// Preview
 			// 
@@ -47,13 +47,12 @@ namespace EveOPreview
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(64, 64);
-			this.Name = "Preview";
+			this.Name = "ThumbnailWindow";
 			this.Opacity = 0.1D;
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Preview";
 			this.TopMost = true;
-			this.Load += new System.EventHandler(this.Preview_Load);
 			((System.ComponentModel.ISupportInitialize)(this.RenderAreaPictureBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

@@ -1,6 +1,6 @@
 ﻿namespace EveOPreview
 {
-    partial class PreviewOverlay
+    partial class ThumbnailOverlay
     {
         /// <summary>
         /// Required designer variable.
@@ -71,7 +71,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "PreviewOverlay";
+			this.Name = "ThumbnailOverlay";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

@@ -3,11 +3,11 @@ using System.Windows.Forms;
 
 namespace EveOPreview
 {
-	public partial class PreviewOverlay : Form
+	public partial class ThumbnailOverlay : Form
 	{
 		private readonly Action<object, MouseEventArgs> _areaClickAction;
 
-		public PreviewOverlay(Action<object, MouseEventArgs> areaClickAction)
+		public ThumbnailOverlay(Action<object, MouseEventArgs> areaClickAction)
 		{
 			this._areaClickAction = areaClickAction;
 			InitializeComponent();

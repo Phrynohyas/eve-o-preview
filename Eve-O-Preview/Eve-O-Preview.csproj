@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="DwmAPI\DWM_BLURBEHIND.cs" />
     <Compile Include="DwmAPI\DWM_THUMBNAIL_PROPERTIES.cs" />
+    <Compile Include="DwmAPI\DWM_TNP_CONSTANTS.cs" />
     <Compile Include="DwmAPI\MARGINS.cs" />
     <Compile Include="DwmAPI\RECT.cs" />
     <Compile Include="GUI\ClientLocation.cs" />
@@ -117,11 +118,13 @@
     <Compile Include="GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Preview\PreviewOverlay.cs">
+    <Compile Include="Thumbnail\IThumbnail.cs" />
+    <Compile Include="Thumbnail\ThumbnailFactory.cs" />
+    <Compile Include="Thumbnail\ThumbnailOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Preview\PreviewOverlay.Designer.cs">
-      <DependentUpon>PreviewOverlay.cs</DependentUpon>
+    <Compile Include="Thumbnail\ThumbnailOverlay.Designer.cs">
+      <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -129,17 +132,17 @@
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Preview\PreviewOverlay.resx">
-      <DependentUpon>PreviewOverlay.cs</DependentUpon>
+    <EmbeddedResource Include="Thumbnail\ThumbnailOverlay.resx">
+      <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Preview\Preview.resx">
+    <EmbeddedResource Include="Thumbnail\ThumbnailWindow.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Preview.cs</DependentUpon>
+      <DependentUpon>ThumbnailWindow.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -158,11 +161,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Preview\Preview.cs">
+    <Compile Include="Thumbnail\ThumbnailWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Preview\Preview.Designer.cs">
-      <DependentUpon>Preview.cs</DependentUpon>
+    <Compile Include="Thumbnail\ThumbnailWindow.Designer.cs">
+      <DependentUpon>ThumbnailWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="DwmAPI\DwmApiNativeMethods.cs" />
   </ItemGroup>
