@@ -9,7 +9,7 @@ namespace EveOPreview
 		#region Private fields
 		private readonly bool _isInitializing;
 		private readonly IntPtr _sourceWindow;
-		private readonly MainForm _parentForm;
+		private readonly ThumbnailManager _manager;
 		private readonly ThumbnailOverlay _overlay;
 		private Hotkey _hotkey; // This field stores the hotkey reference
 
@@ -26,7 +26,7 @@ namespace EveOPreview
 		#endregion
 
 		// This constructor should never be used directly
-		public ThumbnailWindow(MainForm parent, IntPtr sourceWindow, string title, Size size)
+		public ThumbnailWindow(ThumbnailManager manager, IntPtr sourceWindow, string title, Size size)
 		{
 			this._isInitializing = true;
 
@@ -34,7 +34,7 @@ namespace EveOPreview
 			this.IsOverlayEnabled = true;
 
 			this._sourceWindow = sourceWindow;
-			this._parentForm = parent;
+			this._manager = manager;
 
 			this._isThumbnailSetUp = false;
 			this._ignoreMouseOverEvent = false;
@@ -248,7 +248,7 @@ namespace EveOPreview
 			if (e.Button == MouseButtons.Left)
 			{
 				this.ActivateClient();
-				this._parentForm.NotifyPreviewSwitch();
+				this._manager.NotifyPreviewSwitch();
 			}
 
 			if (e.Button == MouseButtons.Right)
@@ -265,7 +265,7 @@ namespace EveOPreview
 		private void Hotkey_Pressed(Object sender, EventArgs e)
 		{
 			this.ActivateClient();
-			this._parentForm.NotifyPreviewSwitch();
+			this._manager.NotifyPreviewSwitch();
 		}
 
 		protected override void OnResize(EventArgs e)
@@ -276,7 +276,7 @@ namespace EveOPreview
 
 			if (!(this._isInitializing || this._ignoreMouseOverEvent))
 			{
-				this._parentForm.SyncPreviewSize(this.Size);
+				this._manager.SyncPreviewSize(this.Size);
 			}
 		}
 
@@ -286,7 +286,7 @@ namespace EveOPreview
 
 			if (!(this._isInitializing || this._ignoreMouseOverEvent))
 			{
-				this._parentForm.UpdatePreviewPosition(this.Text, this.Location);
+				this._manager.UpdatePreviewPosition(this.Text, this.Location);
 			}
 
 			this.RefreshPreview();

@@ -110,6 +110,7 @@
     <Compile Include="DwmAPI\RECT.cs" />
     <Compile Include="GUI\ClientLocation.cs" />
     <Compile Include="GUI\ZoomAnchor.cs" />
+    <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Hotkeys\Hotkey.cs" />
     <Compile Include="Hotkeys\HotkeyNativeMethods.cs" />
     <Compile Include="GUI\MainForm.cs">
@@ -118,8 +119,10 @@
     <Compile Include="GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\ConfigurationStorage.cs" />
     <Compile Include="Thumbnail\IThumbnail.cs" />
     <Compile Include="Thumbnail\ThumbnailFactory.cs" />
+    <Compile Include="Thumbnail\ThumbnailManager.cs" />
     <Compile Include="Thumbnail\ThumbnailOverlay.cs">
       <SubType>Form</SubType>
     </Compile>

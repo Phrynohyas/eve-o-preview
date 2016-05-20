@@ -5,9 +5,9 @@ namespace EveOPreview
 {
 	public class ThumbnailFactory
 	{
-		public IThumbnail Create(MainForm parent, IntPtr sourceWindow, string title, Size size)
+		public IThumbnail Create(ThumbnailManager manager, IntPtr sourceWindow, string title, Size size)
 		{
-			return new ThumbnailWindow(parent, sourceWindow, title, size);
+			return new ThumbnailWindow(manager, sourceWindow, title, size);
 		}
 	}
 }
