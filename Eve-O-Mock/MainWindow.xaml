@@ -1,0 +1,10 @@
+﻿<Window x:Class="EveOMock.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Mock " Height="480" Width="640">
+    <Grid x:Name="grid">
+        <Grid.Background>
+            <SolidColorBrush Color="{Binding Background.Color, ElementName=grid}"/>
+        </Grid.Background>
+    </Grid>
+</Window>
