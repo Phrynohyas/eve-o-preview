@@ -6,9 +6,9 @@ using System.IO;
 using System.Windows.Threading;
 using System.Xml.Linq;
 
-namespace EveOPreview
+namespace EveOPreview.Thumbnails
 {
-	public class ThumbnailManager
+	public class ThumbnailManager : IThumbnailManager
 	{
 		private readonly Stopwatch _ignoringSizeSync;
 		private DispatcherTimer _dispatcherTimer;
@@ -25,18 +25,8 @@ namespace EveOPreview
 
 		private readonly Dictionary<string, string> _xmlBadToOkChars;
 
-		private readonly Action<IList<string>> _addThumbnail;
-		private readonly Action<IList<string>> _removeThumbnail;
-		private readonly Action<bool> _setAeroStatus;
-		private readonly Action<int,int> _sizeChange;
-
-		public ThumbnailManager(Action<IList<string>> addThumbnail, Action<IList<string>> removeThumbnail, Action<bool> setAeroStatus, Action<int,int> sizeChange)
+		public ThumbnailManager(IThumbnailFactory factory)
 		{
-			_addThumbnail = addThumbnail;
-			_removeThumbnail = removeThumbnail;
-			_setAeroStatus = setAeroStatus;
-			_sizeChange = sizeChange;
-
 			_ignoringSizeSync = new Stopwatch();
 			_ignoringSizeSync.Start();
 
@@ -67,10 +57,16 @@ namespace EveOPreview
 			this._thumbnailFactory = new ThumbnailFactory();
 		}
 
+		public event Action<IList<IThumbnail>> ThumbnailsAdded;
+		public event Action<IList<IThumbnail>> ThumbnailsUpdated;
+		public event Action<IList<IThumbnail>> ThumbnailsRemoved;
+		public event Action<Size> ThumbnailSizeChanged;
+
 		public void Activate()
 		{
 			this.load_layout();
 			this._dispatcherTimer.Start();
+			this.RefreshThumbnails();
 		}
 
 		public void Deactivate()
@@ -78,13 +74,25 @@ namespace EveOPreview
 			this._dispatcherTimer.Stop();
 		}
 
+		public void SetThumbnailState(IntPtr thumbnailId, bool hideAlways)
+		{
+			IThumbnail thumbnail;
+			if (!this._previews.TryGetValue(thumbnailId, out thumbnail))
+			{
+				return;
+			}
+
+			thumbnail.IsPreviewEnabled = !hideAlways;
+		}
+
 		private void spawn_and_kill_previews()
 		{
 			// TODO Extract this!
 			Process[] processes = Process.GetProcessesByName("ExeFile");
 			List<IntPtr> processHandles = new List<IntPtr>();
-			List<string> addedList=new List<string>();
-			List<string> removedList = new List<string>();
+			List<IThumbnail> addedList = new List<IThumbnail>();
+			List<IThumbnail> updatedList = new List<IThumbnail>();
+			List<IThumbnail> removedList = new List<IThumbnail>();
 			// pop new previews
 
 			foreach (Process process in processes)
@@ -104,7 +112,7 @@ namespace EveOPreview
 					_previews[process.MainWindowHandle].SetWindowFrames(Properties.Settings.Default.show_thumb_frames);
 
 					// add a preview also
-					addedList.Add(_previews[process.MainWindowHandle].GetLabel());
+					addedList.Add(_previews[process.MainWindowHandle]);
 
 					refresh_client_window_locations(process);
 				}
@@ -118,6 +126,7 @@ namespace EveOPreview
 					{
 						_previews[process.MainWindowHandle].RegisterShortcut(value);
 					}
+					updatedList.Add(_previews[process.MainWindowHandle]);
 					refresh_client_window_locations(process);
 				}
 
@@ -129,8 +138,9 @@ namespace EveOPreview
 
 			}
 
-			// TODO Check for empty list
-			_addThumbnail(addedList);
+			// TODO Check for null list
+			this.ThumbnailsAdded?.Invoke(addedList);
+			this.ThumbnailsUpdated?.Invoke(updatedList);
 
 			// clean up old previews
 			List<IntPtr> to_be_pruned = new List<IntPtr>();
@@ -144,13 +154,14 @@ namespace EveOPreview
 
 			foreach (IntPtr processHandle in to_be_pruned)
 			{
-				removedList.Add(_previews[processHandle].GetLabel());
+				removedList.Add(_previews[processHandle]);
 
 				_previews[processHandle].CloseThumbnail();
 				_previews.Remove(processHandle);
 			}
 
-			_removeThumbnail(removedList);
+			// TODO Check for null list
+			this.ThumbnailsRemoved?.Invoke(removedList);
 		}
 
 		private void refresh_client_window_locations(Process process)
@@ -166,11 +177,8 @@ namespace EveOPreview
 		private void dispatcherTimer_Tick(object sender, EventArgs e)
 		{
 			spawn_and_kill_previews();
-			refresh_thumbnails();
+			RefreshThumbnails();
 			if (_ignoringSizeSync.ElapsedMilliseconds > 500) { _ignoringSizeSync.Stop(); };
-
-			// TODO Do this once in 10 seconds
-			_setAeroStatus(DwmApiNativeMethods.DwmIsCompositionEnabled());
 		}
 
 		public void NotifyPreviewSwitch()
@@ -184,21 +192,19 @@ namespace EveOPreview
 		}
 
 
-		public void SyncPreviewSize(Size sync_size)
+		public void SyncPreviewSize(Size size)
 		{
-			if (Properties.Settings.Default.sync_resize &&
-				Properties.Settings.Default.show_thumb_frames &&
-				_ignoringSizeSync.ElapsedMilliseconds > 500)
+			if (Properties.Settings.Default.sync_resize && _ignoringSizeSync.ElapsedMilliseconds > 500)
 			{
 				_ignoringSizeSync.Stop();
 
-				_sizeChange(sync_size.Width, sync_size.Height);
+				this.ThumbnailSizeChanged?.Invoke(size);
 
 				foreach (KeyValuePair<IntPtr, IThumbnail> entry in _previews)
 				{
 					if (entry.Value.IsPreviewHandle(DwmApiNativeMethods.GetForegroundWindow()))
 					{
-						entry.Value.SetSize(sync_size);
+						entry.Value.SetSize(size);
 					}
 				}
 
@@ -206,8 +212,55 @@ namespace EveOPreview
 
 		}
 
+		public void RefreshThumbnails()
+		{
+			IntPtr active_window = DwmApiNativeMethods.GetForegroundWindow();
 
-		public void UpdatePreviewPosition(string preview_title, Point position)
+			// hide, show, resize and move
+			foreach (KeyValuePair<IntPtr, IThumbnail> entry in _previews)
+			{
+				if (!window_is_preview_or_client(active_window) && Properties.Settings.Default.hide_all)
+				{
+					entry.Value.HideThumbnail();
+				}
+				else if (entry.Key == _activeClientHandle && Properties.Settings.Default.hide_active)
+				{
+					entry.Value.HideThumbnail();
+				}
+				else
+				{
+					entry.Value.ShowThumbnail();
+					if (Properties.Settings.Default.unique_layout)
+					{
+						handle_unique_layout(entry.Value, _activeClientTitle);
+					}
+					else
+					{
+						handle_flat_layout(entry.Value);
+					}
+				}
+				entry.Value.IsZoomEnabled = Properties.Settings.Default.zoom_on_hover;
+				entry.Value.IsOverlayEnabled = Properties.Settings.Default.show_overlay;
+				entry.Value.SetOpacity(Properties.Settings.Default.opacity);
+			}
+		}
+
+		public void SetupThumbnailFrames()
+		{
+			if (Properties.Settings.Default.show_thumb_frames)
+			{
+				_ignoringSizeSync.Stop();
+				_ignoringSizeSync.Reset();
+				_ignoringSizeSync.Start();
+			}
+
+			foreach (var thumbnail in _previews)
+			{
+				thumbnail.Value.SetWindowFrames(Properties.Settings.Default.show_thumb_frames);
+			}
+		}
+
+		public void UpdatePreviewPosition(string title, Point position)
 		{
 
 			if (Properties.Settings.Default.unique_layout)
@@ -215,17 +268,17 @@ namespace EveOPreview
 				Dictionary<string, Point> layout;
 				if (_uniqueLayouts.TryGetValue(_activeClientTitle, out layout))
 				{
-					layout[preview_title] = position;
+					layout[title] = position;
 				}
 				else if (_activeClientTitle == "")
 				{
 					_uniqueLayouts[_activeClientTitle] = new Dictionary<string, Point>();
-					_uniqueLayouts[_activeClientTitle][preview_title] = position;
+					_uniqueLayouts[_activeClientTitle][title] = position;
 				}
 			}
 			else
 			{
-				_flatLayout[preview_title] = position;
+				_flatLayout[title] = position;
 			}
 
 		}
@@ -450,58 +503,5 @@ namespace EveOPreview
 			}
 			return active_window_is_right_type;
 		}
-
-		public void refresh_thumbnails()
-		{
-
-			IntPtr active_window = DwmApiNativeMethods.GetForegroundWindow();
-
-			// hide, show, resize and move
-			foreach (KeyValuePair<IntPtr, IThumbnail> entry in _previews)
-			{
-				if (!window_is_preview_or_client(active_window) && Properties.Settings.Default.hide_all)
-				{
-					entry.Value.HideThumbnail();
-				}
-				else if (entry.Key == _activeClientHandle && Properties.Settings.Default.hide_active)
-				{
-					entry.Value.HideThumbnail();
-				}
-				else
-				{
-					entry.Value.ShowThumbnail();
-					if (Properties.Settings.Default.unique_layout)
-					{
-						handle_unique_layout(entry.Value, _activeClientTitle);
-					}
-					else
-					{
-						handle_flat_layout(entry.Value);
-					}
-				}
-				entry.Value.IsZoomEnabled = Properties.Settings.Default.zoom_on_hover;
-				entry.Value.IsOverlayEnabled = Properties.Settings.Default.show_overlay;
-				entry.Value.SetOpacity(Properties.Settings.Default.opacity);
-			}
-
-			DwmApiNativeMethods.DwmIsCompositionEnabled();
-		}
-
-		public void set_frames()
-		{
-			if (Properties.Settings.Default.show_thumb_frames)
-			{
-				_ignoringSizeSync.Stop();
-				_ignoringSizeSync.Reset();
-				_ignoringSizeSync.Start();
-			}
-
-			foreach (var thumbnail in _previews)
-			{
-				thumbnail.Value.SetWindowFrames(Properties.Settings.Default.show_thumb_frames);
-			}
-
-		}
-
 	}
 }

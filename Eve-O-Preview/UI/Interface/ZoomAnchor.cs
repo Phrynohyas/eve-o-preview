@@ -1,4 +1,4 @@
-namespace EveOPreview
+namespace EveOPreview.UI
 {
 	public enum ZoomAnchor
 	{

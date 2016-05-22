@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
 
-namespace EveOPreview
+namespace EveOPreview.Thumbnails
 {
 	public interface IThumbnail
 	{
+		IntPtr Id { get; }
+
 		bool IsZoomEnabled { get; set; }
 		bool IsPreviewEnabled { get; set; }
 		bool IsOverlayEnabled { get; set; }
@@ -17,6 +19,7 @@ namespace EveOPreview
 
 		void RegisterShortcut(string shortcut);
 
+		// TODO Turn this into a property
 		void SetLabel(string label);
 		string GetLabel();
 

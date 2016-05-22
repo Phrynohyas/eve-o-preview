@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace EveOPreview
+namespace EveOPreview.Thumbnails
 {
 	public partial class ThumbnailOverlay : Form
 	{

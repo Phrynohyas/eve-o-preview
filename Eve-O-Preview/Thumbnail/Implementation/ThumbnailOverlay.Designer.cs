@@ -1,4 +1,4 @@
-﻿namespace EveOPreview
+﻿namespace EveOPreview.Thumbnails
 {
     partial class ThumbnailOverlay
     {

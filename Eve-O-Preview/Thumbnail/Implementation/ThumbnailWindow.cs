@@ -1,15 +1,17 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using EveOPreview.Configuration;
+using EveOPreview.UI;
 
-namespace EveOPreview
+namespace EveOPreview.Thumbnails
 {
 	public partial class ThumbnailWindow : Form, IThumbnail
 	{
 		#region Private fields
 		private readonly bool _isInitializing;
 		private readonly IntPtr _sourceWindow;
-		private readonly ThumbnailManager _manager;
+		private readonly IThumbnailManager _manager;
 		private readonly ThumbnailOverlay _overlay;
 		private Hotkey _hotkey; // This field stores the hotkey reference
 
@@ -26,7 +28,7 @@ namespace EveOPreview
 		#endregion
 
 		// This constructor should never be used directly
-		public ThumbnailWindow(ThumbnailManager manager, IntPtr sourceWindow, string title, Size size)
+		public ThumbnailWindow(IThumbnailManager manager, IntPtr sourceWindow, string title, Size size)
 		{
 			this._isInitializing = true;
 
@@ -50,6 +52,14 @@ namespace EveOPreview
 			this._isInitializing = false;
 
 			this.SetSize(size);
+		}
+
+		public IntPtr Id
+		{
+			get
+			{
+				return this._sourceWindow;
+			}
 		}
 
 		public bool IsZoomEnabled { get; set; }
@@ -348,9 +358,6 @@ namespace EveOPreview
 			this._Thumbnail.opacity = 255;
 			this._Thumbnail.fVisible = true;
 			this._Thumbnail.fSourceClientAreaOnly = true;
-			this._Thumbnail.rcDestination = new RECT(0, 0, this.ClientRectangle.Right, this.ClientRectangle.Bottom);
-
-			DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._ThumbnailHandle, this._Thumbnail);
 
 			this._isThumbnailSetUp = true;
 		}

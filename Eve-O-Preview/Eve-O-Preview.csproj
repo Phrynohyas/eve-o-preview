@@ -90,10 +90,11 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <Reference Include="LightInject, Version=4.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LightInject.4.0.9\lib\net45\LightInject.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -103,39 +104,57 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationBase\ApplicationController.cs" />
+    <Compile Include="ApplicationBase\IApplicationController.cs" />
+    <Compile Include="ApplicationBase\IIocContainer.cs" />
+    <Compile Include="ApplicationBase\IPresenterGeneric.cs" />
+    <Compile Include="ApplicationBase\LightInjectContainer.cs" />
+    <Compile Include="ApplicationBase\Presenter.cs" />
+    <Compile Include="ApplicationBase\PresenterGeneric.cs" />
     <Compile Include="DwmAPI\DWM_BLURBEHIND.cs" />
     <Compile Include="DwmAPI\DWM_THUMBNAIL_PROPERTIES.cs" />
     <Compile Include="DwmAPI\DWM_TNP_CONSTANTS.cs" />
     <Compile Include="DwmAPI\MARGINS.cs" />
     <Compile Include="DwmAPI\RECT.cs" />
     <Compile Include="GUI\ClientLocation.cs" />
-    <Compile Include="GUI\ZoomAnchor.cs" />
+    <Compile Include="ApplicationBase\IPresenter.cs" />
+    <Compile Include="Presentation\MainPresenter.cs" />
+    <Compile Include="Presentation\ViewCloseRequest.cs" />
+    <Compile Include="Thumbnail\Interface\IThumbnailFactory.cs" />
+    <Compile Include="Thumbnail\Interface\IThumbnailManager.cs" />
+    <Compile Include="UI\Implementation\ThumbnailDescriptionView.cs" />
+    <Compile Include="UI\Implementation\ThumbnailDescriptionViewFactory.cs" />
+    <Compile Include="UI\Interface\IMainView.cs" />
+    <Compile Include="ApplicationBase\IView.cs" />
+    <Compile Include="UI\Interface\IThumbnailDescriptionView.cs" />
+    <Compile Include="UI\Interface\IThumbnailDescriptionViewFactory.cs" />
+    <Compile Include="UI\Interface\ZoomAnchor.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Hotkeys\Hotkey.cs" />
     <Compile Include="Hotkeys\HotkeyNativeMethods.cs" />
-    <Compile Include="GUI\MainForm.cs">
+    <Compile Include="UI\Implementation\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\MainForm.Designer.cs">
+    <Compile Include="UI\Implementation\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\ConfigurationStorage.cs" />
-    <Compile Include="Thumbnail\IThumbnail.cs" />
-    <Compile Include="Thumbnail\ThumbnailFactory.cs" />
-    <Compile Include="Thumbnail\ThumbnailManager.cs" />
-    <Compile Include="Thumbnail\ThumbnailOverlay.cs">
+    <Compile Include="Thumbnail\Interface\IThumbnail.cs" />
+    <Compile Include="Thumbnail\Implementation\ThumbnailFactory.cs" />
+    <Compile Include="Thumbnail\Implementation\ThumbnailManager.cs" />
+    <Compile Include="Thumbnail\Implementation\ThumbnailOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Thumbnail\ThumbnailOverlay.Designer.cs">
+    <Compile Include="Thumbnail\Implementation\ThumbnailOverlay.Designer.cs">
       <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="GUI\MainForm.resx">
+    <EmbeddedResource Include="UI\Implementation\MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Thumbnail\ThumbnailOverlay.resx">
+    <EmbeddedResource Include="Thumbnail\Implementation\ThumbnailOverlay.resx">
       <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -143,7 +162,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Thumbnail\ThumbnailWindow.resx">
+    <EmbeddedResource Include="Thumbnail\Implementation\ThumbnailWindow.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ThumbnailWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -155,6 +174,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -164,10 +184,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Thumbnail\ThumbnailWindow.cs">
+    <Compile Include="Thumbnail\Implementation\ThumbnailWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Thumbnail\ThumbnailWindow.Designer.cs">
+    <Compile Include="Thumbnail\Implementation\ThumbnailWindow.Designer.cs">
       <DependentUpon>ThumbnailWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="DwmAPI\DwmApiNativeMethods.cs" />
@@ -200,6 +220,7 @@
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
