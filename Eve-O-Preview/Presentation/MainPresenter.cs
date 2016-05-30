@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using EveOPreview.Thumbnails;
 
 namespace EveOPreview.UI
 {
@@ -78,7 +77,7 @@ namespace EveOPreview.UI
 
 		private void UpdateThumbnailsSize()
 		{
-			this._manager.SyncPreviewSize(new Size(this.View.ThumbnailsWidth, this.View.ThumbnailsHeight));
+			this._manager.SetThumbnailsSize(new Size(this.View.ThumbnailsWidth, this.View.ThumbnailsHeight));
 			this.SaveApplicationSettings();
 		}
 
@@ -134,29 +133,29 @@ namespace EveOPreview.UI
 			this._manager.RefreshThumbnails();
 		}
 
-		private void ThumbnailsAdded(IList<IThumbnail> thumbnails)
+		private void ThumbnailsAdded(IList<IThumbnailView> thumbnails)
 		{
 			this.View.AddThumbnails(this.GetThumbnailViews(thumbnails, false));
 		}
 
-		private void ThumbnailsUpdated(IList<IThumbnail> thumbnails)
+		private void ThumbnailsUpdated(IList<IThumbnailView> thumbnails)
 		{
 			this.View.UpdateThumbnails(this.GetThumbnailViews(thumbnails, false));
 		}
 
-		private void ThumbnailsRemoved(IList<IThumbnail> thumbnails)
+		private void ThumbnailsRemoved(IList<IThumbnailView> thumbnails)
 		{
 			this.View.RemoveThumbnails(this.GetThumbnailViews(thumbnails, true));
 		}
 
-		private IList<IThumbnailDescriptionView> GetThumbnailViews(IList<IThumbnail> thumbnails, bool removeFromCache)
+		private IList<IThumbnailDescriptionView> GetThumbnailViews(IList<IThumbnailView> thumbnails, bool removeFromCache)
 		{
 			IList<IThumbnailDescriptionView> thumbnailViews = new List<IThumbnailDescriptionView>(thumbnails.Count);
 
 			// Time for some thread safety
 			lock (this._thumbnailViews)
 			{
-				foreach (IThumbnail thumbnail in thumbnails)
+				foreach (IThumbnailView thumbnail in thumbnails)
 				{
 					IThumbnailDescriptionView thumbnailView;
 					bool foundInCache = this._thumbnailViews.TryGetValue(thumbnail.Id, out thumbnailView);
@@ -169,7 +168,7 @@ namespace EveOPreview.UI
 							continue;
 						}
 
-						thumbnailView = this._thumbnailDescriptionViewFactory.Create(thumbnail.Id, thumbnail.GetLabel());
+						thumbnailView = this._thumbnailDescriptionViewFactory.Create(thumbnail.Id, thumbnail.Title, !thumbnail.IsEnabled);
 						this._thumbnailViews.Add(thumbnail.Id, thumbnailView);
 					}
 					else
@@ -180,7 +179,7 @@ namespace EveOPreview.UI
 						}
 						else
 						{
-							thumbnailView.Title = thumbnail.GetLabel();
+							thumbnailView.Title = thumbnail.Title;
 						}
 					}
 
@@ -196,9 +195,9 @@ namespace EveOPreview.UI
 			this.View.UpdateThumbnailsSizeView(size);
 		}
 
-		private void UpdateThumbnailState(IntPtr thumbnailId, bool hideAlways)
+		private void UpdateThumbnailState(IntPtr thumbnailId)
 		{
-			this._manager.SetThumbnailState(thumbnailId, hideAlways);
+			this._manager.SetThumbnailState(thumbnailId, this._thumbnailViews[thumbnailId].IsDisabled);
 		}
 
 		private void OpenForumUrlLink()

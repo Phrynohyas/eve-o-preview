@@ -46,7 +46,7 @@ namespace EveOPreview.UI
 		event Action<ViewCloseRequest> FormCloseRequested;
 		event Action ApplicationSettingsChanged;
 		event Action ThumbnailsSizeChanged;
-		event Action<IntPtr, Boolean> ThumbnailStateChanged;
+		event Action<IntPtr> ThumbnailStateChanged;
 		event Action ForumUrlLinkActivated;
 	}
 }

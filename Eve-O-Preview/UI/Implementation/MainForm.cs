@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Globalization;
-using EveOPreview.Configuration;
-using EveOPreview.Thumbnails;
 
 namespace EveOPreview.UI
 {
@@ -312,7 +309,7 @@ namespace EveOPreview.UI
 		public event Action<ViewCloseRequest> FormCloseRequested;
 		public event Action ApplicationSettingsChanged;
 		public event Action ThumbnailsSizeChanged;
-		public event Action<IntPtr, Boolean> ThumbnailStateChanged;
+		public event Action<IntPtr> ThumbnailStateChanged;
 		public event Action ForumUrlLinkActivated;
 
 		#region UI events
@@ -343,8 +340,9 @@ namespace EveOPreview.UI
 			{
 				return;
 			}
+			selectedItem.IsDisabled = (e.NewValue == CheckState.Checked);
 
-			this.ThumbnailStateChanged?.Invoke(selectedItem.Id, e.NewValue == CheckState.Checked);
+			this.ThumbnailStateChanged?.Invoke(selectedItem.Id);
 		}
 
 		private void ForumLinkLabelClicked_Handler(object sender, LinkLabelLinkClickedEventArgs e)

@@ -19,12 +19,13 @@ namespace EveOPreview
 			// UI classes
 			IApplicationController controller = new ApplicationController(container)
 				.RegisterView<IMainView, MainForm>()
+				.RegisterView<IThumbnailView, ThumbnailView>()
 				.RegisterView<IThumbnailDescriptionView, ThumbnailDescriptionView>()
 				.RegisterInstance(new ApplicationContext());
 
 			// Application services
-			controller.RegisterService<EveOPreview.Thumbnails.IThumbnailFactory, EveOPreview.Thumbnails.ThumbnailFactory>()
-				.RegisterService<EveOPreview.Thumbnails.IThumbnailManager, EveOPreview.Thumbnails.ThumbnailManager>()
+			controller.RegisterService<IThumbnailManager, ThumbnailManager>()
+				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
 				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>();
 
 			controller.Run<EveOPreview.UI.MainPresenter>();

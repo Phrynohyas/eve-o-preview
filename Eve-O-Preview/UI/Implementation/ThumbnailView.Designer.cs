@@ -1,6 +1,6 @@
-namespace EveOPreview.Thumbnails
+namespace EveOPreview.UI
 {
-    partial class ThumbnailWindow
+    partial class ThumbnailView
     {
         /// <summary>
         /// Required designer variable.
@@ -31,11 +31,11 @@ namespace EveOPreview.Thumbnails
 			this.RenderAreaPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.RenderAreaPictureBox.TabIndex = 0;
 			this.RenderAreaPictureBox.TabStop = false;
-			this.RenderAreaPictureBox.MouseLeave += new System.EventHandler(this.Preview_MouseLeave);
-			this.RenderAreaPictureBox.MouseHover += new System.EventHandler(this.Preview_MouseHover);
-			this.RenderAreaPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Preview_Click);
+			this.RenderAreaPictureBox.MouseLeave += new System.EventHandler(this.LostFocus_Handler);
+			this.RenderAreaPictureBox.MouseHover += new System.EventHandler(this.Focused_Handler);
+			this.RenderAreaPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ThumbnailActivated_Handler);
 			// 
-			// Preview
+			// ThumbnailView
 			// 
 			this.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -47,12 +47,14 @@ namespace EveOPreview.Thumbnails
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(64, 64);
-			this.Name = "ThumbnailWindow";
+			this.Name = "ThumbnailView";
 			this.Opacity = 0.1D;
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Preview";
 			this.TopMost = true;
+			this.Move += new System.EventHandler(this.Move_Handler);
+			this.Resize += new System.EventHandler(this.Resize_Handler);
 			((System.ComponentModel.ISupportInitialize)(this.RenderAreaPictureBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

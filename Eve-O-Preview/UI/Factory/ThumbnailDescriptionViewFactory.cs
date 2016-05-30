@@ -11,12 +11,13 @@ namespace EveOPreview.UI
 			this._controller = controller;
 		}
 
-		public IThumbnailDescriptionView Create(IntPtr id, string title)
+		public IThumbnailDescriptionView Create(IntPtr id, string title, bool isDisabled)
 		{
 			IThumbnailDescriptionView view = this._controller.Create<IThumbnailDescriptionView>();
 
 			view.Id = id;
 			view.Title = title;
+			view.IsDisabled = isDisabled;
 
 			return view;
 		}

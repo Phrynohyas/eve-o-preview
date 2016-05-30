@@ -8,6 +8,8 @@ namespace EveOPreview.UI
 
 		public string Title { get; set; }
 
+		public bool IsDisabled { get; set; }
+
 		public void Show()
 		{
 		}

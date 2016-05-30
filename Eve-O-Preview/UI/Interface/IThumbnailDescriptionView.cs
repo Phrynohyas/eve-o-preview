@@ -6,5 +6,6 @@ namespace EveOPreview.UI
 	{
 		IntPtr Id { get; set; }
 		string Title { get; set; }
+		bool IsDisabled { get; set; }
 	}
 }
