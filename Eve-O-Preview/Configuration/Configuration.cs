@@ -1,4 +1,4 @@
-﻿namespace EveOPreview
+﻿namespace EveOPreview.Configuration
 {
 	public class Configuration
 	{

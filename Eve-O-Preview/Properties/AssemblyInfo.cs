@@ -12,10 +12,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("04f08f8d-9e98-423b-acdb-4effb31c0d35")]
-[assembly: AssemblyVersion("1.18.0.0")]
-[assembly: AssemblyFileVersion("1.18.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
 
 // Provide your own key name to build the app locally
-[assembly: AssemblyKeyName("Phrynohyas")]
+// TODO Reenable signing
+//[assembly: AssemblyKeyName("Phrynohyas")]
 
 [assembly: CLSCompliant(true)]

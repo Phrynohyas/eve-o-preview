@@ -1,4 +1,4 @@
-﻿namespace EveOPreview.Managers
+﻿namespace EveOPreview.Configuration
 {
 	public class ConfigurationStorage
 	{
