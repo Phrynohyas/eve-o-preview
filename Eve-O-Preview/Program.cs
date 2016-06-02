@@ -28,7 +28,8 @@ namespace EveOPreview
 			controller.RegisterService<IThumbnailManager, ThumbnailManager>()
 				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
 				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
-				.RegisterService<IApplicationConfiguration, ApplicationConfiguration>();
+				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
+				.RegisterInstance<IApplicationConfiguration>(new ApplicationConfiguration());
 
 			controller.Run<EveOPreview.UI.MainPresenter>();
 		}

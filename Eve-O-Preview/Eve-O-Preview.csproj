@@ -94,6 +94,10 @@
       <HintPath>..\packages\LightInject.4.0.9\lib\net45\LightInject.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -111,6 +115,7 @@
     <Compile Include="ApplicationBase\LightInjectContainer.cs" />
     <Compile Include="ApplicationBase\Presenter.cs" />
     <Compile Include="ApplicationBase\PresenterGeneric.cs" />
+    <Compile Include="Configuration\ConfigurationStorage.cs" />
     <Compile Include="Configuration\IApplicationConfiguration.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
     <Compile Include="DwmAPI\DWM_BLURBEHIND.cs" />
@@ -122,6 +127,7 @@
     <Compile Include="ApplicationBase\IPresenter.cs" />
     <Compile Include="Presentation\MainPresenter.cs" />
     <Compile Include="Presentation\ViewCloseRequest.cs" />
+    <Compile Include="Presentation\ViewZoomAnchorConverter.cs" />
     <Compile Include="UI\Interface\IThumbnailViewFactory.cs" />
     <Compile Include="Presentation\IThumbnailManager.cs" />
     <Compile Include="UI\Implementation\ThumbnailDescriptionView.cs" />
@@ -140,7 +146,7 @@
     <Compile Include="UI\Implementation\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\ConfigurationStorage.cs" />
+    <Compile Include="Configuration\IConfigurationStorage.cs" />
     <Compile Include="UI\Interface\IThumbnailView.cs" />
     <Compile Include="UI\Factory\ThumbnailViewFactory.cs" />
     <Compile Include="Presentation\ThumbnailManager.cs" />
@@ -177,15 +183,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Compile Include="UI\Implementation\ThumbnailView.cs">
       <SubType>Form</SubType>
     </Compile>

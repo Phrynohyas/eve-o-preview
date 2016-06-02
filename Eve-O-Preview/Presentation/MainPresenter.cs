@@ -2,26 +2,37 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using EveOPreview.Configuration;
 
 namespace EveOPreview.UI
 {
 	public class MainPresenter : Presenter<IMainView>
 	{
+		#region Private constants
 		private const string ForumUrl = @"https://forums.eveonline.com/default.aspx?g=posts&t=389086";
+		#endregion
 
+		#region Private fields
+		private readonly IApplicationConfiguration _configuration;
+		private readonly IConfigurationStorage _configurationStorage;
 		private readonly IThumbnailDescriptionViewFactory _thumbnailDescriptionViewFactory;
-		private readonly IThumbnailManager _manager;
-		private readonly IDictionary<IntPtr, IThumbnailDescriptionView> _thumbnailViews;
+		private readonly IDictionary<IntPtr, IThumbnailDescriptionView> _thumbnailDescriptionViews;
+		private readonly IThumbnailManager _thumbnailManager;
 
 		private bool _exitApplication;
+		#endregion
 
-		public MainPresenter(IApplicationController controller, IMainView view, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory, IThumbnailManager manager)
+		public MainPresenter(IApplicationController controller, IMainView view, IApplicationConfiguration configuration, IConfigurationStorage configurationStorage,
+																IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory, IThumbnailManager thumbnailManager)
 			: base(controller, view)
 		{
-			this._thumbnailDescriptionViewFactory = thumbnailDescriptionViewFactory;
-			this._manager = manager;
+			this._configuration = configuration;
+			this._configurationStorage = configurationStorage;
 
-			this._thumbnailViews = new Dictionary<IntPtr, IThumbnailDescriptionView>();
+			this._thumbnailDescriptionViewFactory = thumbnailDescriptionViewFactory;
+			this._thumbnailManager = thumbnailManager;
+
+			this._thumbnailDescriptionViews = new Dictionary<IntPtr, IThumbnailDescriptionView>();
 			this._exitApplication = false;
 
 			this.View.ApplicationExitRequested += ExitApplication;
@@ -33,10 +44,10 @@ namespace EveOPreview.UI
 			this.View.ThumbnailStateChanged += UpdateThumbnailState;
 			this.View.ForumUrlLinkActivated += OpenForumUrlLink;
 
-			this._manager.ThumbnailsAdded += ThumbnailsAdded;
-			this._manager.ThumbnailsUpdated += ThumbnailsUpdated;
-			this._manager.ThumbnailsRemoved += ThumbnailsRemoved;
-			this._manager.ThumbnailSizeChanged += ThumbnailSizeChanged;
+			this._thumbnailManager.ThumbnailsAdded += ThumbnailsAdded;
+			this._thumbnailManager.ThumbnailsUpdated += ThumbnailsUpdated;
+			this._thumbnailManager.ThumbnailsRemoved += ThumbnailsRemoved;
+			this._thumbnailManager.ThumbnailSizeChanged += ThumbnailSizeChanged;
 		}
 
 		private void ExitApplication()
@@ -50,7 +61,7 @@ namespace EveOPreview.UI
 			this.LoadApplicationSettings();
 			this.View.SetForumUrl(MainPresenter.ForumUrl);
 
-			this._manager.Activate();
+			this._thumbnailManager.Activate();
 		}
 
 		private void Minimize()
@@ -77,60 +88,65 @@ namespace EveOPreview.UI
 
 		private void UpdateThumbnailsSize()
 		{
-			this._manager.SetThumbnailsSize(new Size(this.View.ThumbnailsWidth, this.View.ThumbnailsHeight));
+			this._thumbnailManager.SetThumbnailsSize(new Size(this.View.ThumbnailsWidth, this.View.ThumbnailsHeight));
 			this.SaveApplicationSettings();
 		}
 
 		private void LoadApplicationSettings()
 		{
-			this.View.MinimizeToTray = Properties.Settings.Default.minimizeToTray;
-			this.View.ThumbnailsOpacity = Properties.Settings.Default.opacity;
-			this.View.EnableClientsLocationTracking = Properties.Settings.Default.track_client_windows;
-			this.View.HideActiveClientThumbnail = Properties.Settings.Default.hide_active;
-			this.View.ShowThumbnailsAlwaysOnTop = Properties.Settings.Default.always_on_top;
-			this.View.HideThumbnailsOnLostFocus = Properties.Settings.Default.hide_all;
-			this.View.EnableUniqueThumbnailsLayouts = Properties.Settings.Default.unique_layout;
+			this._configurationStorage.Load();
 
-			this.View.SyncThumbnailsSize = Properties.Settings.Default.sync_resize;
-			this.View.ThumbnailsWidth = (int)Properties.Settings.Default.sync_resize_x;
-			this.View.ThumbnailsHeight = (int)Properties.Settings.Default.sync_resize_y;
+			this.View.MinimizeToTray = this._configuration.MinimizeToTray;
 
-			this.View.EnableZoomOnHover = Properties.Settings.Default.zoom_on_hover;
-			this.View.ZoomFactor = (int)Properties.Settings.Default.zoom_amount;
-			this.View.ZoomAnchor = (ViewZoomAnchor)Properties.Settings.Default.zoom_anchor;
+			this.View.ThumbnailsOpacity = this._configuration.ThumbnailsOpacity;
 
-			this.View.ShowThumbnailFrames = Properties.Settings.Default.show_thumb_frames;
-			this.View.ShowThumbnailOverlays = Properties.Settings.Default.show_overlay;
+			this.View.EnableClientsLocationTracking = this._configuration.EnableClientsLocationTracking;
+			this.View.HideActiveClientThumbnail = this._configuration.HideActiveClientThumbnail;
+			this.View.ShowThumbnailsAlwaysOnTop = this._configuration.ShowThumbnailsAlwaysOnTop;
+			this.View.HideThumbnailsOnLostFocus = this._configuration.HideThumbnailsOnLostFocus;
+			this.View.EnablePerClientThumbnailsLayouts = this._configuration.EnablePerClientThumbnailsLayouts;
+
+			this.View.SyncThumbnailsSize = this._configuration.SyncThumbnailsSize;
+			this.View.ThumbnailsWidth = this._configuration.ThumbnailsWidth;
+			this.View.ThumbnailsHeight = this._configuration.ThumbnailsHeight;
+
+			this.View.EnableThumbnailZoom = this._configuration.EnableThumbnailZoom;
+			this.View.ThumbnailZoomFactor = this._configuration.ThumbnailZoomFactor;
+			this.View.ThumbnailZoomAnchor = ViewZoomAnchorConverter.Convert(this._configuration.ThumbnailZoomAnchor);
+
+			this.View.ShowThumbnailOverlays = this._configuration.ShowThumbnailOverlays;
+			this.View.ShowThumbnailFrames = this._configuration.ShowThumbnailFrames;
 		}
 
 		private void SaveApplicationSettings()
 		{
-			Properties.Settings.Default.minimizeToTray = this.View.MinimizeToTray;
+			this._configuration.MinimizeToTray = this.View.MinimizeToTray;
 
-			Properties.Settings.Default.opacity = (float)this.View.ThumbnailsOpacity;
-			Properties.Settings.Default.track_client_windows = this.View.EnableClientsLocationTracking;
-			Properties.Settings.Default.hide_active = this.View.HideActiveClientThumbnail;
-			Properties.Settings.Default.always_on_top = this.View.ShowThumbnailsAlwaysOnTop;
-			Properties.Settings.Default.hide_all = this.View.HideThumbnailsOnLostFocus;
-			Properties.Settings.Default.unique_layout = this.View.EnableUniqueThumbnailsLayouts;
+			this._configuration.ThumbnailsOpacity = (float)this.View.ThumbnailsOpacity;
 
-			Properties.Settings.Default.sync_resize = this.View.SyncThumbnailsSize;
-			Properties.Settings.Default.sync_resize_x = (uint)this.View.ThumbnailsWidth;
-			Properties.Settings.Default.sync_resize_y = (uint)this.View.ThumbnailsHeight;
+			this._configuration.EnableClientsLocationTracking = this.View.EnableClientsLocationTracking;
+			this._configuration.HideActiveClientThumbnail = this.View.HideActiveClientThumbnail;
+			this._configuration.ShowThumbnailsAlwaysOnTop = this.View.ShowThumbnailsAlwaysOnTop;
+			this._configuration.HideThumbnailsOnLostFocus = this.View.HideThumbnailsOnLostFocus;
+			this._configuration.EnablePerClientThumbnailsLayouts = this.View.EnablePerClientThumbnailsLayouts;
 
-			Properties.Settings.Default.zoom_on_hover = this.View.EnableZoomOnHover;
-			Properties.Settings.Default.zoom_amount = this.View.ZoomFactor;
-			Properties.Settings.Default.zoom_anchor = (byte)this.View.ZoomAnchor;
+			this._configuration.SyncThumbnailsSize = this.View.SyncThumbnailsSize;
+			this._configuration.ThumbnailsWidth = this.View.ThumbnailsWidth;
+			this._configuration.ThumbnailsHeight = this.View.ThumbnailsHeight;
 
-			Properties.Settings.Default.show_overlay = this.View.ShowThumbnailOverlays;
-			Properties.Settings.Default.show_thumb_frames = this.View.ShowThumbnailFrames;
+			this._configuration.EnableThumbnailZoom = this.View.EnableThumbnailZoom;
+			this._configuration.ThumbnailZoomFactor = this.View.ThumbnailZoomFactor;
+			this._configuration.ThumbnailZoomAnchor = ViewZoomAnchorConverter.Convert(this.View.ThumbnailZoomAnchor);
 
-			Properties.Settings.Default.Save();
+			this._configuration.ShowThumbnailOverlays = this.View.ShowThumbnailOverlays;
+			this._configuration.ShowThumbnailFrames = this.View.ShowThumbnailFrames;
+
+			this._configurationStorage.Save();
 
 			this.View.UpdateZoomSettingsView();
 
-			this._manager.SetupThumbnailFrames();
-			this._manager.RefreshThumbnails();
+			this._thumbnailManager.SetupThumbnailFrames();
+			this._thumbnailManager.RefreshThumbnails();
 		}
 
 		private void ThumbnailsAdded(IList<IThumbnailView> thumbnails)
@@ -153,12 +169,12 @@ namespace EveOPreview.UI
 			IList<IThumbnailDescriptionView> thumbnailViews = new List<IThumbnailDescriptionView>(thumbnails.Count);
 
 			// Time for some thread safety
-			lock (this._thumbnailViews)
+			lock (this._thumbnailDescriptionViews)
 			{
 				foreach (IThumbnailView thumbnail in thumbnails)
 				{
 					IThumbnailDescriptionView thumbnailView;
-					bool foundInCache = this._thumbnailViews.TryGetValue(thumbnail.Id, out thumbnailView);
+					bool foundInCache = this._thumbnailDescriptionViews.TryGetValue(thumbnail.Id, out thumbnailView);
 
 					if (!foundInCache)
 					{
@@ -169,13 +185,13 @@ namespace EveOPreview.UI
 						}
 
 						thumbnailView = this._thumbnailDescriptionViewFactory.Create(thumbnail.Id, thumbnail.Title, !thumbnail.IsEnabled);
-						this._thumbnailViews.Add(thumbnail.Id, thumbnailView);
+						this._thumbnailDescriptionViews.Add(thumbnail.Id, thumbnailView);
 					}
 					else
 					{
 						if (removeFromCache)
 						{
-							this._thumbnailViews.Remove(thumbnail.Id);
+							this._thumbnailDescriptionViews.Remove(thumbnail.Id);
 						}
 						else
 						{
@@ -197,7 +213,7 @@ namespace EveOPreview.UI
 
 		private void UpdateThumbnailState(IntPtr thumbnailId)
 		{
-			this._manager.SetThumbnailState(thumbnailId, this._thumbnailViews[thumbnailId].IsDisabled);
+			this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
 		}
 
 		private void OpenForumUrlLink()

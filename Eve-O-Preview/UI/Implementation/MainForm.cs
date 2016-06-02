@@ -9,14 +9,14 @@ namespace EveOPreview.UI
 	{
 		private readonly ApplicationContext _context;
 		private readonly Dictionary<ViewZoomAnchor, RadioButton> _zoomAnchorMap;
-		private ViewZoomAnchor _cachedZoomAnchor;
+		private ViewZoomAnchor _cachedThumbnailZoomAnchor;
 		private bool _suppressEvents;
 
 		public MainForm(ApplicationContext context)
 		{
 			this._context = context;
 			this._zoomAnchorMap = new Dictionary<ViewZoomAnchor, RadioButton>();
-			this._cachedZoomAnchor = ViewZoomAnchor.NW;
+			this._cachedThumbnailZoomAnchor = ViewZoomAnchor.NW;
 			this._suppressEvents = false;
 
 			InitializeComponent();
@@ -98,15 +98,15 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public bool EnableUniqueThumbnailsLayouts
+		public bool EnablePerClientThumbnailsLayouts
 		{
 			get
 			{
-				return this.EnableUniqueThumbnailsLayoutsCheckBox.Checked;
+				return this.EnablePerClientThumbnailsLayoutsCheckBox.Checked;
 			}
 			set
 			{
-				this.EnableUniqueThumbnailsLayoutsCheckBox.Checked = value;
+				this.EnablePerClientThumbnailsLayoutsCheckBox.Checked = value;
 			}
 		}
 
@@ -146,38 +146,38 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public bool EnableZoomOnHover
+		public bool EnableThumbnailZoom
 		{
 			get
 			{
-				return this.EnableZoomOnHoverCheckBox.Checked;
+				return this.EnableThumbnailZoomCheckBox.Checked;
 			}
 			set
 			{
-				this.EnableZoomOnHoverCheckBox.Checked = value;
+				this.EnableThumbnailZoomCheckBox.Checked = value;
 				this.UpdateZoomSettingsView();
 			}
 		}
 
-		public int ZoomFactor
+		public int ThumbnailZoomFactor
 		{
 			get
 			{
-				return (int)this.ZoomFactorNumericEdit.Value;
+				return (int)this.ThumbnailZoomFactorNumericEdit.Value;
 			}
 			set
 			{
-				this.ZoomFactorNumericEdit.Value = value;
+				this.ThumbnailZoomFactorNumericEdit.Value = value;
 			}
 		}
 
-		public ViewZoomAnchor ZoomAnchor
+		public ViewZoomAnchor ThumbnailZoomAnchor
 		{
 			get
 			{
-				if (this._zoomAnchorMap[this._cachedZoomAnchor].Checked)
+				if (this._zoomAnchorMap[this._cachedThumbnailZoomAnchor].Checked)
 				{
-					return this._cachedZoomAnchor;
+					return this._cachedThumbnailZoomAnchor;
 				}
 
 				foreach (KeyValuePair<ViewZoomAnchor, RadioButton> valuePair in this._zoomAnchorMap)
@@ -187,8 +187,8 @@ namespace EveOPreview.UI
 						continue;
 					}
 
-					this._cachedZoomAnchor = valuePair.Key;
-					return this._cachedZoomAnchor;
+					this._cachedThumbnailZoomAnchor = valuePair.Key;
+					return this._cachedThumbnailZoomAnchor;
 				}
 
 				// Default value
@@ -196,8 +196,8 @@ namespace EveOPreview.UI
 			}
 			set
 			{
-				this._cachedZoomAnchor = value;
-				this._zoomAnchorMap[this._cachedZoomAnchor].Checked = true;
+				this._cachedThumbnailZoomAnchor = value;
+				this._zoomAnchorMap[this._cachedThumbnailZoomAnchor].Checked = true;
 			}
 		}
 
@@ -298,8 +298,8 @@ namespace EveOPreview.UI
 
 		public void UpdateZoomSettingsView()
 		{
-			bool enableControls = this.EnableZoomOnHover;
-			this.ZoomFactorNumericEdit.Enabled = enableControls;
+			bool enableControls = this.EnableThumbnailZoom;
+			this.ThumbnailZoomFactorNumericEdit.Enabled = enableControls;
 			this.ZoomAnchorPanel.Enabled = enableControls;
 		}
 

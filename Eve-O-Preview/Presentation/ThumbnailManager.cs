@@ -11,9 +11,13 @@ namespace EveOPreview.UI
 {
 	public class ThumbnailManager : IThumbnailManager
 	{
+		#region Private constants
 		private const string ClientProcessName = "ExeFile";
 		private const string DefaultThumbnailTitle = "...";
+		#endregion
 
+		#region Private fields
+		private readonly IApplicationConfiguration _configuration;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
@@ -34,10 +38,11 @@ namespace EveOPreview.UI
 
 		// TODO To be removed
 		private readonly Dictionary<string, string> _xmlBadToOkChars;
+		#endregion
 
-		// TODO Drop dependency on the configuration object
-		public ThumbnailManager(IThumbnailViewFactory factory)
+		public ThumbnailManager(IApplicationConfiguration configuration, IThumbnailViewFactory factory)
 		{
+			this._configuration = configuration;
 			this._thumbnailViewFactory = factory;
 
 			this._activeClientHandle = (IntPtr)0;
@@ -115,11 +120,10 @@ namespace EveOPreview.UI
 			this.EnableViewEvents();
 		}
 
-		// TODO Drop dependency on the configuration object
 		public void RefreshThumbnails()
 		{
 			IntPtr foregroundWindowHandle = DwmApiNativeMethods.GetForegroundWindow();
-			Boolean hideAllThumbnails = (Properties.Settings.Default.hide_all && !this.IsClientWindowActive(foregroundWindowHandle)) || !DwmApiNativeMethods.DwmIsCompositionEnabled();
+			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && !this.IsClientWindowActive(foregroundWindowHandle)) || !DwmApiNativeMethods.DwmIsCompositionEnabled();
 
 			this.DisableViewEvents();
 
@@ -137,7 +141,7 @@ namespace EveOPreview.UI
 					continue;
 				}
 
-				if (view.Id == this._activeClientHandle && Properties.Settings.Default.hide_active)
+				if (this._configuration.HideActiveClientThumbnail && (view.Id == this._activeClientHandle))
 				{
 					if (view.IsActive)
 					{
@@ -146,7 +150,7 @@ namespace EveOPreview.UI
 					continue;
 				}
 
-				if (Properties.Settings.Default.unique_layout)
+				if (this._configuration.EnablePerClientThumbnailsLayouts)
 				{
 					this.ApplyPerClientLayout(view, this._activeClientTitle);
 				}
@@ -155,10 +159,10 @@ namespace EveOPreview.UI
 					this.ApplyFlatLayout(view);
 				}
 
-				view.IsOverlayEnabled = Properties.Settings.Default.show_overlay;
+				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 				if (!this._isHoverEffectActive)
 				{
-					view.SetOpacity(Properties.Settings.Default.opacity);
+					view.SetOpacity(this._configuration.ThumbnailsOpacity);
 				}
 
 				if (!view.IsActive)
@@ -177,7 +181,7 @@ namespace EveOPreview.UI
 
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
-				entry.Value.SetWindowFrames(Properties.Settings.Default.show_thumb_frames);
+				entry.Value.SetWindowFrames(this._configuration.ShowThumbnailFrames);
 			}
 
 			this.EnableViewEvents();
@@ -227,14 +231,14 @@ namespace EveOPreview.UI
 				if ((view == null) && (processTitle != ""))
 				{
 					Size thumbnailSize = new Size();
-					thumbnailSize.Width = (int)Properties.Settings.Default.sync_resize_x;
-					thumbnailSize.Height = (int)Properties.Settings.Default.sync_resize_y;
+					thumbnailSize.Width = this._configuration.ThumbnailsWidth;
+					thumbnailSize.Height = this._configuration.ThumbnailsHeight;
 
 					view = this._thumbnailViewFactory.Create(processHandle, ThumbnailManager.DefaultThumbnailTitle, thumbnailSize);
 					view.IsEnabled = true;
-					view.IsOverlayEnabled = Properties.Settings.Default.show_overlay;
-					view.SetTopMost(Properties.Settings.Default.always_on_top);
-					view.SetWindowFrames(Properties.Settings.Default.show_thumb_frames);
+					view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
+					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
+					view.SetWindowFrames(this._configuration.ShowThumbnailFrames);
 
 					view.ThumbnailResized += ThumbnailViewResized;
 					view.ThumbnailMoved += ThumbnailViewMoved;
@@ -333,7 +337,7 @@ namespace EveOPreview.UI
 
 			this.ThumbnailZoomOut(view);
 
-			view.SetOpacity(Properties.Settings.Default.opacity);
+			view.SetOpacity(this._configuration.ThumbnailsOpacity);
 
 			this._isHoverEffectActive = false;
 		}
@@ -355,7 +359,7 @@ namespace EveOPreview.UI
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				IThumbnailView view = entry.Value;
-				view.SetTopMost(Properties.Settings.Default.always_on_top);
+				view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 			}
 		}
 
@@ -389,7 +393,7 @@ namespace EveOPreview.UI
 
 		private void SetupClientWindow(IntPtr clientHandle, string clientTitle)
 		{
-			if (!Properties.Settings.Default.track_client_windows)
+			if (!this._configuration.EnableClientsLocationTracking)
 			{
 				return;
 			}
@@ -418,29 +422,27 @@ namespace EveOPreview.UI
 
 		private void UpdateThumbnailPosition(string title, Point position)
 		{
-			if (Properties.Settings.Default.unique_layout)
-			{
-				Dictionary<string, Point> layout;
-				if (_uniqueLayouts.TryGetValue(_activeClientTitle, out layout))
-				{
-					layout[title] = position;
-				}
-				else if (_activeClientTitle == "")
-				{
-					_uniqueLayouts[_activeClientTitle] = new Dictionary<string, Point>();
-					_uniqueLayouts[_activeClientTitle][title] = position;
-				}
-			}
-			else
+			if (!this._configuration.EnablePerClientThumbnailsLayouts)
 			{
 				_flatLayout[title] = position;
+				return;
+			}
+
+			Dictionary<string, Point> layout;
+			if (_uniqueLayouts.TryGetValue(_activeClientTitle, out layout))
+			{
+				layout[title] = position;
+			}
+			else if (_activeClientTitle == "")
+			{
+				_uniqueLayouts[_activeClientTitle] = new Dictionary<string, Point>();
+				_uniqueLayouts[_activeClientTitle][title] = position;
 			}
 		}
 
 		private void ThumbnailZoomIn(IThumbnailView view)
 		{
-			// TODO Use global settings object
-			float zoomFactor = Properties.Settings.Default.zoom_amount;
+			int zoomFactor = this._configuration.ThumbnailZoomFactor;
 
 			this._thumbnailBaseSize = view.Size;
 			this._thumbnailBaseLocation = view.Location;
@@ -458,35 +460,34 @@ namespace EveOPreview.UI
 			int oldWidth = this._thumbnailBaseSize.Width;
 			int oldHeight = this._thumbnailBaseSize.Height;
 
-			// TODO Use global settings object
-			switch ((ViewZoomAnchor)Properties.Settings.Default.zoom_anchor)
+			switch (this._configuration.ThumbnailZoomAnchor)
 			{
-				case ViewZoomAnchor.NW:
+				case ZoomAnchor.NW:
 					break;
-				case ViewZoomAnchor.N:
+				case ZoomAnchor.N:
 					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY);
 					break;
-				case ViewZoomAnchor.NE:
+				case ZoomAnchor.NE:
 					view.Location = new Point(locationX - newWidth + oldWidth, locationY);
 					break;
 
-				case ViewZoomAnchor.W:
+				case ZoomAnchor.W:
 					view.Location = new Point(locationX, locationY - newHeight / 2 + oldHeight / 2);
 					break;
-				case ViewZoomAnchor.C:
+				case ZoomAnchor.C:
 					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight / 2 + oldHeight / 2);
 					break;
-				case ViewZoomAnchor.E:
+				case ZoomAnchor.E:
 					view.Location = new Point(locationX - newWidth + oldWidth, locationY - newHeight / 2 + oldHeight / 2);
 					break;
 
-				case ViewZoomAnchor.SW:
+				case ZoomAnchor.SW:
 					view.Location = new Point(locationX, locationY - newHeight + this._thumbnailBaseSize.Height);
 					break;
-				case ViewZoomAnchor.S:
+				case ZoomAnchor.S:
 					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight + oldHeight);
 					break;
-				case ViewZoomAnchor.SE:
+				case ZoomAnchor.SE:
 					view.Location = new Point(locationX - newWidth + oldWidth, locationY - newHeight + oldHeight);
 					break;
 			}
@@ -724,7 +725,7 @@ namespace EveOPreview.UI
 			if (_uniqueLayouts.TryGetValue(last_known_active_window, out layout))
 			{
 				Point new_loc;
-				if (Properties.Settings.Default.unique_layout && layout.TryGetValue(thumbnailWindow.Title, out new_loc))
+				if (this._configuration.EnablePerClientThumbnailsLayouts && layout.TryGetValue(thumbnailWindow.Title, out new_loc))
 				{
 					thumbnailWindow.Location = new_loc;
 				}
