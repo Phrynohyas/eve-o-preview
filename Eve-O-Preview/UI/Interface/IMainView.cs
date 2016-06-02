@@ -13,10 +13,11 @@ namespace EveOPreview.UI
 		bool MinimizeToTray { get; set; }
 
 		double ThumbnailsOpacity { get; set; }
-		bool TrackClientLocations { get; set; }
+
+		bool EnableClientsLocationTracking { get; set; }
 		bool HideActiveClientThumbnail { get; set; }
 		bool ShowThumbnailsAlwaysOnTop { get; set; }
-		bool HideAllThumbnailsIfClientIsNotActive { get; set; }
+		bool HideThumbnailsOnLostFocus { get; set; }
 		bool EnableUniqueThumbnailsLayouts { get; set; }
 
 		bool SyncThumbnailsSize { get; set; }
@@ -25,7 +26,7 @@ namespace EveOPreview.UI
 
 		bool EnableZoomOnHover { get; set; }
 		int ZoomFactor { get; set; }
-		ZoomAnchor ZoomAnchor { get; set; }
+		ViewZoomAnchor ZoomAnchor { get; set; }
 
 		bool ShowThumbnailOverlays { get; set; }
 		bool ShowThumbnailFrames { get; set; }

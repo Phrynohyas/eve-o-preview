@@ -8,15 +8,15 @@ namespace EveOPreview.UI
 	public partial class MainForm : Form, IMainView
 	{
 		private readonly ApplicationContext _context;
-		private readonly Dictionary<ZoomAnchor, RadioButton> _zoomAnchorMap;
-		private ZoomAnchor _cachedZoomAnchor;
+		private readonly Dictionary<ViewZoomAnchor, RadioButton> _zoomAnchorMap;
+		private ViewZoomAnchor _cachedZoomAnchor;
 		private bool _suppressEvents;
 
 		public MainForm(ApplicationContext context)
 		{
 			this._context = context;
-			this._zoomAnchorMap = new Dictionary<ZoomAnchor, RadioButton>();
-			this._cachedZoomAnchor = ZoomAnchor.NW;
+			this._zoomAnchorMap = new Dictionary<ViewZoomAnchor, RadioButton>();
+			this._cachedZoomAnchor = ViewZoomAnchor.NW;
 			this._suppressEvents = false;
 
 			InitializeComponent();
@@ -50,15 +50,15 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public bool TrackClientLocations
+		public bool EnableClientsLocationTracking
 		{
 			get
 			{
-				return this.TrackClientLocationsCheckBox.Checked;
+				return this.EnableClientsLocationTrackingCheckBox.Checked;
 			}
 			set
 			{
-				this.TrackClientLocationsCheckBox.Checked = value;
+				this.EnableClientsLocationTrackingCheckBox.Checked = value;
 			}
 		}
 
@@ -86,15 +86,15 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public bool HideAllThumbnailsIfClientIsNotActive
+		public bool HideThumbnailsOnLostFocus
 		{
 			get
 			{
-				return this.HideAllThumbnailsIfClientIsNotActiveCheckBox.Checked;
+				return this.HideThumbnailsOnLostFocusCheckBox.Checked;
 			}
 			set
 			{
-				this.HideAllThumbnailsIfClientIsNotActiveCheckBox.Checked = value;
+				this.HideThumbnailsOnLostFocusCheckBox.Checked = value;
 			}
 		}
 
@@ -171,7 +171,7 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public ZoomAnchor ZoomAnchor
+		public ViewZoomAnchor ZoomAnchor
 		{
 			get
 			{
@@ -180,7 +180,7 @@ namespace EveOPreview.UI
 					return this._cachedZoomAnchor;
 				}
 
-				foreach (KeyValuePair<ZoomAnchor, RadioButton> valuePair in this._zoomAnchorMap)
+				foreach (KeyValuePair<ViewZoomAnchor, RadioButton> valuePair in this._zoomAnchorMap)
 				{
 					if (!valuePair.Value.Checked)
 					{
@@ -192,7 +192,7 @@ namespace EveOPreview.UI
 				}
 
 				// Default value
-				return ZoomAnchor.NW;
+				return ViewZoomAnchor.NW;
 			}
 			set
 			{
@@ -385,15 +385,15 @@ namespace EveOPreview.UI
 
 		private void InitZoomAnchorMap()
 		{
-			this._zoomAnchorMap[ZoomAnchor.NW] = this.ZoomAanchorNWRadioButton;
-			this._zoomAnchorMap[ZoomAnchor.N] = this.ZoomAanchorNRadioButton;
-			this._zoomAnchorMap[ZoomAnchor.NE] = this.ZoomAanchorNERadioButton;
-			this._zoomAnchorMap[ZoomAnchor.W] = this.ZoomAanchorWRadioButton;
-			this._zoomAnchorMap[ZoomAnchor.C] = this.ZoomAanchorCRadioButton;
-			this._zoomAnchorMap[ZoomAnchor.E] = this.ZoomAanchorERadioButton;
-			this._zoomAnchorMap[ZoomAnchor.SW] = this.ZoomAanchorSWRadioButton;
-			this._zoomAnchorMap[ZoomAnchor.S] = this.ZoomAanchorSRadioButton;
-			this._zoomAnchorMap[ZoomAnchor.SE] = this.ZoomAanchorSERadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.NW] = this.ZoomAanchorNWRadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.N] = this.ZoomAanchorNRadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.NE] = this.ZoomAanchorNERadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.W] = this.ZoomAanchorWRadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.C] = this.ZoomAanchorCRadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.E] = this.ZoomAanchorERadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.SW] = this.ZoomAanchorSWRadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.S] = this.ZoomAanchorSRadioButton;
+			this._zoomAnchorMap[ViewZoomAnchor.SE] = this.ZoomAanchorSERadioButton;
 		}
 	}
 }

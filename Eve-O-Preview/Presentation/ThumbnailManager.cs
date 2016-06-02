@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Threading;
 using System.Xml.Linq;
+using EveOPreview.Configuration;
 
 namespace EveOPreview.UI
 {
@@ -42,7 +43,7 @@ namespace EveOPreview.UI
 			this._activeClientHandle = (IntPtr)0;
 			this._activeClientTitle = "";
 
-			this._ignoreViewEvents = false;
+			this.EnableViewEvents();
 			this._isHoverEffectActive = false;
 
 			this._thumbnailViews = new Dictionary<IntPtr, IThumbnailView>();
@@ -101,7 +102,7 @@ namespace EveOPreview.UI
 
 		public void SetThumbnailsSize(Size size)
 		{
-			this._ignoreViewEvents = true;
+			this.DisableViewEvents();
 
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
@@ -111,7 +112,7 @@ namespace EveOPreview.UI
 
 			this.ThumbnailSizeChanged?.Invoke(size);
 
-			this._ignoreViewEvents = false;
+			this.EnableViewEvents();
 		}
 
 		// TODO Drop dependency on the configuration object
@@ -120,7 +121,7 @@ namespace EveOPreview.UI
 			IntPtr foregroundWindowHandle = DwmApiNativeMethods.GetForegroundWindow();
 			Boolean hideAllThumbnails = (Properties.Settings.Default.hide_all && !this.IsClientWindowActive(foregroundWindowHandle)) || !DwmApiNativeMethods.DwmIsCompositionEnabled();
 
-			this._ignoreViewEvents = true;
+			this.DisableViewEvents();
 
 			// Hide, show, resize and move
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
@@ -166,26 +167,36 @@ namespace EveOPreview.UI
 				}
 			}
 
-			this._ignoreViewEvents = false;
+			this.EnableViewEvents();
 		}
 
 		public void SetupThumbnailFrames()
 		{
 			// TODO Drop config dependency
-			this._ignoreViewEvents = true;
+			this.DisableViewEvents();
 
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				entry.Value.SetWindowFrames(Properties.Settings.Default.show_thumb_frames);
 			}
 
-			this._ignoreViewEvents = false;
+			this.EnableViewEvents();
 		}
 
 		private void ThumbnailUpdateTimerTick(object sender, EventArgs e)
 		{
 			this.UpdateThumbnailsList();
 			this.RefreshThumbnails();
+		}
+
+		private void EnableViewEvents()
+		{
+			this._ignoreViewEvents = false;
+		}
+
+		private void DisableViewEvents()
+		{
+			this._ignoreViewEvents = true;
 		}
 
 		private Process[] GetClientProcesses()
@@ -434,7 +445,8 @@ namespace EveOPreview.UI
 			this._thumbnailBaseSize = view.Size;
 			this._thumbnailBaseLocation = view.Location;
 
-			this._ignoreViewEvents = true;
+			this.DisableViewEvents();
+
 			view.Size = new Size((int)(zoomFactor * view.Size.Width), (int)(zoomFactor * view.Size.Height));
 
 			int locationX = view.Location.X;
@@ -447,53 +459,53 @@ namespace EveOPreview.UI
 			int oldHeight = this._thumbnailBaseSize.Height;
 
 			// TODO Use global settings object
-			switch ((ZoomAnchor)Properties.Settings.Default.zoom_anchor)
+			switch ((ViewZoomAnchor)Properties.Settings.Default.zoom_anchor)
 			{
-				case ZoomAnchor.NW:
+				case ViewZoomAnchor.NW:
 					break;
-				case ZoomAnchor.N:
+				case ViewZoomAnchor.N:
 					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY);
 					break;
-				case ZoomAnchor.NE:
+				case ViewZoomAnchor.NE:
 					view.Location = new Point(locationX - newWidth + oldWidth, locationY);
 					break;
 
-				case ZoomAnchor.W:
+				case ViewZoomAnchor.W:
 					view.Location = new Point(locationX, locationY - newHeight / 2 + oldHeight / 2);
 					break;
-				case ZoomAnchor.C:
+				case ViewZoomAnchor.C:
 					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight / 2 + oldHeight / 2);
 					break;
-				case ZoomAnchor.E:
+				case ViewZoomAnchor.E:
 					view.Location = new Point(locationX - newWidth + oldWidth, locationY - newHeight / 2 + oldHeight / 2);
 					break;
 
-				case ZoomAnchor.SW:
+				case ViewZoomAnchor.SW:
 					view.Location = new Point(locationX, locationY - newHeight + this._thumbnailBaseSize.Height);
 					break;
-				case ZoomAnchor.S:
+				case ViewZoomAnchor.S:
 					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight + oldHeight);
 					break;
-				case ZoomAnchor.SE:
+				case ViewZoomAnchor.SE:
 					view.Location = new Point(locationX - newWidth + oldWidth, locationY - newHeight + oldHeight);
 					break;
 			}
 
 			view.Refresh();
 
-			this._ignoreViewEvents = false;
+			this.EnableViewEvents();
 		}
 
 		private void ThumbnailZoomOut(IThumbnailView view)
 		{
-			this._ignoreViewEvents = true;
+			this.DisableViewEvents();
 
 			view.Size = this._thumbnailBaseSize;
 			view.Location = this._thumbnailBaseLocation;
 
 			view.Refresh();
 
-			this._ignoreViewEvents = false;
+			this.EnableViewEvents();
 		}
 
 		// ************************************************************************

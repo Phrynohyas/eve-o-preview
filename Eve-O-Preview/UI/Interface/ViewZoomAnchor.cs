@@ -1,8 +1,8 @@
 namespace EveOPreview.UI
 {
-	public enum ZoomAnchor
+	public enum ViewZoomAnchor
 	{
-		NW = 0,
+		NW,
 		N,
 		NE,
 		W,

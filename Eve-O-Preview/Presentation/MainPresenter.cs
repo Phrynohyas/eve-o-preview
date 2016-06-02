@@ -85,10 +85,10 @@ namespace EveOPreview.UI
 		{
 			this.View.MinimizeToTray = Properties.Settings.Default.minimizeToTray;
 			this.View.ThumbnailsOpacity = Properties.Settings.Default.opacity;
-			this.View.TrackClientLocations = Properties.Settings.Default.track_client_windows;
+			this.View.EnableClientsLocationTracking = Properties.Settings.Default.track_client_windows;
 			this.View.HideActiveClientThumbnail = Properties.Settings.Default.hide_active;
 			this.View.ShowThumbnailsAlwaysOnTop = Properties.Settings.Default.always_on_top;
-			this.View.HideAllThumbnailsIfClientIsNotActive = Properties.Settings.Default.hide_all;
+			this.View.HideThumbnailsOnLostFocus = Properties.Settings.Default.hide_all;
 			this.View.EnableUniqueThumbnailsLayouts = Properties.Settings.Default.unique_layout;
 
 			this.View.SyncThumbnailsSize = Properties.Settings.Default.sync_resize;
@@ -97,7 +97,7 @@ namespace EveOPreview.UI
 
 			this.View.EnableZoomOnHover = Properties.Settings.Default.zoom_on_hover;
 			this.View.ZoomFactor = (int)Properties.Settings.Default.zoom_amount;
-			this.View.ZoomAnchor = (ZoomAnchor)Properties.Settings.Default.zoom_anchor;
+			this.View.ZoomAnchor = (ViewZoomAnchor)Properties.Settings.Default.zoom_anchor;
 
 			this.View.ShowThumbnailFrames = Properties.Settings.Default.show_thumb_frames;
 			this.View.ShowThumbnailOverlays = Properties.Settings.Default.show_overlay;
@@ -108,10 +108,10 @@ namespace EveOPreview.UI
 			Properties.Settings.Default.minimizeToTray = this.View.MinimizeToTray;
 
 			Properties.Settings.Default.opacity = (float)this.View.ThumbnailsOpacity;
-			Properties.Settings.Default.track_client_windows = this.View.TrackClientLocations;
+			Properties.Settings.Default.track_client_windows = this.View.EnableClientsLocationTracking;
 			Properties.Settings.Default.hide_active = this.View.HideActiveClientThumbnail;
 			Properties.Settings.Default.always_on_top = this.View.ShowThumbnailsAlwaysOnTop;
-			Properties.Settings.Default.hide_all = this.View.HideAllThumbnailsIfClientIsNotActive;
+			Properties.Settings.Default.hide_all = this.View.HideThumbnailsOnLostFocus;
 			Properties.Settings.Default.unique_layout = this.View.EnableUniqueThumbnailsLayouts;
 
 			Properties.Settings.Default.sync_resize = this.View.SyncThumbnailsSize;

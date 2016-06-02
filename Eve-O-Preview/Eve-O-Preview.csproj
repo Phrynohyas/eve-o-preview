@@ -111,6 +111,8 @@
     <Compile Include="ApplicationBase\LightInjectContainer.cs" />
     <Compile Include="ApplicationBase\Presenter.cs" />
     <Compile Include="ApplicationBase\PresenterGeneric.cs" />
+    <Compile Include="Configuration\IApplicationConfiguration.cs" />
+    <Compile Include="Configuration\ZoomAnchor.cs" />
     <Compile Include="DwmAPI\DWM_BLURBEHIND.cs" />
     <Compile Include="DwmAPI\DWM_THUMBNAIL_PROPERTIES.cs" />
     <Compile Include="DwmAPI\DWM_TNP_CONSTANTS.cs" />
@@ -128,8 +130,8 @@
     <Compile Include="ApplicationBase\IView.cs" />
     <Compile Include="UI\Interface\IThumbnailDescriptionView.cs" />
     <Compile Include="UI\Interface\IThumbnailDescriptionViewFactory.cs" />
-    <Compile Include="UI\Interface\ZoomAnchor.cs" />
-    <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="UI\Interface\ViewZoomAnchor.cs" />
+    <Compile Include="Configuration\ApplicationConfiguration.cs" />
     <None Include="Hotkeys\Hotkey.cs" />
     <None Include="Hotkeys\HotkeyNativeMethods.cs" />
     <Compile Include="UI\Implementation\MainForm.cs">

@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using EveOPreview.Configuration;
 using EveOPreview.UI;
 
 namespace EveOPreview
@@ -26,7 +27,8 @@ namespace EveOPreview
 			// Application services
 			controller.RegisterService<IThumbnailManager, ThumbnailManager>()
 				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
-				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>();
+				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
+				.RegisterService<IApplicationConfiguration, ApplicationConfiguration>();
 
 			controller.Run<EveOPreview.UI.MainPresenter>();
 		}
