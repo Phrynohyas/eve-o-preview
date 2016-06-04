@@ -1,6 +1,6 @@
 namespace EveOPreview.Configuration
 {
-	public class WindowProperties
+	public class ClientLayout
 	{
 		public int X { get; set; }
 		public int Y { get; set; }

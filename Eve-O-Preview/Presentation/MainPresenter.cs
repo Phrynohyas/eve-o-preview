@@ -23,7 +23,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		public MainPresenter(IApplicationController controller, IMainView view, IApplicationConfiguration configuration, IConfigurationStorage configurationStorage,
-																IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory, IThumbnailManager thumbnailManager)
+								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
 			: base(controller, view)
 		{
 			this._configuration = configuration;
@@ -52,6 +52,7 @@ namespace EveOPreview.UI
 
 		private void ExitApplication()
 		{
+			this._thumbnailManager.Deactivate();
 			this._exitApplication = true;
 			this.View.Close();
 		}
@@ -100,11 +101,11 @@ namespace EveOPreview.UI
 
 			this.View.ThumbnailsOpacity = this._configuration.ThumbnailsOpacity;
 
-			this.View.EnableClientsLocationTracking = this._configuration.EnableClientsLocationTracking;
+			this.View.EnableClientLayoutTracking = this._configuration.EnableClientLayoutTracking;
 			this.View.HideActiveClientThumbnail = this._configuration.HideActiveClientThumbnail;
 			this.View.ShowThumbnailsAlwaysOnTop = this._configuration.ShowThumbnailsAlwaysOnTop;
 			this.View.HideThumbnailsOnLostFocus = this._configuration.HideThumbnailsOnLostFocus;
-			this.View.EnablePerClientThumbnailsLayouts = this._configuration.EnablePerClientThumbnailsLayouts;
+			this.View.EnablePerClientThumbnailsLayouts = this._configuration.EnablePerClientThumbnailLayouts;
 
 			this.View.SyncThumbnailsSize = this._configuration.SyncThumbnailsSize;
 			this.View.ThumbnailsWidth = this._configuration.ThumbnailsWidth;
@@ -124,11 +125,11 @@ namespace EveOPreview.UI
 
 			this._configuration.ThumbnailsOpacity = (float)this.View.ThumbnailsOpacity;
 
-			this._configuration.EnableClientsLocationTracking = this.View.EnableClientsLocationTracking;
+			this._configuration.EnableClientLayoutTracking = this.View.EnableClientLayoutTracking;
 			this._configuration.HideActiveClientThumbnail = this.View.HideActiveClientThumbnail;
 			this._configuration.ShowThumbnailsAlwaysOnTop = this.View.ShowThumbnailsAlwaysOnTop;
 			this._configuration.HideThumbnailsOnLostFocus = this.View.HideThumbnailsOnLostFocus;
-			this._configuration.EnablePerClientThumbnailsLayouts = this.View.EnablePerClientThumbnailsLayouts;
+			this._configuration.EnablePerClientThumbnailLayouts = this.View.EnablePerClientThumbnailsLayouts;
 
 			this._configuration.SyncThumbnailsSize = this.View.SyncThumbnailsSize;
 			this._configuration.ThumbnailsWidth = this.View.ThumbnailsWidth;

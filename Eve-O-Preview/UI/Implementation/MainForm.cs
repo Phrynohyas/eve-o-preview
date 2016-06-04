@@ -50,15 +50,15 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public bool EnableClientsLocationTracking
+		public bool EnableClientLayoutTracking
 		{
 			get
 			{
-				return this.EnableClientsLocationTrackingCheckBox.Checked;
+				return this.EnableClientLayoutTrackingCheckBox.Checked;
 			}
 			set
 			{
-				this.EnableClientsLocationTrackingCheckBox.Checked = value;
+				this.EnableClientLayoutTrackingCheckBox.Checked = value;
 			}
 		}
 

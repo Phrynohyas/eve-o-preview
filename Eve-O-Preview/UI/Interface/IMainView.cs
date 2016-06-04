@@ -14,7 +14,7 @@ namespace EveOPreview.UI
 
 		double ThumbnailsOpacity { get; set; }
 
-		bool EnableClientsLocationTracking { get; set; }
+		bool EnableClientLayoutTracking { get; set; }
 		bool HideActiveClientThumbnail { get; set; }
 		bool ShowThumbnailsAlwaysOnTop { get; set; }
 		bool HideThumbnailsOnLostFocus { get; set; }

@@ -45,7 +45,7 @@ namespace EveOPreview.UI
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
 			this.ThumbnailsOpacityScrollBar = new System.Windows.Forms.HScrollBar();
-			this.EnableClientsLocationTrackingCheckBox = new System.Windows.Forms.CheckBox();
+			this.EnableClientLayoutTrackingCheckBox = new System.Windows.Forms.CheckBox();
 			this.HideActiveClientThumbnailCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowThumbnailsAlwaysOnTopCheckBox = new System.Windows.Forms.CheckBox();
 			this.HideThumbnailsOnLostFocusCheckBox = new System.Windows.Forms.CheckBox();
@@ -122,7 +122,7 @@ namespace EveOPreview.UI
 			ContentFlowLayoutPanel.BackColor = System.Drawing.SystemColors.Control;
 			ContentFlowLayoutPanel.Controls.Add(this.MinimizeToTrayCheckBox);
 			ContentFlowLayoutPanel.Controls.Add(OpacityPanel);
-			ContentFlowLayoutPanel.Controls.Add(this.EnableClientsLocationTrackingCheckBox);
+			ContentFlowLayoutPanel.Controls.Add(this.EnableClientLayoutTrackingCheckBox);
 			ContentFlowLayoutPanel.Controls.Add(this.HideActiveClientThumbnailCheckBox);
 			ContentFlowLayoutPanel.Controls.Add(this.ShowThumbnailsAlwaysOnTopCheckBox);
 			ContentFlowLayoutPanel.Controls.Add(this.HideThumbnailsOnLostFocusCheckBox);
@@ -171,14 +171,14 @@ namespace EveOPreview.UI
 			// 
 			// EnableClientsLocationTrackingCheckBox
 			// 
-			this.EnableClientsLocationTrackingCheckBox.AutoSize = true;
-			this.EnableClientsLocationTrackingCheckBox.Location = new System.Drawing.Point(3, 58);
-			this.EnableClientsLocationTrackingCheckBox.Name = "EnableClientsLocationTrackingCheckBox";
-			this.EnableClientsLocationTrackingCheckBox.Size = new System.Drawing.Size(127, 17);
-			this.EnableClientsLocationTrackingCheckBox.TabIndex = 32;
-			this.EnableClientsLocationTrackingCheckBox.Text = "Track client locations";
-			this.EnableClientsLocationTrackingCheckBox.UseVisualStyleBackColor = true;
-			this.EnableClientsLocationTrackingCheckBox.CheckedChanged += new System.EventHandler(this.OptionChanged_Handler);
+			this.EnableClientLayoutTrackingCheckBox.AutoSize = true;
+			this.EnableClientLayoutTrackingCheckBox.Location = new System.Drawing.Point(3, 58);
+			this.EnableClientLayoutTrackingCheckBox.Name = "EnableClientLayoutTrackingCheckBox";
+			this.EnableClientLayoutTrackingCheckBox.Size = new System.Drawing.Size(127, 17);
+			this.EnableClientLayoutTrackingCheckBox.TabIndex = 32;
+			this.EnableClientLayoutTrackingCheckBox.Text = "Track client locations";
+			this.EnableClientLayoutTrackingCheckBox.UseVisualStyleBackColor = true;
+			this.EnableClientLayoutTrackingCheckBox.CheckedChanged += new System.EventHandler(this.OptionChanged_Handler);
 			// 
 			// HideActiveClientThumbnailCheckBox
 			// 
@@ -655,7 +655,7 @@ namespace EveOPreview.UI
 		private NumericUpDown ThumbnailZoomFactorNumericEdit;
 		private Panel ZoomAnchorPanel;
 		private CheckedListBox ThumbnailsList;
-		private CheckBox EnableClientsLocationTrackingCheckBox;
+		private CheckBox EnableClientLayoutTrackingCheckBox;
 		private HScrollBar ThumbnailsOpacityScrollBar;
 		private CheckBox MinimizeToTrayCheckBox;
 		private NotifyIcon NotifyIcon;

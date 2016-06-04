@@ -1,4 +1,6 @@
-﻿namespace EveOPreview.Configuration
+﻿using System.Drawing;
+
+namespace EveOPreview.Configuration
 {
 	public interface IApplicationConfiguration
 	{
@@ -7,11 +9,11 @@
 
 		double ThumbnailsOpacity { get; set; }
 
-		bool EnableClientsLocationTracking { get; set; }
+		bool EnableClientLayoutTracking { get; set; }
 		bool HideActiveClientThumbnail { get; set; }
 		bool ShowThumbnailsAlwaysOnTop { get; set; }
 		bool HideThumbnailsOnLostFocus { get; set; }
-		bool EnablePerClientThumbnailsLayouts { get; set; }
+		bool EnablePerClientThumbnailLayouts { get; set; }
 
 		bool SyncThumbnailsSize { get; set; }
 		int ThumbnailsWidth { get; set; }
@@ -23,5 +25,11 @@
 
 		bool ShowThumbnailOverlays { get; set; }
 		bool ShowThumbnailFrames { get; set; }
+
+		Point GetThumbnailLocation(string currentClient, string activeClient, Point defaultLocation);
+		void SetThumbnailLocation(string currentClient, string activeClient, Point location);
+
+		ClientLayout GetClientLayout(string currentClient);
+		void SetClientLayout(string currentClient, ClientLayout layout);
 	}
 }

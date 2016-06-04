@@ -123,7 +123,7 @@
     <Compile Include="DwmAPI\DWM_TNP_CONSTANTS.cs" />
     <Compile Include="DwmAPI\MARGINS.cs" />
     <Compile Include="DwmAPI\RECT.cs" />
-    <Compile Include="Configuration\WindowProperties.cs" />
+    <Compile Include="Configuration\ClientLayout.cs" />
     <Compile Include="ApplicationBase\IPresenter.cs" />
     <Compile Include="Presentation\MainPresenter.cs" />
     <Compile Include="Presentation\ViewCloseRequest.cs" />
@@ -219,9 +219,7 @@
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GUI\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
