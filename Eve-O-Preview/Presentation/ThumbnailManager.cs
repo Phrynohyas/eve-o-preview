@@ -36,7 +36,7 @@ namespace EveOPreview.UI
 			this._thumbnailViewFactory = factory;
 
 			this._activeClientHandle = (IntPtr)0;
-			this._activeClientTitle = "";
+			this._activeClientTitle = "EVE";
 
 			this.EnableViewEvents();
 			this._isHoverEffectActive = false;
