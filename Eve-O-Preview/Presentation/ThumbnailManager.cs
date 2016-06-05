@@ -321,13 +321,9 @@ namespace EveOPreview.UI
 				this.UpdateClientLayouts();
 			}
 
-			this._configurationStorage.Save();
+			this.RefreshThumbnails();
 
-			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
-			{
-				IThumbnailView view = entry.Value;
-				view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
-			}
+			this._configurationStorage.Save();
 		}
 
 		private void ThumbnailViewResized(IntPtr id)
