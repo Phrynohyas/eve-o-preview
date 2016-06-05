@@ -127,6 +127,7 @@ namespace EveOPreview.UI
 					// No need to move Thumbnails while one of them is highlighted
 					view.Location = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.Location);
 					view.SetOpacity(this._configuration.ThumbnailsOpacity);
+					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 				}
 
 				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
