@@ -122,12 +122,14 @@ namespace EveOPreview.UI
 					continue;
 				}
 
-				view.Location = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.Location);
-				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 				if (!this._isHoverEffectActive)
 				{
+					// No need to move Thumbnails while one of them is highlighted
+					view.Location = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.Location);
 					view.SetOpacity(this._configuration.ThumbnailsOpacity);
 				}
+
+				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 
 				if (!view.IsActive)
 				{
