@@ -169,7 +169,7 @@ namespace EveOPreview.UI
 			this.ThumbnailsOpacityScrollBar.TabIndex = 1;
 			this.ThumbnailsOpacityScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.OptionChanged_Handler);
 			// 
-			// EnableClientsLocationTrackingCheckBox
+			// EnableClientLayoutTrackingCheckBox
 			// 
 			this.EnableClientLayoutTrackingCheckBox.AutoSize = true;
 			this.EnableClientLayoutTrackingCheckBox.Location = new System.Drawing.Point(3, 58);
@@ -214,13 +214,13 @@ namespace EveOPreview.UI
 			this.HideThumbnailsOnLostFocusCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.HideThumbnailsOnLostFocusCheckBox.Location = new System.Drawing.Point(3, 127);
 			this.HideThumbnailsOnLostFocusCheckBox.Name = "HideThumbnailsOnLostFocusCheckBox";
-			this.HideThumbnailsOnLostFocusCheckBox.Size = new System.Drawing.Size(242, 17);
+			this.HideThumbnailsOnLostFocusCheckBox.Size = new System.Drawing.Size(205, 17);
 			this.HideThumbnailsOnLostFocusCheckBox.TabIndex = 2;
-			this.HideThumbnailsOnLostFocusCheckBox.Text = "Hide previews if active window not EVE client";
+			this.HideThumbnailsOnLostFocusCheckBox.Text = "Hide previews EVE client is not active";
 			this.HideThumbnailsOnLostFocusCheckBox.UseVisualStyleBackColor = true;
 			this.HideThumbnailsOnLostFocusCheckBox.CheckedChanged += new System.EventHandler(this.OptionChanged_Handler);
 			// 
-			// EnableUniqueThumbnailsLayoutsCheckBox
+			// EnablePerClientThumbnailsLayoutsCheckBox
 			// 
 			this.EnablePerClientThumbnailsLayoutsCheckBox.AutoSize = true;
 			this.EnablePerClientThumbnailsLayoutsCheckBox.Checked = true;
@@ -467,7 +467,7 @@ namespace EveOPreview.UI
 			ZoomAnchorLabel.TabIndex = 30;
 			ZoomAnchorLabel.Text = "Anchor";
 			// 
-			// EnableZoomOnHoverCheckBox
+			// EnableThumbnailZoomCheckBox
 			// 
 			this.EnableThumbnailZoomCheckBox.AutoSize = true;
 			this.EnableThumbnailZoomCheckBox.Checked = true;
@@ -481,7 +481,7 @@ namespace EveOPreview.UI
 			this.EnableThumbnailZoomCheckBox.UseVisualStyleBackColor = true;
 			this.EnableThumbnailZoomCheckBox.CheckedChanged += new System.EventHandler(this.OptionChanged_Handler);
 			// 
-			// ZoomFactorNumericEdit
+			// ThumbnailZoomFactorNumericEdit
 			// 
 			this.ThumbnailZoomFactorNumericEdit.BackColor = System.Drawing.SystemColors.Window;
 			this.ThumbnailZoomFactorNumericEdit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
