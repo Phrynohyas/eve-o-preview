@@ -284,10 +284,13 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this.ThumbnailZoomIn(view);
 			view.SetTopMost(true);
-
 			view.SetOpacity(1.0);
+
+			if (this._configuration.EnableThumbnailZoom)
+			{
+				this.ThumbnailZoomIn(view);
+			}
 		}
 
 		private void ThumbnailViewLostFocus(IntPtr id)
@@ -299,9 +302,12 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this.ThumbnailZoomOut(view);
-
 			view.SetOpacity(this._configuration.ThumbnailsOpacity);
+
+			if (this._configuration.EnableThumbnailZoom)
+			{
+				this.ThumbnailZoomOut(view);
+			}
 
 			this._isHoverEffectActive = false;
 		}
