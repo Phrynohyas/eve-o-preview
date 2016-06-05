@@ -96,7 +96,7 @@ namespace EveOPreview.UI
 		public void RefreshThumbnails()
 		{
 			IntPtr foregroundWindowHandle = DwmApiNativeMethods.GetForegroundWindow();
-			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && !this.IsClientWindowActive(foregroundWindowHandle)) || !DwmApiNativeMethods.DwmIsCompositionEnabled();
+			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !DwmApiNativeMethods.DwmIsCompositionEnabled();
 
 			this.DisableViewEvents();
 
@@ -354,17 +354,25 @@ namespace EveOPreview.UI
 			view.Refresh();
 		}
 
-		private bool IsClientWindowActive(IntPtr windowHandle)
+		private bool IsNonClientWindowActive(IntPtr windowHandle)
 		{
-			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in _thumbnailViews)
+			// We just don't know ATM
+			if (windowHandle == IntPtr.Zero)
 			{
-				if (entry.Value.IsKnownHandle(windowHandle))
+				return false;
+			}
+
+			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
+			{
+				IThumbnailView view = entry.Value;
+
+				if (view.IsKnownHandle(windowHandle))
 				{
-					return true;
+					return false;
 				}
 			}
 
-			return false;
+			return true;
 		}
 
 		private void ThumbnailZoomIn(IThumbnailView view)
