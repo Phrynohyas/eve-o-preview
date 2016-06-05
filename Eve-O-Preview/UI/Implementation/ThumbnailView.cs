@@ -153,7 +153,14 @@ namespace EveOPreview.UI
 				this._currentHeight = this.ClientRectangle.Bottom;
 
 				this._Thumbnail.rcDestination = new RECT(0, 0, this._currentWidth, this._currentHeight);
-				DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._ThumbnailHandle, this._Thumbnail);
+				try
+				{
+					DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._ThumbnailHandle, this._Thumbnail);
+				}
+				catch (ArgumentException)
+				{
+					//This exception will be thrown if the EVE client disappears while this method is running
+				}
 			}
 
 			if (!(this.IsOverlayEnabled && (sizeChanged || locationChanged)))
