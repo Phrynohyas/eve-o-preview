@@ -76,6 +76,10 @@ namespace EveOPreview.UI
 
 		public new void Show()
 		{
+			this.StartPosition = (this.Location.X > 0) || (this.Location.Y > 0)
+									? FormStartPosition.Manual
+									: FormStartPosition.WindowsDefaultLocation;
+
 			base.Show();
 
 			if (this.IsOverlayEnabled)

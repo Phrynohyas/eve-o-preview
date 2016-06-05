@@ -11,7 +11,6 @@ namespace EveOPreview.UI
 	{
 		#region Private constants
 		private const string ClientProcessName = "ExeFile";
-		private const string DefaultThumbnailTitle = "...";
 		#endregion
 
 		#region Private fields
@@ -194,12 +193,13 @@ namespace EveOPreview.UI
 
 				if ((view == null) && (processTitle != ""))
 				{
-					view = this._thumbnailViewFactory.Create(processHandle, ThumbnailManager.DefaultThumbnailTitle, this._configuration.ThumbnailSize);
+					view = this._thumbnailViewFactory.Create(processHandle, processTitle, this._configuration.ThumbnailSize);
 					view.IsEnabled = true;
 					view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 					view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 					view.SetWindowFrames(this._configuration.ShowThumbnailFrames);
+					view.Location = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.Location);
 
 					view.ThumbnailResized += ThumbnailViewResized;
 					view.ThumbnailMoved += ThumbnailViewMoved;
