@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 
 namespace EveOPreview.Configuration
 {
-	// TODO Add Save and Load to this class
 	public class ApplicationConfiguration : IApplicationConfiguration
 	{
 		public ApplicationConfiguration()
@@ -22,8 +21,9 @@ namespace EveOPreview.Configuration
 			this.EnablePerClientThumbnailLayouts = false;
 
 			this.SyncThumbnailsSize = true;
-			this.ThumbnailsWidth = 250;
-			this.ThumbnailsHeight = 150;
+			this.ThumbnailSize = new Size(250, 150);
+			this.ThumbnailMinimumSize = new Size(100, 80);
+			this.ThumbnailMaximumSize = new Size(640, 400);
 
 			this.EnableThumbnailZoom = false;
 			this.ThumbnailZoomFactor = 2;
@@ -49,8 +49,9 @@ namespace EveOPreview.Configuration
 		public bool EnablePerClientThumbnailLayouts { get; set; }
 
 		public bool SyncThumbnailsSize { get; set; }
-		public int ThumbnailsWidth { get; set; }
-		public int ThumbnailsHeight { get; set; }
+		public Size ThumbnailSize { get; set; }
+		public Size ThumbnailMaximumSize { get; set; }
+		public Size ThumbnailMinimumSize { get; set; }
 
 		public bool EnableThumbnailZoom { get; set; }
 		public int ThumbnailZoomFactor { get; set; }

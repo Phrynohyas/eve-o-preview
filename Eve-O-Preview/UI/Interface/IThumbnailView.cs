@@ -16,6 +16,7 @@ namespace EveOPreview.UI
 
 		bool IsKnownHandle(IntPtr handle);
 
+		void SetSizeLimitations(Size minimumSize, Size maximumSize);
 		void SetOpacity(double opacity);
 		void SetWindowFrames(bool enable);
 		void SetTopMost(bool enableTopmost);

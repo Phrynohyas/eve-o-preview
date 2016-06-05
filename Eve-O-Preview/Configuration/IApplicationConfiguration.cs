@@ -16,8 +16,9 @@ namespace EveOPreview.Configuration
 		bool EnablePerClientThumbnailLayouts { get; set; }
 
 		bool SyncThumbnailsSize { get; set; }
-		int ThumbnailsWidth { get; set; }
-		int ThumbnailsHeight { get; set; }
+		Size ThumbnailSize { get; set; }
+		Size ThumbnailMinimumSize { get; set; }
+		Size ThumbnailMaximumSize { get; set; }
 
 		bool EnableThumbnailZoom { get; set; }
 		int ThumbnailZoomFactor { get; set; }

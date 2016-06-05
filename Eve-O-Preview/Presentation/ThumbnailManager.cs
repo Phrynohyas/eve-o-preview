@@ -194,13 +194,10 @@ namespace EveOPreview.UI
 
 				if ((view == null) && (processTitle != ""))
 				{
-					Size thumbnailSize = new Size();
-					thumbnailSize.Width = this._configuration.ThumbnailsWidth;
-					thumbnailSize.Height = this._configuration.ThumbnailsHeight;
-
-					view = this._thumbnailViewFactory.Create(processHandle, ThumbnailManager.DefaultThumbnailTitle, thumbnailSize);
+					view = this._thumbnailViewFactory.Create(processHandle, ThumbnailManager.DefaultThumbnailTitle, this._configuration.ThumbnailSize);
 					view.IsEnabled = true;
 					view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
+					view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 					view.SetWindowFrames(this._configuration.ShowThumbnailFrames);
 
@@ -242,7 +239,7 @@ namespace EveOPreview.UI
 			// Cleanup
 			IList<IntPtr> obsoleteThumbnails = new List<IntPtr>();
 
-			foreach (IntPtr processHandle in _thumbnailViews.Keys)
+			foreach (IntPtr processHandle in this._thumbnailViews.Keys)
 			{
 				if (!processHandles.Contains(processHandle))
 				{
@@ -254,7 +251,7 @@ namespace EveOPreview.UI
 			{
 				IThumbnailView view = this._thumbnailViews[processHandle];
 
-				_thumbnailViews.Remove(processHandle);
+				this._thumbnailViews.Remove(processHandle);
 
 				// TODO Remove hotkey here
 				view.ThumbnailResized -= ThumbnailViewResized;

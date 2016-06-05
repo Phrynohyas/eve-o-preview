@@ -90,7 +90,7 @@ namespace EveOPreview.UI
 
 		private void UpdateThumbnailsSize()
 		{
-			this._thumbnailManager.SetThumbnailsSize(new Size(this.View.ThumbnailsWidth, this.View.ThumbnailsHeight));
+			this._thumbnailManager.SetThumbnailsSize(this.View.ThumbnailSize);
 			this.SaveApplicationSettings();
 		}
 
@@ -109,8 +109,7 @@ namespace EveOPreview.UI
 			this.View.EnablePerClientThumbnailsLayouts = this._configuration.EnablePerClientThumbnailLayouts;
 
 			this.View.SyncThumbnailsSize = this._configuration.SyncThumbnailsSize;
-			this.View.ThumbnailsWidth = this._configuration.ThumbnailsWidth;
-			this.View.ThumbnailsHeight = this._configuration.ThumbnailsHeight;
+			this.View.ThumbnailSize = this._configuration.ThumbnailSize;
 
 			this.View.EnableThumbnailZoom = this._configuration.EnableThumbnailZoom;
 			this.View.ThumbnailZoomFactor = this._configuration.ThumbnailZoomFactor;
@@ -118,6 +117,8 @@ namespace EveOPreview.UI
 
 			this.View.ShowThumbnailOverlays = this._configuration.ShowThumbnailOverlays;
 			this.View.ShowThumbnailFrames = this._configuration.ShowThumbnailFrames;
+
+			this.View.SetThumbnailSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 		}
 
 		private void SaveApplicationSettings()
@@ -133,8 +134,7 @@ namespace EveOPreview.UI
 			this._configuration.EnablePerClientThumbnailLayouts = this.View.EnablePerClientThumbnailsLayouts;
 
 			this._configuration.SyncThumbnailsSize = this.View.SyncThumbnailsSize;
-			this._configuration.ThumbnailsWidth = this.View.ThumbnailsWidth;
-			this._configuration.ThumbnailsHeight = this.View.ThumbnailsHeight;
+			this._configuration.ThumbnailSize = this.View.ThumbnailSize;
 
 			this._configuration.EnableThumbnailZoom = this.View.EnableThumbnailZoom;
 			this._configuration.ThumbnailZoomFactor = this.View.ThumbnailZoomFactor;
@@ -145,7 +145,7 @@ namespace EveOPreview.UI
 
 			this._configurationStorage.Save();
 
-			this.View.UpdateZoomSettingsView();
+			this.View.RefreshZoomSettings();
 
 			this._thumbnailManager.SetupThumbnailFrames();
 			this._thumbnailManager.RefreshThumbnails();
@@ -210,7 +210,7 @@ namespace EveOPreview.UI
 
 		private void ThumbnailSizeChanged(Size size)
 		{
-			this.View.UpdateThumbnailsSizeView(size);
+			this.View.ThumbnailSize = size;
 		}
 
 		private void UpdateThumbnailState(IntPtr thumbnailId)

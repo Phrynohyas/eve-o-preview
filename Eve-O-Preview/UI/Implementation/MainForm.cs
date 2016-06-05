@@ -122,27 +122,16 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public int ThumbnailsWidth
+		public Size ThumbnailSize
 		{
 			get
 			{
-				return (int)this.ThumbnailsWidthNumericEdit.Value;
+				return new Size((int)this.ThumbnailsWidthNumericEdit.Value, (int)this.ThumbnailsHeightNumericEdit.Value);
 			}
 			set
 			{
-				this.ThumbnailsWidthNumericEdit.Value = value;
-			}
-		}
-
-		public int ThumbnailsHeight
-		{
-			get
-			{
-				return (int)this.ThumbnailsHeightNumericEdit.Value;
-			}
-			set
-			{
-				this.ThumbnailsHeightNumericEdit.Value = value;
+				this.ThumbnailsWidthNumericEdit.Value = value.Width;
+				this.ThumbnailsHeightNumericEdit.Value = value.Height;
 			}
 		}
 
@@ -155,7 +144,7 @@ namespace EveOPreview.UI
 			set
 			{
 				this.EnableThumbnailZoomCheckBox.Checked = value;
-				this.UpdateZoomSettingsView();
+				this.RefreshZoomSettings();
 			}
 		}
 
@@ -237,6 +226,15 @@ namespace EveOPreview.UI
 			Application.Run(this._context);
 		}
 
+		public void SetThumbnailSizeLimitations(Size minimumSize, Size maximumSize)
+		{
+			this.ThumbnailsWidthNumericEdit.Minimum = minimumSize.Width;
+			this.ThumbnailsWidthNumericEdit.Maximum = maximumSize.Width;
+
+			this.ThumbnailsHeightNumericEdit.Minimum = minimumSize.Height;
+			this.ThumbnailsHeightNumericEdit.Maximum = maximumSize.Height;
+		}
+
 		public void Minimize()
 		{
 			this.WindowState = FormWindowState.Minimized;
@@ -290,13 +288,7 @@ namespace EveOPreview.UI
 			this.ThumbnailsList.EndUpdate();
 		}
 
-		public void UpdateThumbnailsSizeView(Size size)
-		{
-			this.ThumbnailsWidth = size.Width;
-			this.ThumbnailsHeight = size.Height;
-		}
-
-		public void UpdateZoomSettingsView()
+		public void RefreshZoomSettings()
 		{
 			bool enableControls = this.EnableThumbnailZoom;
 			this.ThumbnailZoomFactorNumericEdit.Enabled = enableControls;

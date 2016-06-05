@@ -115,6 +115,12 @@ namespace EveOPreview.UI
 			return (this.Id == handle) || (this.Handle == handle) || (this._overlay.Handle == handle);
 		}
 
+		public void SetSizeLimitations(Size minimumSize, Size maximumSize)
+		{
+			this.MinimumSize = minimumSize;
+			this.MaximumSize = maximumSize;
+		}
+
 		public void SetOpacity(double opacity)
 		{
 			this.Opacity = opacity;
