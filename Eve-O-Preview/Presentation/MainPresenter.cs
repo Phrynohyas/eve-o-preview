@@ -53,6 +53,7 @@ namespace EveOPreview.UI
 		private void ExitApplication()
 		{
 			this._thumbnailManager.Deactivate();
+			this._configurationStorage.Save();
 			this._exitApplication = true;
 			this.View.Close();
 		}
