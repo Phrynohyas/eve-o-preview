@@ -17,6 +17,7 @@ namespace EveOPreview.UI
 		// This is pure brainless View
 		// Just somewhat more complex than usual
 		private bool _isThumbnailSetUp;
+		private bool _isTopMost;
 		private DWM_THUMBNAIL_PROPERTIES _Thumbnail;
 		private IntPtr _ThumbnailHandle;
 		private int _currentWidth;
@@ -32,6 +33,7 @@ namespace EveOPreview.UI
 
 			this.IsOverlayEnabled = false;
 			this._isThumbnailSetUp = false;
+			this._isTopMost = false;
 
 			this._currentWidth = -1;
 			this._currentHeight = -1;
@@ -74,7 +76,7 @@ namespace EveOPreview.UI
 			{
 				if ((value.X > 0) || (value.Y > 0))
 				{
-					this.StartPosition=FormStartPosition.Manual;
+					this.StartPosition = FormStartPosition.Manual;
 				}
 				base.Location = value;
 			}
@@ -148,7 +150,13 @@ namespace EveOPreview.UI
 
 		public void SetTopMost(bool enableTopmost)
 		{
+			if (this._isTopMost == enableTopmost)
+			{
+				return;
+			}
+
 			this.TopMost = enableTopmost;
+			this._isTopMost = enableTopmost;
 		}
 
 		public new void Refresh()
