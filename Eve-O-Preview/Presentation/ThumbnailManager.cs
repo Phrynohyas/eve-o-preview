@@ -136,6 +136,10 @@ namespace EveOPreview.UI
 				{
 					view.Show();
 				}
+				else
+				{
+					view.Refresh();
+				}
 			}
 
 			this.EnableViewEvents();

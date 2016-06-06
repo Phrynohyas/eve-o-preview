@@ -18,12 +18,11 @@ namespace EveOPreview.UI
 		// Just somewhat more complex than usual
 		private bool _isThumbnailSetUp;
 		private bool _isTopMost;
+		private bool _isOverlayVisible;
+		private bool _isPositionChanged;
+		private bool _isSizeChanged;
 		private DWM_THUMBNAIL_PROPERTIES _Thumbnail;
 		private IntPtr _ThumbnailHandle;
-		private int _currentWidth;
-		private int _currentHeight;
-		private int _currentTop;
-		private int _currentLeft;
 		#endregion
 
 		public ThumbnailView()
@@ -34,11 +33,10 @@ namespace EveOPreview.UI
 			this.IsOverlayEnabled = false;
 			this._isThumbnailSetUp = false;
 			this._isTopMost = false;
+			this._isOverlayVisible = false;
 
-			this._currentWidth = -1;
-			this._currentHeight = -1;
-			this._currentTop = -1;
-			this._currentLeft = -1;
+			this._isPositionChanged = true;
+			this._isSizeChanged = true;
 
 			InitializeComponent();
 
@@ -96,15 +94,6 @@ namespace EveOPreview.UI
 		{
 			base.Show();
 
-			if (this.IsOverlayEnabled)
-			{
-				this._overlay.Show();
-			}
-			else
-			{
-				this._overlay.Hide();
-			}
-
 			this.Refresh();
 
 			this.IsActive = true;
@@ -146,6 +135,9 @@ namespace EveOPreview.UI
 		public void SetWindowFrames(bool enable)
 		{
 			this.FormBorderStyle = enable ? FormBorderStyle.SizableToolWindow : FormBorderStyle.None;
+
+			// Notify about windo contents position change
+			this._isSizeChanged = true;
 		}
 
 		public void SetTopMost(bool enableTopmost)
@@ -156,6 +148,7 @@ namespace EveOPreview.UI
 			}
 
 			this.TopMost = enableTopmost;
+			this._overlay.TopMost = enableTopmost;
 			this._isTopMost = enableTopmost;
 		}
 
@@ -166,15 +159,12 @@ namespace EveOPreview.UI
 				this.InitializeThumbnail();
 			}
 
-			bool sizeChanged = (this._currentWidth != this.ClientRectangle.Right) || (this._currentHeight != this.ClientRectangle.Bottom);
-			bool locationChanged = (this._currentLeft != this.Location.X) || (this._currentTop != this.Location.Y);
+			bool sizeChanged = this._isSizeChanged;
+			bool locationChanged = this._isPositionChanged;
 
 			if (sizeChanged)
 			{
-				this._currentWidth = this.ClientRectangle.Right;
-				this._currentHeight = this.ClientRectangle.Bottom;
-
-				this._Thumbnail.rcDestination = new RECT(0, 0, this._currentWidth, this._currentHeight);
+				this._Thumbnail.rcDestination = new RECT(0, 0, this.ClientRectangle.Right, this.ClientRectangle.Bottom);
 				try
 				{
 					DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._ThumbnailHandle, this._Thumbnail);
@@ -183,10 +173,28 @@ namespace EveOPreview.UI
 				{
 					//This exception will be thrown if the EVE client disappears while this method is running
 				}
+				this._isSizeChanged = false;
 			}
 
-			if (!(this.IsOverlayEnabled && (sizeChanged || locationChanged)))
+			if (!this.IsOverlayEnabled)
 			{
+				if (this._isOverlayVisible)
+				{
+					this._overlay.Hide();
+					this._isOverlayVisible = false;
+				}
+
+				return;
+			}
+
+			if (!this._isOverlayVisible)
+			{
+				this._overlay.Show();
+				this._isOverlayVisible = true;
+			}
+			else if (!(sizeChanged || locationChanged))
+			{
+				// No need to adjust in the overlay location if it is already visible and properly set
 				return;
 			}
 
@@ -196,12 +204,10 @@ namespace EveOPreview.UI
 
 			Point overlayLocation = this.Location;
 
-			this._currentLeft = overlayLocation.X;
-			this._currentTop = overlayLocation.Y;
-
 			overlayLocation.X += 5 + (this.Size.Width - this.RenderAreaPictureBox.Size.Width) / 2;
 			overlayLocation.Y += 5 + (this.Size.Height - this.RenderAreaPictureBox.Size.Height) - (this.Size.Width - this.RenderAreaPictureBox.Size.Width) / 2;
 
+			this._isPositionChanged = false;
 			this._overlay.Size = overlaySize;
 			this._overlay.Location = overlayLocation;
 		}
@@ -219,11 +225,13 @@ namespace EveOPreview.UI
 
 		private void Move_Handler(object sender, EventArgs e)
 		{
+			this._isPositionChanged = true;
 			this.ThumbnailMoved?.Invoke(this.Id);
 		}
 
 		private void Resize_Handler(object sender, EventArgs e)
 		{
+			this._isSizeChanged = true;
 			this.ThumbnailResized?.Invoke(this.Id);
 		}
 
