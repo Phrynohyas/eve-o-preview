@@ -43,6 +43,8 @@ namespace EveOPreview.UI
 			System.Windows.Forms.Panel ThumbnailsListPanel;
 			System.Windows.Forms.Label ThumbnailsListLabel;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+			System.Windows.Forms.ToolStripMenuItem TitleMenuItem;
+			System.Windows.Forms.ToolStripSeparator SeparatorMenuItem;
 			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
 			this.ThumbnailsOpacityScrollBar = new System.Windows.Forms.HScrollBar();
 			this.EnableClientLayoutTrackingCheckBox = new System.Windows.Forms.CheckBox();
@@ -82,6 +84,8 @@ namespace EveOPreview.UI
 			ZoomAnchorLabel = new System.Windows.Forms.Label();
 			ThumbnailsListPanel = new System.Windows.Forms.Panel();
 			ThumbnailsListLabel = new System.Windows.Forms.Label();
+			TitleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			SeparatorMenuItem = new System.Windows.Forms.ToolStripSeparator();
 			ContentFlowLayoutPanel.SuspendLayout();
 			OpacityPanel.SuspendLayout();
 			ResizeOptionsPanel.SuspendLayout();
@@ -106,14 +110,14 @@ namespace EveOPreview.UI
 			// RestoreWindowMenuItem
 			// 
 			RestoreWindowMenuItem.Name = "RestoreWindowMenuItem";
-			RestoreWindowMenuItem.Size = new System.Drawing.Size(113, 22);
+			RestoreWindowMenuItem.Size = new System.Drawing.Size(151, 22);
 			RestoreWindowMenuItem.Text = "Restore";
 			RestoreWindowMenuItem.Click += new System.EventHandler(this.RestoreMainForm_Handler);
 			// 
 			// ExitMenuItem
 			// 
 			ExitMenuItem.Name = "ExitMenuItem";
-			ExitMenuItem.Size = new System.Drawing.Size(113, 22);
+			ExitMenuItem.Size = new System.Drawing.Size(151, 22);
 			ExitMenuItem.Text = "Exit";
 			ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItemClick_Handler);
 			// 
@@ -588,10 +592,24 @@ namespace EveOPreview.UI
 			// TrayMenu
 			// 
 			this.TrayMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            TitleMenuItem,
             RestoreWindowMenuItem,
+            SeparatorMenuItem,
             ExitMenuItem});
 			this.TrayMenu.Name = "contextMenuStrip1";
-			this.TrayMenu.Size = new System.Drawing.Size(114, 48);
+			this.TrayMenu.Size = new System.Drawing.Size(152, 76);
+			// 
+			// TitleMenuItem
+			// 
+			TitleMenuItem.Enabled = false;
+			TitleMenuItem.Name = "TitleMenuItem";
+			TitleMenuItem.Size = new System.Drawing.Size(151, 22);
+			TitleMenuItem.Text = "EVE-O Preview";
+			// 
+			// SeparatorMenuItem
+			// 
+			SeparatorMenuItem.Name = "SeparatorMenuItem";
+			SeparatorMenuItem.Size = new System.Drawing.Size(148, 6);
 			// 
 			// MainForm
 			// 
@@ -605,7 +623,7 @@ namespace EveOPreview.UI
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
-			this.Text = "EVE Online previewer";
+			this.Text = "EVE-O Preview";
 			this.TopMost = true;
 			this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing_Handler);
