@@ -40,7 +40,7 @@ namespace EveOPreview.UI
 
 			InitializeComponent();
 
-			this._overlay = new ThumbnailOverlay(this.ThumbnailActivated_Handler);
+			this._overlay = new ThumbnailOverlay(this, this.ThumbnailActivated_Handler);
 		}
 
 		public IntPtr Id { get; set; }
@@ -64,6 +64,22 @@ namespace EveOPreview.UI
 
 		public bool IsOverlayEnabled { get; set; }
 
+		public new Point Location
+		{
+			get
+			{
+				return base.Location;
+			}
+			set
+			{
+				if ((value.X > 0) || (value.Y > 0))
+				{
+					this.StartPosition=FormStartPosition.Manual;
+				}
+				base.Location = value;
+			}
+		}
+
 		public event Action<IntPtr> ThumbnailResized;
 
 		public event Action<IntPtr> ThumbnailMoved;
@@ -76,16 +92,11 @@ namespace EveOPreview.UI
 
 		public new void Show()
 		{
-			this.StartPosition = (this.Location.X > 0) || (this.Location.Y > 0)
-									? FormStartPosition.Manual
-									: FormStartPosition.WindowsDefaultLocation;
-
 			base.Show();
 
 			if (this.IsOverlayEnabled)
 			{
 				this._overlay.Show();
-				this._overlay.TopMost = true;
 			}
 			else
 			{
@@ -138,7 +149,6 @@ namespace EveOPreview.UI
 		public void SetTopMost(bool enableTopmost)
 		{
 			this.TopMost = enableTopmost;
-			this._overlay.TopMost = true;
 		}
 
 		public new void Refresh()

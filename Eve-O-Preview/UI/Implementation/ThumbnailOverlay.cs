@@ -5,17 +5,21 @@ namespace EveOPreview.UI
 {
 	public partial class ThumbnailOverlay : Form
 	{
+		#region Private fields
 		private readonly Action<object, MouseEventArgs> _areaClickAction;
+		#endregion
 
-		public ThumbnailOverlay(Action<object, MouseEventArgs> areaClickAction)
+		public ThumbnailOverlay(Form owner, Action<object, MouseEventArgs> areaClickAction)
 		{
+			this.Owner = owner;
 			this._areaClickAction = areaClickAction;
+
 			InitializeComponent();
 		}
 
 		private void OverlayArea_Click(object sender, MouseEventArgs e)
 		{
-			this._areaClickAction(sender, e);
+			this._areaClickAction(this, e);
 		}
 
 		public void SetOverlayLabel(string label)
