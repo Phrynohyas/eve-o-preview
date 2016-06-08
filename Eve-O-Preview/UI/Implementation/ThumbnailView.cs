@@ -114,7 +114,7 @@ namespace EveOPreview.UI
 		{
 			this.IsActive = false;
 
-			this.UnregisterThumbnail();
+			this.UnregisterThumbnail(this._thumbnailHandle);
 
 			this._overlay.Close();
 			base.Close();
@@ -215,15 +215,18 @@ namespace EveOPreview.UI
 			this.Location = this._baseLocation;
 		}
 
-		public new void Refresh()
+		public void Refresh(bool forceRefresh)
 		{
-			if (this._isThumbnailSetUp == false)
+			// To prevent flickering the old broken thumbnail is removed AFTER the new shiny one is created
+			IntPtr obsoleteThumbnailHanlde = forceRefresh ? this._thumbnailHandle : IntPtr.Zero;
+
+			if ((this._isThumbnailSetUp == false) || forceRefresh)
 			{
 				this.RegisterThumbnail();
 			}
 
-			bool sizeChanged = this._isSizeChanged;
-			bool locationChanged = this._isPositionChanged;
+			bool sizeChanged = this._isSizeChanged || forceRefresh;
+			bool locationChanged = this._isPositionChanged || forceRefresh;
 
 			if (sizeChanged)
 			{
@@ -237,6 +240,11 @@ namespace EveOPreview.UI
 					//This exception will be thrown if the EVE client disappears while this method is running
 				}
 				this._isSizeChanged = false;
+			}
+
+			if (obsoleteThumbnailHanlde != IntPtr.Zero)
+			{
+				this.UnregisterThumbnail(obsoleteThumbnailHanlde);
 			}
 
 			if (!this.IsOverlayEnabled)
@@ -320,10 +328,12 @@ namespace EveOPreview.UI
 			//	// do smth cool?
 			//}
 
-			//if (e.Button == MouseButtons.Middle)
-			//{
-			//	// do smth cool?
-			//}
+			if (e.Button == MouseButtons.Middle)
+			{
+				//// Trigger full thumbnail refresh
+				//this.UnregisterThumbnail();
+				//this.Refresh();
+			}
 		}
 		#endregion
 
@@ -343,11 +353,14 @@ namespace EveOPreview.UI
 			this._isThumbnailSetUp = true;
 		}
 
-		private void UnregisterThumbnail()
+		private void UnregisterThumbnail(IntPtr thumbnailHandle)
 		{
-			if (this._thumbnailHandle != IntPtr.Zero)
+			try
 			{
-				DwmApiNativeMethods.DwmUnregisterThumbnail(this._thumbnailHandle);
+				DwmApiNativeMethods.DwmUnregisterThumbnail(thumbnailHandle);
+			}
+			catch (ArgumentException)
+			{
 			}
 		}
 

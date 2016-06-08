@@ -85,7 +85,7 @@ namespace EveOPreview.UI
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				entry.Value.Size = size;
-				entry.Value.Refresh();
+				entry.Value.Refresh(false);
 			}
 
 			this.ThumbnailSizeChanged?.Invoke(size);
@@ -139,7 +139,7 @@ namespace EveOPreview.UI
 				}
 				else
 				{
-					view.Refresh();
+					view.Refresh(false);
 				}
 			}
 
@@ -322,9 +322,15 @@ namespace EveOPreview.UI
 			DwmApiNativeMethods.SetForegroundWindow(id);
 
 			int style = DwmApiNativeMethods.GetWindowLong(id, DwmApiNativeMethods.GWL_STYLE);
+			// If the window was minimized then its thumbnail should be reset
 			if ((style & DwmApiNativeMethods.WS_MINIMIZE) == DwmApiNativeMethods.WS_MINIMIZE)
 			{
 				DwmApiNativeMethods.ShowWindowAsync(id, DwmApiNativeMethods.SW_SHOWNORMAL);
+				IThumbnailView view;
+				if (this._thumbnailViews.TryGetValue(id, out view))
+				{
+					view.Refresh(true);
+				}
 			}
 
 			if (this._configuration.EnableClientLayoutTracking)
@@ -348,7 +354,7 @@ namespace EveOPreview.UI
 
 			this.SetThumbnailsSize(view.Size);
 
-			view.Refresh();
+			view.Refresh(false);
 		}
 
 		private void ThumbnailViewMoved(IntPtr id)
@@ -362,7 +368,7 @@ namespace EveOPreview.UI
 
 			this._configuration.SetThumbnailLocation(view.Title, this._activeClientTitle, view.Location);
 
-			view.Refresh();
+			view.Refresh(false);
 		}
 
 		private bool IsNonClientWindowActive(IntPtr windowHandle)
@@ -391,7 +397,7 @@ namespace EveOPreview.UI
 			this.DisableViewEvents();
 
 			view.ZoomIn(ViewZoomAnchorConverter.Convert(this._configuration.ThumbnailZoomAnchor), this._configuration.ThumbnailZoomFactor);
-			view.Refresh();
+			view.Refresh(false);
 
 			this.EnableViewEvents();
 		}
@@ -401,7 +407,7 @@ namespace EveOPreview.UI
 			this.DisableViewEvents();
 
 			view.ZoomOut();
-			view.Refresh();
+			view.Refresh(false);
 
 			this.EnableViewEvents();
 		}

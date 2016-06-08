@@ -24,7 +24,7 @@ namespace EveOPreview.UI
 		void ZoomIn(ViewZoomAnchor anchor, int zoomFactor);
 		void ZoomOut();
 
-		void Refresh();
+		void Refresh(bool forceRefresh);
 
 		Action<IntPtr> ThumbnailResized { get; set; }
 		Action<IntPtr> ThumbnailMoved { get; set; }

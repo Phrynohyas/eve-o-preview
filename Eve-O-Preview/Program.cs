@@ -12,7 +12,7 @@ namespace EveOPreview
 		static void Main()
 		{
 			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(true);
+			Application.SetCompatibleTextRenderingDefault(false);
 
 			// TODO Switch to another container that provides signed assemblies
 			IIocContainer container = new LightInjectContainer();
@@ -31,7 +31,7 @@ namespace EveOPreview
 				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
 				.RegisterInstance<IApplicationConfiguration>(new ApplicationConfiguration());
 
-			controller.Run<EveOPreview.UI.MainPresenter>();
+			controller.Run<MainPresenter>();
 		}
 	}
 }
