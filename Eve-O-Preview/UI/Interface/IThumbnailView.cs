@@ -21,6 +21,9 @@ namespace EveOPreview.UI
 		void SetWindowFrames(bool enable);
 		void SetTopMost(bool enableTopmost);
 
+		void ZoomIn(ViewZoomAnchor anchor, int zoomFactor);
+		void ZoomOut();
+
 		void Refresh();
 
 		event Action<IntPtr> ThumbnailResized;

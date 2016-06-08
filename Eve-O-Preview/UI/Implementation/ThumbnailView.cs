@@ -23,6 +23,8 @@ namespace EveOPreview.UI
 		private bool _isSizeChanged;
 		private DWM_THUMBNAIL_PROPERTIES _Thumbnail;
 		private IntPtr _ThumbnailHandle;
+		private Size _baseSize;
+		private Point _baseLocation;
 		#endregion
 
 		public ThumbnailView()
@@ -150,6 +152,64 @@ namespace EveOPreview.UI
 			this.TopMost = enableTopmost;
 			this._overlay.TopMost = enableTopmost;
 			this._isTopMost = enableTopmost;
+		}
+
+		public void ZoomIn(ViewZoomAnchor anchor, int zoomFactor)
+		{
+			this._baseSize = this.Size;
+			this._baseLocation = this.Location;
+
+			int oldWidth = this._baseSize.Width;
+			int oldHeight = this._baseSize.Height;
+
+			int locationX = this.Location.X;
+			int locationY = this.Location.Y;
+
+			int newWidth = (zoomFactor * this.ClientSize.Width) + (this.Size.Width - this.ClientSize.Width);
+			int newHeight = (zoomFactor * this.ClientSize.Height) + (this.Size.Height - this.ClientSize.Height);
+
+			// First change size, THEN move the window
+			// Otherwise there is a chance to fail in a loop
+			// Zoom requied -> Moved the windows 1st -> Focus is lost -> Window is moved back -> Focus is back on -> Zoom required -> ...
+			this.Size = new Size(newWidth, newHeight);
+
+			switch (anchor)
+			{
+				case ViewZoomAnchor.NW:
+					break;
+				case ViewZoomAnchor.N:
+					this.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY);
+					break;
+				case ViewZoomAnchor.NE:
+					this.Location = new Point(locationX - newWidth + oldWidth, locationY);
+					break;
+
+				case ViewZoomAnchor.W:
+					this.Location = new Point(locationX, locationY - newHeight / 2 + oldHeight / 2);
+					break;
+				case ViewZoomAnchor.C:
+					this.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight / 2 + oldHeight / 2);
+					break;
+				case ViewZoomAnchor.E:
+					this.Location = new Point(locationX - newWidth + oldWidth, locationY - newHeight / 2 + oldHeight / 2);
+					break;
+
+				case ViewZoomAnchor.SW:
+					this.Location = new Point(locationX, locationY - newHeight + this._baseSize.Height);
+					break;
+				case ViewZoomAnchor.S:
+					this.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight + oldHeight);
+					break;
+				case ViewZoomAnchor.SE:
+					this.Location = new Point(locationX - newWidth + oldWidth, locationY - newHeight + oldHeight);
+					break;
+			}
+		}
+
+		public void ZoomOut()
+		{
+			this.Size = this._baseSize;
+			this.Location = this._baseLocation;
 		}
 
 		public new void Refresh()

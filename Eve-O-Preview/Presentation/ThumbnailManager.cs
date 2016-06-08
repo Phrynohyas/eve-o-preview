@@ -25,8 +25,6 @@ namespace EveOPreview.UI
 
 		private bool _ignoreViewEvents;
 		private bool _isHoverEffectActive;
-		private Size _thumbnailBaseSize;
-		private Point _thumbnailBaseLocation;
 		#endregion
 
 		public ThumbnailManager(IApplicationConfiguration configuration, IConfigurationStorage configurationStorage, IThumbnailViewFactory factory)
@@ -387,56 +385,9 @@ namespace EveOPreview.UI
 
 		private void ThumbnailZoomIn(IThumbnailView view)
 		{
-			int zoomFactor = this._configuration.ThumbnailZoomFactor;
-
-			this._thumbnailBaseSize = view.Size;
-			this._thumbnailBaseLocation = view.Location;
-
 			this.DisableViewEvents();
 
-			view.Size = new Size(zoomFactor * view.Size.Width, zoomFactor * view.Size.Height);
-
-			int locationX = view.Location.X;
-			int locationY = view.Location.Y;
-
-			int newWidth = view.Size.Width;
-			int newHeight = view.Size.Height;
-
-			int oldWidth = this._thumbnailBaseSize.Width;
-			int oldHeight = this._thumbnailBaseSize.Height;
-
-			switch (this._configuration.ThumbnailZoomAnchor)
-			{
-				case ZoomAnchor.NW:
-					break;
-				case ZoomAnchor.N:
-					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY);
-					break;
-				case ZoomAnchor.NE:
-					view.Location = new Point(locationX - newWidth + oldWidth, locationY);
-					break;
-
-				case ZoomAnchor.W:
-					view.Location = new Point(locationX, locationY - newHeight / 2 + oldHeight / 2);
-					break;
-				case ZoomAnchor.C:
-					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight / 2 + oldHeight / 2);
-					break;
-				case ZoomAnchor.E:
-					view.Location = new Point(locationX - newWidth + oldWidth, locationY - newHeight / 2 + oldHeight / 2);
-					break;
-
-				case ZoomAnchor.SW:
-					view.Location = new Point(locationX, locationY - newHeight + this._thumbnailBaseSize.Height);
-					break;
-				case ZoomAnchor.S:
-					view.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight + oldHeight);
-					break;
-				case ZoomAnchor.SE:
-					view.Location = new Point(locationX - newWidth + oldWidth, locationY - newHeight + oldHeight);
-					break;
-			}
-
+			view.ZoomIn(ViewZoomAnchorConverter.Convert(this._configuration.ThumbnailZoomAnchor), this._configuration.ThumbnailZoomFactor);
 			view.Refresh();
 
 			this.EnableViewEvents();
@@ -446,9 +397,7 @@ namespace EveOPreview.UI
 		{
 			this.DisableViewEvents();
 
-			view.Size = this._thumbnailBaseSize;
-			view.Location = this._thumbnailBaseLocation;
-
+			view.ZoomOut();
 			view.Refresh();
 
 			this.EnableViewEvents();
