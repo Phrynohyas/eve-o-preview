@@ -40,13 +40,13 @@ namespace EveOPreview.UI
 		void RemoveThumbnails(IList<IThumbnailDescriptionView> thumbnails);
 		void RefreshZoomSettings();
 
-		event Action ApplicationExitRequested;
-		event Action FormActivated;
-		event Action FormMinimized;
-		event Action<ViewCloseRequest> FormCloseRequested;
-		event Action ApplicationSettingsChanged;
-		event Action ThumbnailsSizeChanged;
-		event Action<IntPtr> ThumbnailStateChanged;
-		event Action ForumUrlLinkActivated;
+		Action ApplicationExitRequested { get; set; }
+		Action FormActivated { get; set; }
+		Action FormMinimized { get; set; }
+		Action<ViewCloseRequest> FormCloseRequested { get; set; }
+		Action ApplicationSettingsChanged { get; set; }
+		Action ThumbnailsSizeChanged { get; set; }
+		Action<IntPtr> ThumbnailStateChanged { get; set; }
+		Action ForumUrlLinkActivated { get; set; }
 	}
 }

@@ -26,10 +26,10 @@ namespace EveOPreview.UI
 
 		void Refresh();
 
-		event Action<IntPtr> ThumbnailResized;
-		event Action<IntPtr> ThumbnailMoved;
-		event Action<IntPtr> ThumbnailFocused;
-		event Action<IntPtr> ThumbnailLostFocus;
-		event Action<IntPtr> ThumbnailActivated;
+		Action<IntPtr> ThumbnailResized { get; set; }
+		Action<IntPtr> ThumbnailMoved { get; set; }
+		Action<IntPtr> ThumbnailFocused { get; set; }
+		Action<IntPtr> ThumbnailLostFocus { get; set; }
+		Action<IntPtr> ThumbnailActivated { get; set; }
 	}
 }

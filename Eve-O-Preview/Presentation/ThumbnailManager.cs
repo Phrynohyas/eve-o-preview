@@ -47,10 +47,13 @@ namespace EveOPreview.UI
 			this._thumbnailUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, configuration.ThumbnailRefreshPeriod);
 		}
 
-		public event Action<IList<IThumbnailView>> ThumbnailsAdded;
-		public event Action<IList<IThumbnailView>> ThumbnailsUpdated;
-		public event Action<IList<IThumbnailView>> ThumbnailsRemoved;
-		public event Action<Size> ThumbnailSizeChanged;
+		public Action<IList<IThumbnailView>> ThumbnailsAdded { get; set; }
+
+		public Action<IList<IThumbnailView>> ThumbnailsUpdated { get; set; }
+
+		public Action<IList<IThumbnailView>> ThumbnailsRemoved { get; set; }
+
+		public Action<Size> ThumbnailSizeChanged { get; set; }
 
 		public void Activate()
 		{
@@ -206,11 +209,11 @@ namespace EveOPreview.UI
 					view.SetWindowFrames(this._configuration.ShowThumbnailFrames);
 					view.Location = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.Location);
 
-					view.ThumbnailResized += ThumbnailViewResized;
-					view.ThumbnailMoved += ThumbnailViewMoved;
-					view.ThumbnailFocused += ThumbnailViewFocused;
-					view.ThumbnailLostFocus += ThumbnailViewLostFocus;
-					view.ThumbnailActivated += ThumbnailActivated;
+					view.ThumbnailResized = this.ThumbnailViewResized;
+					view.ThumbnailMoved = this.ThumbnailViewMoved;
+					view.ThumbnailFocused = this.ThumbnailViewFocused;
+					view.ThumbnailLostFocus = this.ThumbnailViewLostFocus;
+					view.ThumbnailActivated = this.ThumbnailActivated;
 
 					this._thumbnailViews.Add(processHandle, view);
 
@@ -259,11 +262,11 @@ namespace EveOPreview.UI
 				this._thumbnailViews.Remove(processHandle);
 
 				// TODO Remove hotkey here
-				view.ThumbnailResized -= ThumbnailViewResized;
-				view.ThumbnailMoved -= ThumbnailViewMoved;
-				view.ThumbnailFocused -= ThumbnailViewFocused;
-				view.ThumbnailLostFocus -= ThumbnailViewLostFocus;
-				view.ThumbnailActivated -= ThumbnailActivated;
+				view.ThumbnailResized = null;
+				view.ThumbnailMoved = null;
+				view.ThumbnailFocused = null;
+				view.ThumbnailLostFocus = null;
+				view.ThumbnailActivated = null;
 
 				view.Close();
 

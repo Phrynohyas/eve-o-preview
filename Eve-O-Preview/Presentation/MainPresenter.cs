@@ -35,19 +35,19 @@ namespace EveOPreview.UI
 			this._thumbnailDescriptionViews = new Dictionary<IntPtr, IThumbnailDescriptionView>();
 			this._exitApplication = false;
 
-			this.View.FormActivated += Activate;
-			this.View.FormMinimized += Minimize;
-			this.View.FormCloseRequested += Close;
-			this.View.ApplicationSettingsChanged += SaveApplicationSettings;
-			this.View.ThumbnailsSizeChanged += UpdateThumbnailsSize;
-			this.View.ThumbnailStateChanged += UpdateThumbnailState;
-			this.View.ForumUrlLinkActivated += OpenForumUrlLink;
-			this.View.ApplicationExitRequested += ExitApplication;
+			this.View.FormActivated = this.Activate;
+			this.View.FormMinimized = this.Minimize;
+			this.View.FormCloseRequested = this.Close;
+			this.View.ApplicationSettingsChanged = this.SaveApplicationSettings;
+			this.View.ThumbnailsSizeChanged = this.UpdateThumbnailsSize;
+			this.View.ThumbnailStateChanged = this.UpdateThumbnailState;
+			this.View.ForumUrlLinkActivated = this.OpenForumUrlLink;
+			this.View.ApplicationExitRequested = this.ExitApplication;
 
-			this._thumbnailManager.ThumbnailsAdded += ThumbnailsAdded;
-			this._thumbnailManager.ThumbnailsUpdated += ThumbnailsUpdated;
-			this._thumbnailManager.ThumbnailsRemoved += ThumbnailsRemoved;
-			this._thumbnailManager.ThumbnailSizeChanged += ThumbnailSizeChanged;
+			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
+			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
+			this._thumbnailManager.ThumbnailsRemoved = this.ThumbnailsRemoved;
+			this._thumbnailManager.ThumbnailSizeChanged = this.ThumbnailSizeChanged;
 		}
 
 		private void Activate()

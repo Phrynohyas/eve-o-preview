@@ -295,14 +295,21 @@ namespace EveOPreview.UI
 			this.ZoomAnchorPanel.Enabled = enableControls;
 		}
 
-		public event Action ApplicationExitRequested;
-		public event Action FormActivated;
-		public event Action FormMinimized;
-		public event Action<ViewCloseRequest> FormCloseRequested;
-		public event Action ApplicationSettingsChanged;
-		public event Action ThumbnailsSizeChanged;
-		public event Action<IntPtr> ThumbnailStateChanged;
-		public event Action ForumUrlLinkActivated;
+		public Action ApplicationExitRequested { get; set; }
+
+		public Action FormActivated { get; set; }
+
+		public Action FormMinimized { get; set; }
+
+		public Action<ViewCloseRequest> FormCloseRequested { get; set; }
+
+		public Action ApplicationSettingsChanged { get; set; }
+
+		public Action ThumbnailsSizeChanged { get; set; }
+
+		public Action<IntPtr> ThumbnailStateChanged { get; set; }
+
+		public Action ForumUrlLinkActivated { get; set; }
 
 		#region UI events
 		private void OptionChanged_Handler(object sender, EventArgs e)

@@ -82,15 +82,15 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public event Action<IntPtr> ThumbnailResized;
+		public Action<IntPtr> ThumbnailResized { get; set; }
 
-		public event Action<IntPtr> ThumbnailMoved;
+		public Action<IntPtr> ThumbnailMoved { get; set; }
 
-		public event Action<IntPtr> ThumbnailFocused;
+		public Action<IntPtr> ThumbnailFocused { get; set; }
 
-		public event Action<IntPtr> ThumbnailLostFocus;
+		public Action<IntPtr> ThumbnailLostFocus { get; set; }
 
-		public event Action<IntPtr> ThumbnailActivated;
+		public Action<IntPtr> ThumbnailActivated { get; set; }
 
 		public new void Show()
 		{
