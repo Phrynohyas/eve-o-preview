@@ -21,8 +21,8 @@ namespace EveOPreview.UI
 		private bool _isOverlayVisible;
 		private bool _isPositionChanged;
 		private bool _isSizeChanged;
-		private DWM_THUMBNAIL_PROPERTIES _Thumbnail;
-		private IntPtr _ThumbnailHandle;
+		private DWM_THUMBNAIL_PROPERTIES _thumbnail;
+		private IntPtr _thumbnailHandle;
 		private Size _baseSize;
 		private Point _baseLocation;
 		#endregion
@@ -96,6 +96,7 @@ namespace EveOPreview.UI
 		{
 			base.Show();
 
+			// Thumbnail will be registered during the Refresh cycle
 			this.Refresh();
 
 			this.IsActive = true;
@@ -112,6 +113,8 @@ namespace EveOPreview.UI
 		public new void Close()
 		{
 			this.IsActive = false;
+
+			this.UnregisterThumbnail();
 
 			this._overlay.Close();
 			base.Close();
@@ -216,7 +219,7 @@ namespace EveOPreview.UI
 		{
 			if (this._isThumbnailSetUp == false)
 			{
-				this.InitializeThumbnail();
+				this.RegisterThumbnail();
 			}
 
 			bool sizeChanged = this._isSizeChanged;
@@ -224,10 +227,10 @@ namespace EveOPreview.UI
 
 			if (sizeChanged)
 			{
-				this._Thumbnail.rcDestination = new RECT(0, 0, this.ClientRectangle.Right, this.ClientRectangle.Bottom);
+				this._thumbnail.rcDestination = new RECT(0, 0, this.ClientRectangle.Right, this.ClientRectangle.Bottom);
 				try
 				{
-					DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._ThumbnailHandle, this._Thumbnail);
+					DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._thumbnailHandle, this._thumbnail);
 				}
 				catch (ArgumentException)
 				{
@@ -324,20 +327,28 @@ namespace EveOPreview.UI
 		}
 		#endregion
 
-		private void InitializeThumbnail()
+		private void RegisterThumbnail()
 		{
-			this._ThumbnailHandle = DwmApiNativeMethods.DwmRegisterThumbnail(this.Handle, this.Id);
+			this._thumbnailHandle = DwmApiNativeMethods.DwmRegisterThumbnail(this.Handle, this.Id);
 
-			this._Thumbnail = new DWM_THUMBNAIL_PROPERTIES();
-			this._Thumbnail.dwFlags = DWM_TNP_CONSTANTS.DWM_TNP_VISIBLE
+			this._thumbnail = new DWM_THUMBNAIL_PROPERTIES();
+			this._thumbnail.dwFlags = DWM_TNP_CONSTANTS.DWM_TNP_VISIBLE
 									+ DWM_TNP_CONSTANTS.DWM_TNP_OPACITY
 									+ DWM_TNP_CONSTANTS.DWM_TNP_RECTDESTINATION
 									+ DWM_TNP_CONSTANTS.DWM_TNP_SOURCECLIENTAREAONLY;
-			this._Thumbnail.opacity = 255;
-			this._Thumbnail.fVisible = true;
-			this._Thumbnail.fSourceClientAreaOnly = true;
+			this._thumbnail.opacity = 255;
+			this._thumbnail.fVisible = true;
+			this._thumbnail.fSourceClientAreaOnly = true;
 
 			this._isThumbnailSetUp = true;
+		}
+
+		private void UnregisterThumbnail()
+		{
+			if (this._thumbnailHandle != IntPtr.Zero)
+			{
+				DwmApiNativeMethods.DwmUnregisterThumbnail(this._thumbnailHandle);
+			}
 		}
 
 		//private Hotkey _hotkey; // This field stores the hotkey reference
