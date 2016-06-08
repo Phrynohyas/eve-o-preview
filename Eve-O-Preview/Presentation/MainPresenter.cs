@@ -35,7 +35,6 @@ namespace EveOPreview.UI
 			this._thumbnailDescriptionViews = new Dictionary<IntPtr, IThumbnailDescriptionView>();
 			this._exitApplication = false;
 
-			this.View.ApplicationExitRequested += ExitApplication;
 			this.View.FormActivated += Activate;
 			this.View.FormMinimized += Minimize;
 			this.View.FormCloseRequested += Close;
@@ -43,19 +42,12 @@ namespace EveOPreview.UI
 			this.View.ThumbnailsSizeChanged += UpdateThumbnailsSize;
 			this.View.ThumbnailStateChanged += UpdateThumbnailState;
 			this.View.ForumUrlLinkActivated += OpenForumUrlLink;
+			this.View.ApplicationExitRequested += ExitApplication;
 
 			this._thumbnailManager.ThumbnailsAdded += ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated += ThumbnailsUpdated;
 			this._thumbnailManager.ThumbnailsRemoved += ThumbnailsRemoved;
 			this._thumbnailManager.ThumbnailSizeChanged += ThumbnailSizeChanged;
-		}
-
-		private void ExitApplication()
-		{
-			this._thumbnailManager.Deactivate();
-			this._configurationStorage.Save();
-			this._exitApplication = true;
-			this.View.Close();
 		}
 
 		private void Activate()
@@ -80,6 +72,8 @@ namespace EveOPreview.UI
 		{
 			if (this._exitApplication || !this.View.MinimizeToTray)
 			{
+				this._thumbnailManager.Deactivate();
+				this._configurationStorage.Save();
 				request.Allow = true;
 				return;
 			}
@@ -222,6 +216,12 @@ namespace EveOPreview.UI
 		{
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
+		}
+
+		private void ExitApplication()
+		{
+			this._exitApplication = true;
+			this.View.Close();
 		}
 	}
 }
