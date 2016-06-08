@@ -17,7 +17,6 @@ namespace EveOPreview.UI
 		// This is pure brainless View
 		// Just somewhat more complex than usual
 		private bool _isThumbnailSetUp;
-		private bool _isTopMost;
 		private bool _isOverlayVisible;
 		private bool _isPositionChanged;
 		private bool _isSizeChanged;
@@ -34,7 +33,6 @@ namespace EveOPreview.UI
 
 			this.IsOverlayEnabled = false;
 			this._isThumbnailSetUp = false;
-			this._isTopMost = false;
 			this._isOverlayVisible = false;
 
 			this._isPositionChanged = true;
@@ -147,14 +145,8 @@ namespace EveOPreview.UI
 
 		public void SetTopMost(bool enableTopmost)
 		{
-			if (this._isTopMost == enableTopmost)
-			{
-				return;
-			}
-
 			this.TopMost = enableTopmost;
 			this._overlay.TopMost = enableTopmost;
-			this._isTopMost = enableTopmost;
 		}
 
 		public void ZoomIn(ViewZoomAnchor anchor, int zoomFactor)

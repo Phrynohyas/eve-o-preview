@@ -307,12 +307,12 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			view.SetOpacity(this._configuration.ThumbnailsOpacity);
-
 			if (this._configuration.EnableThumbnailZoom)
 			{
 				this.ThumbnailZoomOut(view);
 			}
+
+			view.SetOpacity(this._configuration.ThumbnailsOpacity);
 
 			this._isHoverEffectActive = false;
 		}
