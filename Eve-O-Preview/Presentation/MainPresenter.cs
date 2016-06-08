@@ -54,13 +54,17 @@ namespace EveOPreview.UI
 		{
 			this.LoadApplicationSettings();
 			this.View.SetForumUrl(MainPresenter.ForumUrl);
+			if (this._configuration.MinimizeToTray)
+			{
+				this.View.Minimize();
+			}
 
 			this._thumbnailManager.Activate();
 		}
 
 		private void Minimize()
 		{
-			if (!this.View.MinimizeToTray)
+			if (!this._configuration.MinimizeToTray)
 			{
 				return;
 			}

@@ -42,9 +42,9 @@ namespace EveOPreview.UI
 			System.Windows.Forms.Label ZoomAnchorLabel;
 			System.Windows.Forms.Panel ThumbnailsListPanel;
 			System.Windows.Forms.Label ThumbnailsListLabel;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			System.Windows.Forms.ToolStripMenuItem TitleMenuItem;
 			System.Windows.Forms.ToolStripSeparator SeparatorMenuItem;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
 			this.ThumbnailsOpacityScrollBar = new System.Windows.Forms.HScrollBar();
 			this.EnableClientLayoutTrackingCheckBox = new System.Windows.Forms.CheckBox();
@@ -581,6 +581,18 @@ namespace EveOPreview.UI
     "be set from prresenter";
 			this.ForumLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ForumLinkLabelClicked_Handler);
 			// 
+			// TitleMenuItem
+			// 
+			TitleMenuItem.Enabled = false;
+			TitleMenuItem.Name = "TitleMenuItem";
+			TitleMenuItem.Size = new System.Drawing.Size(151, 22);
+			TitleMenuItem.Text = "EVE-O Preview";
+			// 
+			// SeparatorMenuItem
+			// 
+			SeparatorMenuItem.Name = "SeparatorMenuItem";
+			SeparatorMenuItem.Size = new System.Drawing.Size(148, 6);
+			// 
 			// NotifyIcon
 			// 
 			this.NotifyIcon.ContextMenuStrip = this.TrayMenu;
@@ -599,18 +611,6 @@ namespace EveOPreview.UI
 			this.TrayMenu.Name = "contextMenuStrip1";
 			this.TrayMenu.Size = new System.Drawing.Size(152, 76);
 			// 
-			// TitleMenuItem
-			// 
-			TitleMenuItem.Enabled = false;
-			TitleMenuItem.Name = "TitleMenuItem";
-			TitleMenuItem.Size = new System.Drawing.Size(151, 22);
-			TitleMenuItem.Text = "EVE-O Preview";
-			// 
-			// SeparatorMenuItem
-			// 
-			SeparatorMenuItem.Name = "SeparatorMenuItem";
-			SeparatorMenuItem.Size = new System.Drawing.Size(148, 6);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -625,8 +625,8 @@ namespace EveOPreview.UI
 			this.Name = "MainForm";
 			this.Text = "EVE-O Preview";
 			this.TopMost = true;
-			this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormClosing_Handler);
+			this.Load += new System.EventHandler(this.MainFormResize_Handler);
 			this.Resize += new System.EventHandler(this.MainFormResize_Handler);
 			ContentFlowLayoutPanel.ResumeLayout(false);
 			ContentFlowLayoutPanel.PerformLayout();
