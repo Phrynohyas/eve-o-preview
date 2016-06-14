@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace EveOPreview.UI
 {
@@ -23,6 +24,9 @@ namespace EveOPreview.UI
 
 		void ZoomIn(ViewZoomAnchor anchor, int zoomFactor);
 		void ZoomOut();
+
+		void RegisterHotkey(Keys hotkey);
+		void UnregisterHotkey();
 
 		void Refresh(bool forceRefresh);
 

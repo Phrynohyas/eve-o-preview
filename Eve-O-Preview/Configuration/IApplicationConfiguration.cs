@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace EveOPreview.Configuration
 {
@@ -32,5 +33,8 @@ namespace EveOPreview.Configuration
 
 		ClientLayout GetClientLayout(string currentClient);
 		void SetClientLayout(string currentClient, ClientLayout layout);
+
+		Keys GetClientHotkey(string currentClient);
+		void SetClientHotkey(string currentClient, Keys hotkey);
 	}
 }

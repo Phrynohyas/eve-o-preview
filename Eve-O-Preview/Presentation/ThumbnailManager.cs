@@ -215,6 +215,8 @@ namespace EveOPreview.UI
 					view.ThumbnailLostFocus = this.ThumbnailViewLostFocus;
 					view.ThumbnailActivated = this.ThumbnailActivated;
 
+					view.RegisterHotkey(this._configuration.GetClientHotkey(processTitle));
+
 					this._thumbnailViews.Add(processHandle, view);
 
 					this.ApplyClientLayout(processHandle, processTitle);
@@ -224,13 +226,7 @@ namespace EveOPreview.UI
 				else if ((view != null) && (processTitle != view.Title)) // update thumbnail title
 				{
 					view.Title = processTitle;
-
-					// TODO Shortcuts should be handled at manager level
-					//string value;
-					//if (_flatLayoutShortcuts.TryGetValue(processTitle, out value))
-					//{
-					//	view.RegisterShortcut(value); 
-					//}
+					view.RegisterHotkey(this._configuration.GetClientHotkey(processTitle));
 
 					this.ApplyClientLayout(processHandle, processTitle);
 
@@ -261,7 +257,8 @@ namespace EveOPreview.UI
 
 				this._thumbnailViews.Remove(processHandle);
 
-				// TODO Remove hotkey here
+				view.UnregisterHotkey();
+
 				view.ThumbnailResized = null;
 				view.ThumbnailMoved = null;
 				view.ThumbnailFocused = null;

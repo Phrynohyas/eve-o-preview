@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -24,6 +25,7 @@ namespace EveOPreview.UI
 		private IntPtr _thumbnailHandle;
 		private Size _baseSize;
 		private Point _baseLocation;
+		private HotkeyHandler _hotkeyHandler;
 		#endregion
 
 		public ThumbnailView()
@@ -207,6 +209,47 @@ namespace EveOPreview.UI
 			this.Location = this._baseLocation;
 		}
 
+		public void RegisterHotkey(Keys hotkey)
+		{
+			if (this._hotkeyHandler != null)
+			{
+				this.UnregisterHotkey();
+			}
+
+			if (hotkey == Keys.None)
+			{
+				return;
+			}
+
+			this._hotkeyHandler = new HotkeyHandler(this.Handle, hotkey);
+			this._hotkeyHandler.Pressed += HotkeyPressed_Handler;
+			try
+			{
+				this._hotkeyHandler.Register();
+				System.Diagnostics.Debug.WriteLine("Registered shortcut for " + this.Title);
+			}
+			catch (Exception)
+			{
+				System.Diagnostics.Debug.WriteLine("Failed to register shortcut for " + this.Title);
+				// There can be a lot of possible exception reasons here
+				// In case of any of them the hotkey setting is silently ignored
+			}
+
+		}
+
+		public void UnregisterHotkey()
+		{
+			if (this._hotkeyHandler == null)
+			{
+				return;
+			}
+
+			this._hotkeyHandler.Unregister();
+			this._hotkeyHandler.Pressed -= HotkeyPressed_Handler;
+			this._hotkeyHandler.Dispose();
+			this._hotkeyHandler = null;
+		}
+
 		public void Refresh(bool forceRefresh)
 		{
 			// To prevent flickering the old broken thumbnail is removed AFTER the new shiny one is created
@@ -326,6 +369,13 @@ namespace EveOPreview.UI
 				//this.UnregisterThumbnail();
 				//this.Refresh();
 			}
+		}
+
+		private void HotkeyPressed_Handler(object sender, HandledEventArgs e)
+		{
+			this.ThumbnailActivated?.Invoke(this.Id);
+
+			e.Handled = true;
 		}
 		#endregion
 
