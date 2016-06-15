@@ -35,6 +35,7 @@ CCP FoxFour wrote:
 > to bring the respective EVE Client to the front/put the window focus on it, in order to
 > interact with it.
 
+***
 
 **Created by**
 
