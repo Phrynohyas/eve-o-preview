@@ -19,7 +19,7 @@ The program does NOT (and will NOT ever) do the following things:
 **How To Install & Use**
 
 1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc)
-..* **Note**: Please do not install the program into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its vonfiguration file next to its executable, thus requiring the write access to the folder it is installed into.
+..* **Note**: Please do not install the program into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described [here](https://github.com/Phrynohyas/eve-o-preview/wiki/EVE-O-Preview-Program-Options)
 
