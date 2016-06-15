@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6CA62DF3-8589-484C-8BC8-F763CA66BBB1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EveOPreview</RootNamespace>
+    <AssemblyName>Eve-O Preview</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>EveOPreview.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>4B29FD125BFAD24FF900FC81CCE0B0AD37464FDB</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>preview toy_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup>
+    <Reference Include="LightInject, Version=4.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LightInject.4.0.9\lib\net45\LightInject.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.Serialization" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApplicationBase\ApplicationController.cs" />
+    <Compile Include="ApplicationBase\IApplicationController.cs" />
+    <Compile Include="ApplicationBase\IIocContainer.cs" />
+    <Compile Include="ApplicationBase\IPresenterGeneric.cs" />
+    <Compile Include="ApplicationBase\LightInjectContainer.cs" />
+    <Compile Include="ApplicationBase\Presenter.cs" />
+    <Compile Include="ApplicationBase\PresenterGeneric.cs" />
+    <Compile Include="Configuration\ConfigurationStorage.cs" />
+    <Compile Include="Configuration\IApplicationConfiguration.cs" />
+    <Compile Include="Configuration\ZoomAnchor.cs" />
+    <Compile Include="DwmAPI\DWM_BLURBEHIND.cs" />
+    <Compile Include="DwmAPI\DWM_THUMBNAIL_PROPERTIES.cs" />
+    <Compile Include="DwmAPI\DWM_TNP_CONSTANTS.cs" />
+    <Compile Include="DwmAPI\MARGINS.cs" />
+    <Compile Include="DwmAPI\RECT.cs" />
+    <Compile Include="Configuration\ClientLayout.cs" />
+    <Compile Include="ApplicationBase\IPresenter.cs" />
+    <Compile Include="Presentation\MainPresenter.cs" />
+    <Compile Include="Presentation\ViewCloseRequest.cs" />
+    <Compile Include="Presentation\ViewZoomAnchorConverter.cs" />
+    <Compile Include="UI\Interface\IThumbnailViewFactory.cs" />
+    <Compile Include="Presentation\IThumbnailManager.cs" />
+    <Compile Include="UI\Implementation\ThumbnailDescriptionView.cs" />
+    <Compile Include="UI\Factory\ThumbnailDescriptionViewFactory.cs" />
+    <Compile Include="UI\Interface\IMainView.cs" />
+    <Compile Include="ApplicationBase\IView.cs" />
+    <Compile Include="UI\Interface\IThumbnailDescriptionView.cs" />
+    <Compile Include="UI\Interface\IThumbnailDescriptionViewFactory.cs" />
+    <Compile Include="UI\Interface\ViewZoomAnchor.cs" />
+    <Compile Include="Configuration\ApplicationConfiguration.cs" />
+    <Compile Include="Hotkeys\HotkeyHandler.cs" />
+    <Compile Include="Hotkeys\HotkeyHandlerNativeMethods.cs" />
+    <Compile Include="UI\Implementation\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Implementation\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\IConfigurationStorage.cs" />
+    <Compile Include="UI\Interface\IThumbnailView.cs" />
+    <Compile Include="UI\Factory\ThumbnailViewFactory.cs" />
+    <Compile Include="Presentation\ThumbnailManager.cs" />
+    <Compile Include="UI\Implementation\ThumbnailOverlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Implementation\ThumbnailOverlay.Designer.cs">
+      <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="UI\Implementation\MainForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Implementation\ThumbnailOverlay.resx">
+      <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Implementation\ThumbnailView.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ThumbnailView.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <Compile Include="UI\Implementation\ThumbnailView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Implementation\ThumbnailView.Designer.cs">
+      <DependentUpon>ThumbnailView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DwmAPI\DwmApiNativeMethods.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
+    <Content Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.4\build\dotnet\Fody.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
