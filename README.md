@@ -8,14 +8,18 @@ The program does NOT (and will NOT ever) do the following things:
 * broadcast any keyboard or mouse events
 * anyhow interact with EVE Online except of bringing its main window to foreground or resizing it
 
-System Requirements:
+
+**System Requirements**
+
 * Windows Vista, Windows 7, Windows 8/8.1, Windows 10
 * Windows Aero Enabled
 * Microsoft .NET Framework 4.5+
 
-How To Install & Use:
-1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc). 
-Note: Please DO NOT install the program into the Program Files or Program files (x86) folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its vonfiguration file next to its executable, thus requiring the write access to the folder it is installed into.
+
+**How To Install & Use**
+
+1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc)
+..* **Note**: Please do not install the program into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its vonfiguration file next to its executable, thus requiring the write access to the folder it is installed into.
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described [here](https://github.com/Phrynohyas/eve-o-preview/wiki/EVE-O-Preview-Program-Options)
 
@@ -55,12 +59,9 @@ CCP FoxFour wrote:
 
 * CCP FoxFour
 
-**Current thread**
+**Original threads**
 
 https://forums.eveonline.com/default.aspx?g=posts&t=389086
-
-**Original thread**
-
 https://forums.eveonline.com/default.aspx?g=posts&t=246157
 
 **Original repository**
