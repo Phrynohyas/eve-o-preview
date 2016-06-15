@@ -160,9 +160,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
     <Compile Include="UI\Implementation\ThumbnailView.cs">
       <SubType>Form</SubType>
