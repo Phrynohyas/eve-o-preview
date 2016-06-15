@@ -10,7 +10,7 @@ namespace EveOPreview.Configuration
 		public ApplicationConfiguration()
 		{
 			// Default values
-			this.MinimizeToTray = true;
+			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
 
 			this.ThumbnailsOpacity = 0.5;
