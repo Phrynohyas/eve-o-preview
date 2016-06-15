@@ -218,9 +218,9 @@ namespace EveOPreview.UI
 			this.HideThumbnailsOnLostFocusCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.HideThumbnailsOnLostFocusCheckBox.Location = new System.Drawing.Point(3, 127);
 			this.HideThumbnailsOnLostFocusCheckBox.Name = "HideThumbnailsOnLostFocusCheckBox";
-			this.HideThumbnailsOnLostFocusCheckBox.Size = new System.Drawing.Size(205, 17);
+			this.HideThumbnailsOnLostFocusCheckBox.Size = new System.Drawing.Size(234, 17);
 			this.HideThumbnailsOnLostFocusCheckBox.TabIndex = 2;
-			this.HideThumbnailsOnLostFocusCheckBox.Text = "Hide previews EVE client is not active";
+			this.HideThumbnailsOnLostFocusCheckBox.Text = "Hide previews when EVE client is not active";
 			this.HideThumbnailsOnLostFocusCheckBox.UseVisualStyleBackColor = true;
 			this.HideThumbnailsOnLostFocusCheckBox.CheckedChanged += new System.EventHandler(this.OptionChanged_Handler);
 			// 
