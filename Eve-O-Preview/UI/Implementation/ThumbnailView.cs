@@ -363,12 +363,12 @@ namespace EveOPreview.UI
 			//	// do smth cool?
 			//}
 
-			if (e.Button == MouseButtons.Middle)
-			{
+			//if (e.Button == MouseButtons.Middle)
+			//{
 				//// Trigger full thumbnail refresh
 				//this.UnregisterThumbnail();
 				//this.Refresh();
-			}
+			//}
 		}
 
 		private void HotkeyPressed_Handler(object sender, HandledEventArgs e)
@@ -405,47 +405,5 @@ namespace EveOPreview.UI
 			{
 			}
 		}
-
-		//private Hotkey _hotkey; // This field stores the hotkey reference
-		//public void RegisterShortcut(string shortcut)
-		//{
-		//if (String.IsNullOrEmpty(shortcut))
-		//{
-		//	return;
-		//}
-
-		//KeysConverter converter = new KeysConverter();
-		//object keysObject = converter.ConvertFrom(shortcut);
-		//if (keysObject == null)
-		//{
-		//	return;
-		//}
-
-		//Keys key = (Keys)keysObject;
-
-		//Hotkey hotkey = new Hotkey();
-
-		//if ((key & Keys.Shift) == Keys.Shift)
-		//{
-		//	hotkey.Shift = true;
-		//}
-
-		//if ((key & Keys.Alt) == Keys.Alt)
-		//{
-		//	hotkey.Alt = true;
-		//}
-
-		//if ((key & Keys.Control) == Keys.Control)
-		//{
-		//	hotkey.Control = true;
-		//}
-
-		//key = key & ~Keys.Shift & ~Keys.Alt & ~Keys.Control;
-		//hotkey.KeyCode = key;
-		//hotkey.Pressed += Hotkey_Pressed;
-		//hotkey.Register(this);
-
-		//this._hotkey = hotkey;
-		//}
 	}
 }
