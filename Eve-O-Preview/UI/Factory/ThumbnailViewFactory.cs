@@ -18,7 +18,7 @@ namespace EveOPreview.UI
 
 			view.Id = id;
 			view.Title = title;
-			view.Size = size;
+			view.ThumbnailSize = size;
 
 			return view;
 		}
