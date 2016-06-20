@@ -7,10 +7,14 @@ namespace EveOPreview.UI
 {
 	public partial class MainForm : Form, IMainView
 	{
+		#region Private fields
 		private readonly ApplicationContext _context;
 		private readonly Dictionary<ViewZoomAnchor, RadioButton> _zoomAnchorMap;
 		private ViewZoomAnchor _cachedThumbnailZoomAnchor;
 		private bool _suppressEvents;
+		private Size _minimumSize;
+		private Size _maximumSize;
+		#endregion
 
 		public MainForm(ApplicationContext context)
 		{
@@ -18,6 +22,8 @@ namespace EveOPreview.UI
 			this._zoomAnchorMap = new Dictionary<ViewZoomAnchor, RadioButton>();
 			this._cachedThumbnailZoomAnchor = ViewZoomAnchor.NW;
 			this._suppressEvents = false;
+			this._minimumSize = new Size(80, 60);
+			this._maximumSize = new Size(80, 60);
 
 			InitializeComponent();
 
@@ -216,11 +222,8 @@ namespace EveOPreview.UI
 
 		public void SetThumbnailSizeLimitations(Size minimumSize, Size maximumSize)
 		{
-			this.ThumbnailsWidthNumericEdit.Minimum = minimumSize.Width;
-			this.ThumbnailsWidthNumericEdit.Maximum = maximumSize.Width;
-
-			this.ThumbnailsHeightNumericEdit.Minimum = minimumSize.Height;
-			this.ThumbnailsHeightNumericEdit.Maximum = maximumSize.Height;
+			this._minimumSize = minimumSize;
+			this._maximumSize = maximumSize;
 		}
 
 		public void Minimize()
@@ -316,6 +319,14 @@ namespace EveOPreview.UI
 			{
 				return;
 			}
+
+			// Perform some View work that is not properly done in the Control
+			this._suppressEvents = true;
+			Size thumbnailSize = this.ThumbnailSize;
+			thumbnailSize.Width = Math.Min(Math.Max(thumbnailSize.Width, this._minimumSize.Width), this._maximumSize.Width);
+			thumbnailSize.Height = Math.Min(Math.Max(thumbnailSize.Height, this._minimumSize.Height), this._maximumSize.Height);
+			this.ThumbnailSize = thumbnailSize;
+			this._suppressEvents = false;
 
 			this.ThumbnailsSizeChanged?.Invoke();
 		}
