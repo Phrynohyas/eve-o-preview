@@ -20,7 +20,6 @@ namespace EveOPreview.UI
 		bool HideThumbnailsOnLostFocus { get; set; }
 		bool EnablePerClientThumbnailsLayouts { get; set; }
 
-		bool SyncThumbnailsSize { get; set; }
 		Size ThumbnailSize { get; set; }
 
 		bool EnableThumbnailZoom { get; set; }

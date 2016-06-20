@@ -110,18 +110,6 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public bool SyncThumbnailsSize
-		{
-			get
-			{
-				return this.SyncThumbnailsSizeCheckBox.Checked;
-			}
-			set
-			{
-				this.SyncThumbnailsSizeCheckBox.Checked = value;
-			}
-		}
-
 		public Size ThumbnailSize
 		{
 			get

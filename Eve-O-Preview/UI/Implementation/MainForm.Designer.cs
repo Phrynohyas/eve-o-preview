@@ -37,6 +37,8 @@ namespace EveOPreview.UI
 			System.Windows.Forms.FlowLayoutPanel ContentFlowLayoutPanel;
 			System.Windows.Forms.Panel OpacityPanel;
 			System.Windows.Forms.Panel ResizeOptionsPanel;
+			System.Windows.Forms.Label HeigthLabel;
+			System.Windows.Forms.Label WidthLabel;
 			System.Windows.Forms.Panel ZoomOptionsPanel;
 			System.Windows.Forms.Label ZoomFactorLabel;
 			System.Windows.Forms.Label ZoomAnchorLabel;
@@ -52,7 +54,6 @@ namespace EveOPreview.UI
 			this.ShowThumbnailsAlwaysOnTopCheckBox = new System.Windows.Forms.CheckBox();
 			this.HideThumbnailsOnLostFocusCheckBox = new System.Windows.Forms.CheckBox();
 			this.EnablePerClientThumbnailsLayoutsCheckBox = new System.Windows.Forms.CheckBox();
-			this.SyncThumbnailsSizeCheckBox = new System.Windows.Forms.CheckBox();
 			this.ThumbnailsWidthNumericEdit = new System.Windows.Forms.NumericUpDown();
 			this.ThumbnailsHeightNumericEdit = new System.Windows.Forms.NumericUpDown();
 			this.ZoomAnchorPanel = new System.Windows.Forms.Panel();
@@ -79,6 +80,8 @@ namespace EveOPreview.UI
 			ContentFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			OpacityPanel = new System.Windows.Forms.Panel();
 			ResizeOptionsPanel = new System.Windows.Forms.Panel();
+			HeigthLabel = new System.Windows.Forms.Label();
+			WidthLabel = new System.Windows.Forms.Label();
 			ZoomOptionsPanel = new System.Windows.Forms.Panel();
 			ZoomFactorLabel = new System.Windows.Forms.Label();
 			ZoomAnchorLabel = new System.Windows.Forms.Label();
@@ -140,7 +143,7 @@ namespace EveOPreview.UI
 			ContentFlowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			ContentFlowLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			ContentFlowLayoutPanel.Name = "ContentFlowLayoutPanel";
-			ContentFlowLayoutPanel.Size = new System.Drawing.Size(252, 487);
+			ContentFlowLayoutPanel.Size = new System.Drawing.Size(252, 481);
 			ContentFlowLayoutPanel.TabIndex = 25;
 			// 
 			// MinimizeToTrayCheckBox
@@ -240,88 +243,83 @@ namespace EveOPreview.UI
 			// ResizeOptionsPanel
 			// 
 			ResizeOptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			ResizeOptionsPanel.Controls.Add(this.SyncThumbnailsSizeCheckBox);
+			ResizeOptionsPanel.Controls.Add(HeigthLabel);
+			ResizeOptionsPanel.Controls.Add(WidthLabel);
 			ResizeOptionsPanel.Controls.Add(this.ThumbnailsWidthNumericEdit);
 			ResizeOptionsPanel.Controls.Add(this.ThumbnailsHeightNumericEdit);
 			ResizeOptionsPanel.Location = new System.Drawing.Point(3, 173);
 			ResizeOptionsPanel.Name = "ResizeOptionsPanel";
-			ResizeOptionsPanel.Size = new System.Drawing.Size(246, 30);
+			ResizeOptionsPanel.Size = new System.Drawing.Size(246, 28);
 			ResizeOptionsPanel.TabIndex = 26;
 			// 
-			// SyncThumbnailsSizeCheckBox
+			// HeigthLabel
 			// 
-			this.SyncThumbnailsSizeCheckBox.AutoSize = true;
-			this.SyncThumbnailsSizeCheckBox.Checked = true;
-			this.SyncThumbnailsSizeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.SyncThumbnailsSizeCheckBox.Location = new System.Drawing.Point(1, 3);
-			this.SyncThumbnailsSizeCheckBox.Name = "SyncThumbnailsSizeCheckBox";
-			this.SyncThumbnailsSizeCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.SyncThumbnailsSizeCheckBox.Size = new System.Drawing.Size(108, 17);
-			this.SyncThumbnailsSizeCheckBox.TabIndex = 4;
-			this.SyncThumbnailsSizeCheckBox.Text = "Syncronize resize";
-			this.SyncThumbnailsSizeCheckBox.UseVisualStyleBackColor = true;
-			this.SyncThumbnailsSizeCheckBox.CheckedChanged += new System.EventHandler(this.OptionChanged_Handler);
+			HeigthLabel.AutoSize = true;
+			HeigthLabel.Location = new System.Drawing.Point(152, 5);
+			HeigthLabel.Name = "HeigthLabel";
+			HeigthLabel.Size = new System.Drawing.Size(38, 13);
+			HeigthLabel.TabIndex = 14;
+			HeigthLabel.Text = "Heigth";
+			// 
+			// WidthLabel
+			// 
+			WidthLabel.AutoSize = true;
+			WidthLabel.Location = new System.Drawing.Point(2, 5);
+			WidthLabel.Name = "WidthLabel";
+			WidthLabel.Size = new System.Drawing.Size(87, 13);
+			WidthLabel.TabIndex = 13;
+			WidthLabel.Text = "Thumbnail Width";
 			// 
 			// ThumbnailsWidthNumericEdit
 			// 
 			this.ThumbnailsWidthNumericEdit.BackColor = System.Drawing.SystemColors.Window;
 			this.ThumbnailsWidthNumericEdit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.ThumbnailsWidthNumericEdit.CausesValidation = false;
 			this.ThumbnailsWidthNumericEdit.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-			this.ThumbnailsWidthNumericEdit.Location = new System.Drawing.Point(137, 3);
+			10,
+			0,
+			0,
+			0});
+			this.ThumbnailsWidthNumericEdit.Location = new System.Drawing.Point(95, 3);
 			this.ThumbnailsWidthNumericEdit.Maximum = new decimal(new int[] {
-            640,
-            0,
-            0,
-            0});
-			this.ThumbnailsWidthNumericEdit.Minimum = new decimal(new int[] {
-            80,
-            0,
-            0,
-            0});
+			999999,
+			0,
+			0,
+			0});
 			this.ThumbnailsWidthNumericEdit.Name = "ThumbnailsWidthNumericEdit";
 			this.ThumbnailsWidthNumericEdit.Size = new System.Drawing.Size(48, 20);
 			this.ThumbnailsWidthNumericEdit.TabIndex = 11;
 			this.ThumbnailsWidthNumericEdit.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-			this.ThumbnailsWidthNumericEdit.TextChanged += new System.EventHandler(this.ThumbnailSizeChanged_Handler);
+			100,
+			0,
+			0,
+			0});
 			this.ThumbnailsWidthNumericEdit.ValueChanged += new System.EventHandler(this.ThumbnailSizeChanged_Handler);
 			// 
 			// ThumbnailsHeightNumericEdit
 			// 
 			this.ThumbnailsHeightNumericEdit.BackColor = System.Drawing.SystemColors.Window;
 			this.ThumbnailsHeightNumericEdit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.ThumbnailsHeightNumericEdit.CausesValidation = false;
 			this.ThumbnailsHeightNumericEdit.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
+			10,
+			0,
+			0,
+			0});
 			this.ThumbnailsHeightNumericEdit.Location = new System.Drawing.Point(196, 3);
 			this.ThumbnailsHeightNumericEdit.Maximum = new decimal(new int[] {
-            480,
-            0,
-            0,
-            0});
-			this.ThumbnailsHeightNumericEdit.Minimum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
+			99999999,
+			0,
+			0,
+			0});
 			this.ThumbnailsHeightNumericEdit.Name = "ThumbnailsHeightNumericEdit";
 			this.ThumbnailsHeightNumericEdit.Size = new System.Drawing.Size(42, 20);
 			this.ThumbnailsHeightNumericEdit.TabIndex = 12;
 			this.ThumbnailsHeightNumericEdit.Value = new decimal(new int[] {
-            70,
-            0,
-            0,
-            0});
-			this.ThumbnailsHeightNumericEdit.TextChanged += new System.EventHandler(this.ThumbnailSizeChanged_Handler);
+			70,
+			0,
+			0,
+			0});
 			this.ThumbnailsHeightNumericEdit.ValueChanged += new System.EventHandler(this.ThumbnailSizeChanged_Handler);
 			// 
 			// ZoomOptionsPanel
@@ -333,7 +331,7 @@ namespace EveOPreview.UI
 			ZoomOptionsPanel.Controls.Add(ZoomAnchorLabel);
 			ZoomOptionsPanel.Controls.Add(this.EnableThumbnailZoomCheckBox);
 			ZoomOptionsPanel.Controls.Add(this.ThumbnailZoomFactorNumericEdit);
-			ZoomOptionsPanel.Location = new System.Drawing.Point(3, 209);
+			ZoomOptionsPanel.Location = new System.Drawing.Point(3, 207);
 			ZoomOptionsPanel.Name = "ZoomOptionsPanel";
 			ZoomOptionsPanel.Size = new System.Drawing.Size(246, 82);
 			ZoomOptionsPanel.TabIndex = 27;
@@ -341,11 +339,11 @@ namespace EveOPreview.UI
 			// ZoomFactorLabel
 			// 
 			ZoomFactorLabel.AutoSize = true;
-			ZoomFactorLabel.Location = new System.Drawing.Point(49, 43);
+			ZoomFactorLabel.Location = new System.Drawing.Point(8, 43);
 			ZoomFactorLabel.Name = "ZoomFactorLabel";
-			ZoomFactorLabel.Size = new System.Drawing.Size(37, 13);
+			ZoomFactorLabel.Size = new System.Drawing.Size(67, 13);
 			ZoomFactorLabel.TabIndex = 29;
-			ZoomFactorLabel.Text = "Factor";
+			ZoomFactorLabel.Text = "Zoom Factor";
 			// 
 			// ZoomAnchorPanel
 			// 
@@ -489,25 +487,25 @@ namespace EveOPreview.UI
 			// 
 			this.ThumbnailZoomFactorNumericEdit.BackColor = System.Drawing.SystemColors.Window;
 			this.ThumbnailZoomFactorNumericEdit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.ThumbnailZoomFactorNumericEdit.Location = new System.Drawing.Point(9, 40);
+			this.ThumbnailZoomFactorNumericEdit.Location = new System.Drawing.Point(81, 41);
 			this.ThumbnailZoomFactorNumericEdit.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
+			10,
+			0,
+			0,
+			0});
 			this.ThumbnailZoomFactorNumericEdit.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+			1,
+			0,
+			0,
+			0});
 			this.ThumbnailZoomFactorNumericEdit.Name = "ThumbnailZoomFactorNumericEdit";
 			this.ThumbnailZoomFactorNumericEdit.Size = new System.Drawing.Size(34, 20);
 			this.ThumbnailZoomFactorNumericEdit.TabIndex = 24;
 			this.ThumbnailZoomFactorNumericEdit.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+			1,
+			0,
+			0,
+			0});
 			this.ThumbnailZoomFactorNumericEdit.ValueChanged += new System.EventHandler(this.OptionChanged_Handler);
 			// 
 			// ShowThumbnailOverlaysCheckBox
@@ -515,7 +513,7 @@ namespace EveOPreview.UI
 			this.ShowThumbnailOverlaysCheckBox.AutoSize = true;
 			this.ShowThumbnailOverlaysCheckBox.Checked = true;
 			this.ShowThumbnailOverlaysCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.ShowThumbnailOverlaysCheckBox.Location = new System.Drawing.Point(3, 297);
+			this.ShowThumbnailOverlaysCheckBox.Location = new System.Drawing.Point(3, 295);
 			this.ShowThumbnailOverlaysCheckBox.Name = "ShowThumbnailOverlaysCheckBox";
 			this.ShowThumbnailOverlaysCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
 			this.ShowThumbnailOverlaysCheckBox.Size = new System.Drawing.Size(90, 17);
@@ -529,7 +527,7 @@ namespace EveOPreview.UI
 			this.ShowThumbnailFramesCheckBox.AutoSize = true;
 			this.ShowThumbnailFramesCheckBox.Checked = true;
 			this.ShowThumbnailFramesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.ShowThumbnailFramesCheckBox.Location = new System.Drawing.Point(99, 297);
+			this.ShowThumbnailFramesCheckBox.Location = new System.Drawing.Point(99, 295);
 			this.ShowThumbnailFramesCheckBox.Name = "ShowThumbnailFramesCheckBox";
 			this.ShowThumbnailFramesCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.No;
 			this.ShowThumbnailFramesCheckBox.Size = new System.Drawing.Size(127, 17);
@@ -543,7 +541,7 @@ namespace EveOPreview.UI
 			ThumbnailsListPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			ThumbnailsListPanel.Controls.Add(this.ThumbnailsList);
 			ThumbnailsListPanel.Controls.Add(ThumbnailsListLabel);
-			ThumbnailsListPanel.Location = new System.Drawing.Point(3, 320);
+			ThumbnailsListPanel.Location = new System.Drawing.Point(3, 318);
 			ThumbnailsListPanel.Name = "ThumbnailsListPanel";
 			ThumbnailsListPanel.Size = new System.Drawing.Size(246, 125);
 			ThumbnailsListPanel.TabIndex = 31;
@@ -572,13 +570,13 @@ namespace EveOPreview.UI
 			// ForumLinkLabel
 			// 
 			this.ForumLinkLabel.AutoSize = true;
-			this.ForumLinkLabel.Location = new System.Drawing.Point(3, 448);
+			this.ForumLinkLabel.Location = new System.Drawing.Point(3, 446);
 			this.ForumLinkLabel.Name = "ForumLinkLabel";
 			this.ForumLinkLabel.Size = new System.Drawing.Size(241, 26);
 			this.ForumLinkLabel.TabIndex = 10;
 			this.ForumLinkLabel.TabStop = true;
 			this.ForumLinkLabel.Text = "to be set from prresenter to be set from prresenter to be set from prresenter to " +
-    "be set from prresenter";
+	"be set from prresenter";
 			this.ForumLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ForumLinkLabelClicked_Handler);
 			// 
 			// TitleMenuItem
@@ -604,10 +602,10 @@ namespace EveOPreview.UI
 			// TrayMenu
 			// 
 			this.TrayMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            TitleMenuItem,
-            RestoreWindowMenuItem,
-            SeparatorMenuItem,
-            ExitMenuItem});
+			TitleMenuItem,
+			RestoreWindowMenuItem,
+			SeparatorMenuItem,
+			ExitMenuItem});
 			this.TrayMenu.Name = "contextMenuStrip1";
 			this.TrayMenu.Size = new System.Drawing.Size(152, 76);
 			// 
@@ -616,7 +614,7 @@ namespace EveOPreview.UI
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-			this.ClientSize = new System.Drawing.Size(252, 487);
+			this.ClientSize = new System.Drawing.Size(252, 481);
 			this.Controls.Add(ContentFlowLayoutPanel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -653,7 +651,6 @@ namespace EveOPreview.UI
 		private CheckBox HideActiveClientThumbnailCheckBox;
 		private CheckBox HideThumbnailsOnLostFocusCheckBox;
 		private CheckBox EnablePerClientThumbnailsLayoutsCheckBox;
-		private CheckBox SyncThumbnailsSizeCheckBox;
 		private CheckBox ShowThumbnailsAlwaysOnTopCheckBox;
 		private CheckBox ShowThumbnailFramesCheckBox;
 		private LinkLabel ForumLinkLabel;
