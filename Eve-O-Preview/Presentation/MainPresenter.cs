@@ -106,6 +106,7 @@ namespace EveOPreview.UI
 			this.View.HideThumbnailsOnLostFocus = this._configuration.HideThumbnailsOnLostFocus;
 			this.View.EnablePerClientThumbnailsLayouts = this._configuration.EnablePerClientThumbnailLayouts;
 
+			this.View.SetThumbnailSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 			this.View.ThumbnailSize = this._configuration.ThumbnailSize;
 
 			this.View.EnableThumbnailZoom = this._configuration.EnableThumbnailZoom;
@@ -114,8 +115,6 @@ namespace EveOPreview.UI
 
 			this.View.ShowThumbnailOverlays = this._configuration.ShowThumbnailOverlays;
 			this.View.ShowThumbnailFrames = this._configuration.ShowThumbnailFrames;
-
-			this.View.SetThumbnailSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 		}
 
 		private void SaveApplicationSettings()
