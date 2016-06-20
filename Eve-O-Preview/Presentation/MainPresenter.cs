@@ -9,7 +9,7 @@ namespace EveOPreview.UI
 	public class MainPresenter : Presenter<IMainView>
 	{
 		#region Private constants
-		private const string ForumUrl = @"https://forums.eveonline.com/default.aspx?g=posts&t=389086";
+		private const string ForumUrl = @"https://forums.eveonline.com/default.aspx?g=posts&t=484927";
 		#endregion
 
 		#region Private fields
@@ -106,7 +106,7 @@ namespace EveOPreview.UI
 			this.View.HideThumbnailsOnLostFocus = this._configuration.HideThumbnailsOnLostFocus;
 			this.View.EnablePerClientThumbnailsLayouts = this._configuration.EnablePerClientThumbnailLayouts;
 
-			this.View.SyncThumbnailsSize = this._configuration.SyncThumbnailsSize;
+			this.View.SetThumbnailSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 			this.View.ThumbnailSize = this._configuration.ThumbnailSize;
 
 			this.View.EnableThumbnailZoom = this._configuration.EnableThumbnailZoom;
@@ -115,8 +115,6 @@ namespace EveOPreview.UI
 
 			this.View.ShowThumbnailOverlays = this._configuration.ShowThumbnailOverlays;
 			this.View.ShowThumbnailFrames = this._configuration.ShowThumbnailFrames;
-
-			this.View.SetThumbnailSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 		}
 
 		private void SaveApplicationSettings()
@@ -131,7 +129,6 @@ namespace EveOPreview.UI
 			this._configuration.HideThumbnailsOnLostFocus = this.View.HideThumbnailsOnLostFocus;
 			this._configuration.EnablePerClientThumbnailLayouts = this.View.EnablePerClientThumbnailsLayouts;
 
-			this._configuration.SyncThumbnailsSize = this.View.SyncThumbnailsSize;
 			this._configuration.ThumbnailSize = this.View.ThumbnailSize;
 
 			this._configuration.EnableThumbnailZoom = this.View.EnableThumbnailZoom;

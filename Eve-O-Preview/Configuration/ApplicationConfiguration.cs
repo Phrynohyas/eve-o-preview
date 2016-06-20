@@ -21,7 +21,6 @@ namespace EveOPreview.Configuration
 			this.HideThumbnailsOnLostFocus = false;
 			this.EnablePerClientThumbnailLayouts = false;
 
-			this.SyncThumbnailsSize = true;
 			this.ThumbnailSize = new Size(250, 150);
 			this.ThumbnailMinimumSize = new Size(100, 80);
 			this.ThumbnailMaximumSize = new Size(640, 400);
@@ -50,7 +49,6 @@ namespace EveOPreview.Configuration
 		public bool HideThumbnailsOnLostFocus { get; set; }
 		public bool EnablePerClientThumbnailLayouts { get; set; }
 
-		public bool SyncThumbnailsSize { get; set; }
 		public Size ThumbnailSize { get; set; }
 		public Size ThumbnailMaximumSize { get; set; }
 		public Size ThumbnailMinimumSize { get; set; }

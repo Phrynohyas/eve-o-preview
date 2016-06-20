@@ -12,15 +12,13 @@ namespace EveOPreview.UI
 		//private readonly IThumbnailManager _manager;
 		private readonly ThumbnailOverlay _overlay;
 
-		//private Size _baseSize;
-		//private Point _basePosition;
-
 		// This is pure brainless View
 		// Just somewhat more complex than usual
 		private bool _isThumbnailSetUp;
 		private bool _isOverlayVisible;
 		private bool _isPositionChanged;
 		private bool _isSizeChanged;
+		private DateTime _suppressResizeEventsTimestamp;
 		private DWM_THUMBNAIL_PROPERTIES _thumbnail;
 		private IntPtr _thumbnailHandle;
 		private Size _baseSize;
@@ -39,6 +37,8 @@ namespace EveOPreview.UI
 
 			this._isPositionChanged = true;
 			this._isSizeChanged = true;
+
+			this._suppressResizeEventsTimestamp = DateTime.UtcNow;
 
 			InitializeComponent();
 
@@ -66,11 +66,11 @@ namespace EveOPreview.UI
 
 		public bool IsOverlayEnabled { get; set; }
 
-		public new Point Location
+		public Point ThumbnailLocation
 		{
 			get
 			{
-				return base.Location;
+				return this.Location;
 			}
 			set
 			{
@@ -78,7 +78,19 @@ namespace EveOPreview.UI
 				{
 					this.StartPosition = FormStartPosition.Manual;
 				}
-				base.Location = value;
+				this.Location = value;
+			}
+		}
+
+		public Size ThumbnailSize
+		{
+			get
+			{
+				return this.ClientSize;
+			}
+			set
+			{
+				this.ClientSize = value;
 			}
 		}
 
@@ -137,11 +149,14 @@ namespace EveOPreview.UI
 			this.Opacity = opacity;
 		}
 
-		public void SetWindowFrames(bool enable)
+		public void SetFrames(bool enable)
 		{
+			// Fix for WinForms issue with the Resize event being fired with inconsistent ClientSize value
+			// Any Resize events fired before this timestamp will be ignored
+			this._suppressResizeEventsTimestamp = DateTime.UtcNow.AddMilliseconds(450);
 			this.FormBorderStyle = enable ? FormBorderStyle.SizableToolWindow : FormBorderStyle.None;
 
-			// Notify about windo contents position change
+			// Notify about possible contents position change
 			this._isSizeChanged = true;
 		}
 
@@ -226,11 +241,9 @@ namespace EveOPreview.UI
 			try
 			{
 				this._hotkeyHandler.Register();
-				System.Diagnostics.Debug.WriteLine("Registered shortcut for " + this.Title);
 			}
 			catch (Exception)
 			{
-				System.Diagnostics.Debug.WriteLine("Failed to register shortcut for " + this.Title);
 				// There can be a lot of possible exception reasons here
 				// In case of any of them the hotkey setting is silently ignored
 			}
@@ -265,7 +278,7 @@ namespace EveOPreview.UI
 
 			if (sizeChanged)
 			{
-				this._thumbnail.rcDestination = new RECT(0, 0, this.ClientRectangle.Right, this.ClientRectangle.Bottom);
+				this._thumbnail.rcDestination = new RECT(0, 0, this.ClientSize.Width, this.ClientSize.Height);
 				try
 				{
 					DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._thumbnailHandle, this._thumbnail);
@@ -304,14 +317,14 @@ namespace EveOPreview.UI
 				return;
 			}
 
-			Size overlaySize = this.RenderAreaPictureBox.Size;
+			Size overlaySize = this.ClientSize;
 			overlaySize.Width -= 2 * 5;
 			overlaySize.Height -= 2 * 5;
 
 			Point overlayLocation = this.Location;
 
-			overlayLocation.X += 5 + (this.Size.Width - this.RenderAreaPictureBox.Size.Width) / 2;
-			overlayLocation.Y += 5 + (this.Size.Height - this.RenderAreaPictureBox.Size.Height) - (this.Size.Width - this.RenderAreaPictureBox.Size.Width) / 2;
+			overlayLocation.X += 5 + (this.Size.Width - this.ClientSize.Width) / 2;
+			overlayLocation.Y += 5 + (this.Size.Height - this.ClientSize.Height) - (this.Size.Width - this.ClientSize.Width) / 2;
 
 			this._isPositionChanged = false;
 			this._overlay.Size = overlaySize;
@@ -337,7 +350,13 @@ namespace EveOPreview.UI
 
 		private void Resize_Handler(object sender, EventArgs e)
 		{
+			if (DateTime.UtcNow < this._suppressResizeEventsTimestamp)
+			{
+				return;
+			}
+
 			this._isSizeChanged = true;
+
 			this.ThumbnailResized?.Invoke(this.Id);
 		}
 
@@ -363,12 +382,12 @@ namespace EveOPreview.UI
 			//	// do smth cool?
 			//}
 
-			if (e.Button == MouseButtons.Middle)
-			{
-				//// Trigger full thumbnail refresh
-				//this.UnregisterThumbnail();
-				//this.Refresh();
-			}
+			//if (e.Button == MouseButtons.Middle)
+			//{
+			//// Trigger full thumbnail refresh
+			//this.UnregisterThumbnail();
+			//this.Refresh();
+			//}
 		}
 
 		private void HotkeyPressed_Handler(object sender, HandledEventArgs e)
@@ -405,47 +424,5 @@ namespace EveOPreview.UI
 			{
 			}
 		}
-
-		//private Hotkey _hotkey; // This field stores the hotkey reference
-		//public void RegisterShortcut(string shortcut)
-		//{
-		//if (String.IsNullOrEmpty(shortcut))
-		//{
-		//	return;
-		//}
-
-		//KeysConverter converter = new KeysConverter();
-		//object keysObject = converter.ConvertFrom(shortcut);
-		//if (keysObject == null)
-		//{
-		//	return;
-		//}
-
-		//Keys key = (Keys)keysObject;
-
-		//Hotkey hotkey = new Hotkey();
-
-		//if ((key & Keys.Shift) == Keys.Shift)
-		//{
-		//	hotkey.Shift = true;
-		//}
-
-		//if ((key & Keys.Alt) == Keys.Alt)
-		//{
-		//	hotkey.Alt = true;
-		//}
-
-		//if ((key & Keys.Control) == Keys.Control)
-		//{
-		//	hotkey.Control = true;
-		//}
-
-		//key = key & ~Keys.Shift & ~Keys.Alt & ~Keys.Control;
-		//hotkey.KeyCode = key;
-		//hotkey.Pressed += Hotkey_Pressed;
-		//hotkey.Register(this);
-
-		//this._hotkey = hotkey;
-		//}
 	}
 }

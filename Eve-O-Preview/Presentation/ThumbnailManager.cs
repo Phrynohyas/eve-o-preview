@@ -84,7 +84,7 @@ namespace EveOPreview.UI
 
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
-				entry.Value.Size = size;
+				entry.Value.ThumbnailSize = size;
 				entry.Value.Refresh(false);
 			}
 
@@ -126,7 +126,7 @@ namespace EveOPreview.UI
 				if (!this._isHoverEffectActive)
 				{
 					// No need to move Thumbnails while one of them is highlighted
-					view.Location = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.Location);
+					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
 					view.SetOpacity(this._configuration.ThumbnailsOpacity);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 				}
@@ -152,7 +152,7 @@ namespace EveOPreview.UI
 
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
-				entry.Value.SetWindowFrames(this._configuration.ShowThumbnailFrames);
+				entry.Value.SetFrames(this._configuration.ShowThumbnailFrames);
 			}
 
 			this.EnableViewEvents();
@@ -206,8 +206,8 @@ namespace EveOPreview.UI
 					view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 					view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
-					view.SetWindowFrames(this._configuration.ShowThumbnailFrames);
-					view.Location = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.Location);
+					view.SetFrames(this._configuration.ShowThumbnailFrames);
+					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
 
 					view.ThumbnailResized = this.ThumbnailViewResized;
 					view.ThumbnailMoved = this.ThumbnailViewMoved;
@@ -349,7 +349,7 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this.SetThumbnailsSize(view.Size);
+			this.SetThumbnailsSize(view.ThumbnailSize);
 
 			view.Refresh(false);
 		}
@@ -363,7 +363,7 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this._configuration.SetThumbnailLocation(view.Title, this._activeClientTitle, view.Location);
+			this._configuration.SetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
 
 			view.Refresh(false);
 		}

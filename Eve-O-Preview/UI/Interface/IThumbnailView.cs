@@ -11,15 +11,15 @@ namespace EveOPreview.UI
 
 		bool IsEnabled { get; set; }
 		bool IsActive { get; set; }
-		Point Location { get; set; }
-		Size Size { get; set; }
+		Point ThumbnailLocation { get; set; }
+		Size ThumbnailSize { get; set; }
 		bool IsOverlayEnabled { get; set; }
 
 		bool IsKnownHandle(IntPtr handle);
 
 		void SetSizeLimitations(Size minimumSize, Size maximumSize);
 		void SetOpacity(double opacity);
-		void SetWindowFrames(bool enable);
+		void SetFrames(bool enable);
 		void SetTopMost(bool enableTopmost);
 
 		void ZoomIn(ViewZoomAnchor anchor, int zoomFactor);
