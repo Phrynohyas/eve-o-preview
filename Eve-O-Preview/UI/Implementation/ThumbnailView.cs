@@ -16,6 +16,7 @@ namespace EveOPreview.UI
 		// Just somewhat more complex than usual
 		private bool _isThumbnailSetUp;
 		private bool _isOverlayVisible;
+		private bool _isTopMost;
 		private bool _isPositionChanged;
 		private bool _isSizeChanged;
 		private DateTime _suppressResizeEventsTimestamp;
@@ -34,6 +35,7 @@ namespace EveOPreview.UI
 			this.IsOverlayEnabled = false;
 			this._isThumbnailSetUp = false;
 			this._isOverlayVisible = false;
+			this._isTopMost = false;
 
 			this._isPositionChanged = true;
 			this._isSizeChanged = true;
@@ -162,8 +164,16 @@ namespace EveOPreview.UI
 
 		public void SetTopMost(bool enableTopmost)
 		{
+			// IMO WinForms could check this too
+			if (this._isTopMost == enableTopmost)
+			{
+				return;
+			}
+
 			this.TopMost = enableTopmost;
 			this._overlay.TopMost = enableTopmost;
+
+			this._isTopMost = enableTopmost;
 		}
 
 		public void ZoomIn(ViewZoomAnchor anchor, int zoomFactor)
