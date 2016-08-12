@@ -167,7 +167,7 @@
     <Compile Include="UI\Implementation\ThumbnailView.Designer.cs">
       <DependentUpon>ThumbnailView.cs</DependentUpon>
     </Compile>
-    <Compile Include="DwmAPI\DwmApiNativeMethods.cs" />
+    <Compile Include="DwmAPI\WindowManagerNativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\icon.png" />

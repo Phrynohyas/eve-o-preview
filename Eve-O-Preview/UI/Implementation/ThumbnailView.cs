@@ -8,22 +8,24 @@ namespace EveOPreview.UI
 	public partial class ThumbnailView : Form, IThumbnailView
 	{
 		#region Private fields
-
-		//private readonly IThumbnailManager _manager;
 		private readonly ThumbnailOverlay _overlay;
 
-		// This is pure brainless View
-		// Just somewhat more complex than usual
+		// Part of the logic (namely current size / position management)
+		// was moved to the view due to the performance reasons
 		private bool _isThumbnailSetUp;
 		private bool _isOverlayVisible;
 		private bool _isTopMost;
 		private bool _isPositionChanged;
 		private bool _isSizeChanged;
+		private bool _isCustomMouseModeActive;
 		private DateTime _suppressResizeEventsTimestamp;
 		private DWM_THUMBNAIL_PROPERTIES _thumbnail;
 		private IntPtr _thumbnailHandle;
-		private Size _baseSize;
-		private Point _baseLocation;
+		private Size _baseZoomSize;
+		private Point _baseZoomLocation;
+		private Point _baseMousePosition;
+		private Size _baseZoomMaximumSize;
+
 		private HotkeyHandler _hotkeyHandler;
 		#endregion
 
@@ -39,12 +41,13 @@ namespace EveOPreview.UI
 
 			this._isPositionChanged = true;
 			this._isSizeChanged = true;
+			this._isCustomMouseModeActive = false;
 
 			this._suppressResizeEventsTimestamp = DateTime.UtcNow;
 
 			InitializeComponent();
 
-			this._overlay = new ThumbnailOverlay(this, this.ThumbnailActivated_Handler);
+			this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
 		}
 
 		public IntPtr Id { get; set; }
@@ -153,10 +156,18 @@ namespace EveOPreview.UI
 
 		public void SetFrames(bool enable)
 		{
+			FormBorderStyle style = enable ? FormBorderStyle.SizableToolWindow : FormBorderStyle.None;
+
+			// No need to change the borders style if it is ALREADY correct
+			if (this.FormBorderStyle == style)
+			{
+				return;
+			}
+
 			// Fix for WinForms issue with the Resize event being fired with inconsistent ClientSize value
 			// Any Resize events fired before this timestamp will be ignored
 			this._suppressResizeEventsTimestamp = DateTime.UtcNow.AddMilliseconds(450);
-			this.FormBorderStyle = enable ? FormBorderStyle.SizableToolWindow : FormBorderStyle.None;
+			this.FormBorderStyle = style;
 
 			// Notify about possible contents position change
 			this._isSizeChanged = true;
@@ -178,11 +189,8 @@ namespace EveOPreview.UI
 
 		public void ZoomIn(ViewZoomAnchor anchor, int zoomFactor)
 		{
-			this._baseSize = this.Size;
-			this._baseLocation = this.Location;
-
-			int oldWidth = this._baseSize.Width;
-			int oldHeight = this._baseSize.Height;
+			int oldWidth = this._baseZoomSize.Width;
+			int oldHeight = this._baseZoomSize.Height;
 
 			int locationX = this.Location.X;
 			int locationY = this.Location.Y;
@@ -193,6 +201,7 @@ namespace EveOPreview.UI
 			// First change size, THEN move the window
 			// Otherwise there is a chance to fail in a loop
 			// Zoom requied -> Moved the windows 1st -> Focus is lost -> Window is moved back -> Focus is back on -> Zoom required -> ...
+			this.MaximumSize = new Size(0, 0);
 			this.Size = new Size(newWidth, newHeight);
 
 			switch (anchor)
@@ -217,7 +226,7 @@ namespace EveOPreview.UI
 					break;
 
 				case ViewZoomAnchor.SW:
-					this.Location = new Point(locationX, locationY - newHeight + this._baseSize.Height);
+					this.Location = new Point(locationX, locationY - newHeight + this._baseZoomSize.Height);
 					break;
 				case ViewZoomAnchor.S:
 					this.Location = new Point(locationX - newWidth / 2 + oldWidth / 2, locationY - newHeight + oldHeight);
@@ -230,8 +239,7 @@ namespace EveOPreview.UI
 
 		public void ZoomOut()
 		{
-			this.Size = this._baseSize;
-			this.Location = this._baseLocation;
+			this.RestoreWindowSizeAndLocation();
 		}
 
 		public void RegisterHotkey(Keys hotkey)
@@ -257,7 +265,6 @@ namespace EveOPreview.UI
 				// There can be a lot of possible exception reasons here
 				// In case of any of them the hotkey setting is silently ignored
 			}
-
 		}
 
 		public void UnregisterHotkey()
@@ -291,7 +298,7 @@ namespace EveOPreview.UI
 				this._thumbnail.rcDestination = new RECT(0, 0, this.ClientSize.Width, this.ClientSize.Height);
 				try
 				{
-					DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._thumbnailHandle, this._thumbnail);
+					WindowManagerNativeMethods.DwmUpdateThumbnailProperties(this._thumbnailHandle, this._thumbnail);
 				}
 				catch (ArgumentException)
 				{
@@ -347,7 +354,7 @@ namespace EveOPreview.UI
 			get
 			{
 				var Params = base.CreateParams;
-				Params.ExStyle |= (int)DwmApiNativeMethods.WS_EX_TOOLWINDOW;
+				Params.ExStyle |= (int)WindowManagerNativeMethods.WS_EX_TOOLWINDOW;
 				return Params;
 			}
 		}
@@ -370,34 +377,46 @@ namespace EveOPreview.UI
 			this.ThumbnailResized?.Invoke(this.Id);
 		}
 
-		private void Focused_Handler(object sender, EventArgs e)
+		private void MouseEnter_Handler(object sender, EventArgs e)
 		{
+			this.ExitCustomMouseMode();
+			this.SaveWindowSizeAndLocation();
+
 			this.ThumbnailFocused?.Invoke(this.Id);
 		}
 
-		private void LostFocus_Handler(object sender, EventArgs e)
+		private void MouseLeave_Handler(object sender, EventArgs e)
 		{
 			this.ThumbnailLostFocus?.Invoke(this.Id);
 		}
 
-		private void ThumbnailActivated_Handler(object sender, MouseEventArgs e)
+		private void MouseDown_Handler(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left)
 			{
 				this.ThumbnailActivated?.Invoke(this.Id);
 			}
 
-			//if (e.Button == MouseButtons.Right)
-			//{
-			//	// do smth cool?
-			//}
+			if ((e.Button == MouseButtons.Right) || (e.Button == (MouseButtons.Left | MouseButtons.Right)))
+			{
+				this.EnterCustomMouseMode();
+			}
+		}
 
-			//if (e.Button == MouseButtons.Middle)
-			//{
-			//// Trigger full thumbnail refresh
-			//this.UnregisterThumbnail();
-			//this.Refresh();
-			//}
+		private void MouseMove_Handler(object sender, MouseEventArgs e)
+		{
+			if (this._isCustomMouseModeActive)
+			{
+				this.ProcessCustomMouseMode(e.Button.HasFlag(MouseButtons.Left), e.Button.HasFlag(MouseButtons.Right));
+			}
+		}
+
+		private void MouseUp_Handler(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right)
+			{
+				this.ExitCustomMouseMode();
+			}
 		}
 
 		private void HotkeyPressed_Handler(object sender, HandledEventArgs e)
@@ -408,9 +427,29 @@ namespace EveOPreview.UI
 		}
 		#endregion
 
+		// This pair of methods saves/restores certain window propeties
+		// Methods are used to remove the 'Zoom' effect (if any) when the
+		// custom resize/move mode is activated
+		// Methods are kept on this level because moving to the presenter
+		// the code that responds to the mouse events like movement
+		// seems like a huge overkill
+		private void SaveWindowSizeAndLocation()
+		{
+			this._baseZoomSize = this.Size;
+			this._baseZoomLocation = this.Location;
+			this._baseZoomMaximumSize = this.MaximumSize;
+		}
+
+		private void RestoreWindowSizeAndLocation()
+		{
+			this.Size = this._baseZoomSize;
+			this.MaximumSize = this._baseZoomMaximumSize;
+			this.Location = this._baseZoomLocation;
+		}
+
 		private void RegisterThumbnail()
 		{
-			this._thumbnailHandle = DwmApiNativeMethods.DwmRegisterThumbnail(this.Handle, this.Id);
+			this._thumbnailHandle = WindowManagerNativeMethods.DwmRegisterThumbnail(this.Handle, this.Id);
 
 			this._thumbnail = new DWM_THUMBNAIL_PROPERTIES();
 			this._thumbnail.dwFlags = DWM_TNP_CONSTANTS.DWM_TNP_VISIBLE
@@ -428,11 +467,45 @@ namespace EveOPreview.UI
 		{
 			try
 			{
-				DwmApiNativeMethods.DwmUnregisterThumbnail(thumbnailHandle);
+				WindowManagerNativeMethods.DwmUnregisterThumbnail(thumbnailHandle);
 			}
 			catch (ArgumentException)
 			{
 			}
+		}
+
+		private void EnterCustomMouseMode()
+		{
+			this.RestoreWindowSizeAndLocation();
+
+			this._isCustomMouseModeActive = true;
+			this._baseMousePosition = Control.MousePosition;
+		}
+
+		private void ProcessCustomMouseMode(bool leftButton, bool rightButton)
+		{
+			Point mousePosition = Control.MousePosition;
+			int offsetX = mousePosition.X - this._baseMousePosition.X;
+			int offsetY = mousePosition.Y - this._baseMousePosition.Y;
+			this._baseMousePosition = mousePosition;
+
+			// Left + Right buttons trigger thumbnail resize
+			// Right button only trigger thumbnail movement
+			if (leftButton && rightButton)
+			{
+				this.Size = new Size(this.Size.Width + offsetX, this.Size.Height + offsetY);
+				this._baseZoomSize = this.Size;
+			}
+			else
+			{
+				this.Location = new Point(this.Location.X + offsetX, this.Location.Y + offsetY);
+				this._baseZoomLocation = this.Location;
+			}
+		}
+
+		private void ExitCustomMouseMode()
+		{
+			this._isCustomMouseModeActive = false;
 		}
 	}
 }

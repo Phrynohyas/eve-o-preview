@@ -32,7 +32,7 @@ namespace EveOPreview.UI
 			get
 			{
 				var Params = base.CreateParams;
-				Params.ExStyle |= (int)DwmApiNativeMethods.WS_EX_TOOLWINDOW;
+				Params.ExStyle |= (int)WindowManagerNativeMethods.WS_EX_TOOLWINDOW;
 				return Params;
 			}
 		}

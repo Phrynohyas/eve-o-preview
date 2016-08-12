@@ -5,7 +5,7 @@ using System.Drawing;
 namespace EveOPreview
 {
     // Desktop Windows Manager APIs
-    static class DwmApiNativeMethods
+    static class WindowManagerNativeMethods
     {
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();

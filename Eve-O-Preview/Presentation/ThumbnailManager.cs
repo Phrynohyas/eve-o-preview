@@ -95,8 +95,8 @@ namespace EveOPreview.UI
 
 		public void RefreshThumbnails()
 		{
-			IntPtr foregroundWindowHandle = DwmApiNativeMethods.GetForegroundWindow();
-			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !DwmApiNativeMethods.DwmIsCompositionEnabled();
+			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
+			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !WindowManagerNativeMethods.DwmIsCompositionEnabled();
 
 			this.DisableViewEvents();
 
@@ -184,7 +184,7 @@ namespace EveOPreview.UI
 			Process[] clientProcesses = ThumbnailManager.GetClientProcesses();
 			List<IntPtr> processHandles = new List<IntPtr>(clientProcesses.Length);
 
-			IntPtr foregroundWindowHandle = DwmApiNativeMethods.GetForegroundWindow();
+			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
 
 			List<IThumbnailView> viewsAdded = new List<IThumbnailView>();
 			List<IThumbnailView> viewsUpdated = new List<IThumbnailView>();
@@ -316,13 +316,13 @@ namespace EveOPreview.UI
 
 		private void ThumbnailActivated(IntPtr id)
 		{
-			DwmApiNativeMethods.SetForegroundWindow(id);
+			WindowManagerNativeMethods.SetForegroundWindow(id);
 
-			int style = DwmApiNativeMethods.GetWindowLong(id, DwmApiNativeMethods.GWL_STYLE);
+			int style = WindowManagerNativeMethods.GetWindowLong(id, WindowManagerNativeMethods.GWL_STYLE);
 			// If the window was minimized then its thumbnail should be reset
-			if ((style & DwmApiNativeMethods.WS_MINIMIZE) == DwmApiNativeMethods.WS_MINIMIZE)
+			if ((style & WindowManagerNativeMethods.WS_MINIMIZE) == WindowManagerNativeMethods.WS_MINIMIZE)
 			{
-				DwmApiNativeMethods.ShowWindowAsync(id, DwmApiNativeMethods.SW_SHOWNORMAL);
+				WindowManagerNativeMethods.ShowWindowAsync(id, WindowManagerNativeMethods.SW_SHOWNORMAL);
 				IThumbnailView view;
 				if (this._thumbnailViews.TryGetValue(id, out view))
 				{
@@ -418,7 +418,7 @@ namespace EveOPreview.UI
 				return;
 			}
 
-			DwmApiNativeMethods.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height, true);
+			WindowManagerNativeMethods.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height, true);
 		}
 
 		private void UpdateClientLayouts()
@@ -428,7 +428,7 @@ namespace EveOPreview.UI
 			foreach (Process process in clientProcesses)
 			{
 				RECT rect;
-				DwmApiNativeMethods.GetWindowRect(process.MainWindowHandle, out rect);
+				WindowManagerNativeMethods.GetWindowRect(process.MainWindowHandle, out rect);
 
 				int left = Math.Abs(rect.Left);
 				int right = Math.Abs(rect.Right);
