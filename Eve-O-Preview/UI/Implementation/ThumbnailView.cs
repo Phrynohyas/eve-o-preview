@@ -113,7 +113,11 @@ namespace EveOPreview.UI
 		{
 			base.Show();
 
-			// Thumbnail will be registered during the Refresh cycle
+			this._isPositionChanged = true;
+			this._isSizeChanged = true;
+			this._isOverlayVisible = false;
+
+			// Thumbnail will be properly registered during the Manager's Refresh cycle
 			this.Refresh();
 
 			this.IsActive = true;
@@ -152,6 +156,12 @@ namespace EveOPreview.UI
 		public void SetOpacity(double opacity)
 		{
 			this.Opacity = opacity;
+
+			// Overlay opacity settings
+			// Of the thumbnail's opacity is almost full then set the overlay's one to
+			// full. Otherwise set it to half of the thumnail opacity
+			// Opacity value is stored even if the overlay is not displayed atm
+			this._overlay.Opacity = this.Opacity > 0.9 ? 1.0 : 1.0 - (1.0 - this.Opacity) / 2;
 		}
 
 		public void SetFrames(bool enable)
@@ -185,6 +195,11 @@ namespace EveOPreview.UI
 			this._overlay.TopMost = enableTopmost;
 
 			this._isTopMost = enableTopmost;
+		}
+
+		public void SetHighlight(bool enabled, Color color)
+		{
+			this._overlay.EnableHighlight(enabled, color);
 		}
 
 		public void ZoomIn(ViewZoomAnchor anchor, int zoomFactor)
@@ -312,40 +327,34 @@ namespace EveOPreview.UI
 				this.UnregisterThumbnail(obsoleteThumbnailHanlde);
 			}
 
-			if (!this.IsOverlayEnabled)
-			{
-				if (this._isOverlayVisible)
-				{
-					this._overlay.Hide();
-					this._isOverlayVisible = false;
-				}
-
-				return;
-			}
+			this._overlay.EnableOverlayLabel(this.IsOverlayEnabled);
 
 			if (!this._isOverlayVisible)
 			{
+				// One-time action to show the Overlay before it is set up
+				// Otherwise its position won't be set
 				this._overlay.Show();
 				this._isOverlayVisible = true;
 			}
-			else if (!(sizeChanged || locationChanged))
+			else
 			{
-				// No need to adjust in the overlay location if it is already visible and properly set
-				return;
+				if (!(sizeChanged || locationChanged))
+				{
+					// No need to adjust in the overlay location if it is already visible and properly set
+					return;
+				}
 			}
 
 			Size overlaySize = this.ClientSize;
-			overlaySize.Width -= 2 * 5;
-			overlaySize.Height -= 2 * 5;
-
 			Point overlayLocation = this.Location;
 
-			overlayLocation.X += 5 + (this.Size.Width - this.ClientSize.Width) / 2;
-			overlayLocation.Y += 5 + (this.Size.Height - this.ClientSize.Height) - (this.Size.Width - this.ClientSize.Width) / 2;
+			overlayLocation.X += (this.Size.Width - this.ClientSize.Width) / 2;
+			overlayLocation.Y += (this.Size.Height - this.ClientSize.Height) - (this.Size.Width - this.ClientSize.Width) / 2;
 
 			this._isPositionChanged = false;
 			this._overlay.Size = overlaySize;
 			this._overlay.Location = overlayLocation;
+			this._overlay.Invalidate();
 		}
 
 		#region GUI events
@@ -427,26 +436,7 @@ namespace EveOPreview.UI
 		}
 		#endregion
 
-		// This pair of methods saves/restores certain window propeties
-		// Methods are used to remove the 'Zoom' effect (if any) when the
-		// custom resize/move mode is activated
-		// Methods are kept on this level because moving to the presenter
-		// the code that responds to the mouse events like movement
-		// seems like a huge overkill
-		private void SaveWindowSizeAndLocation()
-		{
-			this._baseZoomSize = this.Size;
-			this._baseZoomLocation = this.Location;
-			this._baseZoomMaximumSize = this.MaximumSize;
-		}
-
-		private void RestoreWindowSizeAndLocation()
-		{
-			this.Size = this._baseZoomSize;
-			this.MaximumSize = this._baseZoomMaximumSize;
-			this.Location = this._baseZoomLocation;
-		}
-
+		#region Thumbnail management
 		private void RegisterThumbnail()
 		{
 			this._thumbnailHandle = WindowManagerNativeMethods.DwmRegisterThumbnail(this.Handle, this.Id);
@@ -472,6 +462,28 @@ namespace EveOPreview.UI
 			catch (ArgumentException)
 			{
 			}
+		}
+		#endregion
+
+		#region Custom Mouse mode
+		// This pair of methods saves/restores certain window propeties
+		// Methods are used to remove the 'Zoom' effect (if any) when the
+		// custom resize/move mode is activated
+		// Methods are kept on this level because moving to the presenter
+		// the code that responds to the mouse events like movement
+		// seems like a huge overkill
+		private void SaveWindowSizeAndLocation()
+		{
+			this._baseZoomSize = this.Size;
+			this._baseZoomLocation = this.Location;
+			this._baseZoomMaximumSize = this.MaximumSize;
+		}
+
+		private void RestoreWindowSizeAndLocation()
+		{
+			this.Size = this._baseZoomSize;
+			this.MaximumSize = this._baseZoomMaximumSize;
+			this.Location = this._baseZoomLocation;
 		}
 
 		private void EnterCustomMouseMode()
@@ -507,5 +519,6 @@ namespace EveOPreview.UI
 		{
 			this._isCustomMouseModeActive = false;
 		}
+		#endregion
 	}
 }

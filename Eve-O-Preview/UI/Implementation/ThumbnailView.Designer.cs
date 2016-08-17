@@ -34,8 +34,8 @@ namespace EveOPreview.UI
 			this.Text = "Preview";
 			this.TopMost = true;
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDown_Handler);
-			this.MouseLeave += new System.EventHandler(this.MouseLeave_Handler);
 			this.MouseEnter += new System.EventHandler(this.MouseEnter_Handler);
+			this.MouseLeave += new System.EventHandler(this.MouseLeave_Handler);
 			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove_Handler);
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUp_Handler);
 			this.Move += new System.EventHandler(this.Move_Handler);

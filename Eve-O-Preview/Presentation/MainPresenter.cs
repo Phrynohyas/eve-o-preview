@@ -13,7 +13,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		#region Private fields
-		private readonly IApplicationConfiguration _configuration;
+		private readonly IAppConfig _configuration;
 		private readonly IConfigurationStorage _configurationStorage;
 		private readonly IThumbnailDescriptionViewFactory _thumbnailDescriptionViewFactory;
 		private readonly IDictionary<IntPtr, IThumbnailDescriptionView> _thumbnailDescriptionViews;
@@ -22,7 +22,7 @@ namespace EveOPreview.UI
 		private bool _exitApplication;
 		#endregion
 
-		public MainPresenter(IApplicationController controller, IMainView view, IApplicationConfiguration configuration, IConfigurationStorage configurationStorage,
+		public MainPresenter(IApplicationController controller, IMainView view, IAppConfig configuration, IConfigurationStorage configurationStorage,
 								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
 			: base(controller, view)
 		{
@@ -98,18 +98,18 @@ namespace EveOPreview.UI
 
 			this.View.MinimizeToTray = this._configuration.MinimizeToTray;
 
-			this.View.ThumbnailsOpacity = this._configuration.ThumbnailsOpacity;
+			this.View.ThumbnailOpacity = this._configuration.ThumbnailOpacity;
 
 			this.View.EnableClientLayoutTracking = this._configuration.EnableClientLayoutTracking;
 			this.View.HideActiveClientThumbnail = this._configuration.HideActiveClientThumbnail;
 			this.View.ShowThumbnailsAlwaysOnTop = this._configuration.ShowThumbnailsAlwaysOnTop;
 			this.View.HideThumbnailsOnLostFocus = this._configuration.HideThumbnailsOnLostFocus;
-			this.View.EnablePerClientThumbnailsLayouts = this._configuration.EnablePerClientThumbnailLayouts;
+			this.View.EnablePerClientThumbnailLayouts = this._configuration.EnablePerClientThumbnailLayouts;
 
 			this.View.SetThumbnailSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 			this.View.ThumbnailSize = this._configuration.ThumbnailSize;
 
-			this.View.EnableThumbnailZoom = this._configuration.EnableThumbnailZoom;
+			this.View.EnableThumbnailZoom = this._configuration.ThumbnailZoomEnabled;
 			this.View.ThumbnailZoomFactor = this._configuration.ThumbnailZoomFactor;
 			this.View.ThumbnailZoomAnchor = ViewZoomAnchorConverter.Convert(this._configuration.ThumbnailZoomAnchor);
 
@@ -121,17 +121,17 @@ namespace EveOPreview.UI
 		{
 			this._configuration.MinimizeToTray = this.View.MinimizeToTray;
 
-			this._configuration.ThumbnailsOpacity = (float)this.View.ThumbnailsOpacity;
+			this._configuration.ThumbnailOpacity = (float)this.View.ThumbnailOpacity;
 
 			this._configuration.EnableClientLayoutTracking = this.View.EnableClientLayoutTracking;
 			this._configuration.HideActiveClientThumbnail = this.View.HideActiveClientThumbnail;
 			this._configuration.ShowThumbnailsAlwaysOnTop = this.View.ShowThumbnailsAlwaysOnTop;
 			this._configuration.HideThumbnailsOnLostFocus = this.View.HideThumbnailsOnLostFocus;
-			this._configuration.EnablePerClientThumbnailLayouts = this.View.EnablePerClientThumbnailsLayouts;
+			this._configuration.EnablePerClientThumbnailLayouts = this.View.EnablePerClientThumbnailLayouts;
 
 			this._configuration.ThumbnailSize = this.View.ThumbnailSize;
 
-			this._configuration.EnableThumbnailZoom = this.View.EnableThumbnailZoom;
+			this._configuration.ThumbnailZoomEnabled = this.View.EnableThumbnailZoom;
 			this._configuration.ThumbnailZoomFactor = this.View.ThumbnailZoomFactor;
 			this._configuration.ThumbnailZoomAnchor = ViewZoomAnchorConverter.Convert(this.View.ThumbnailZoomAnchor);
 
