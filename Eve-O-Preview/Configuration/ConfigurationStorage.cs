@@ -7,9 +7,9 @@ namespace EveOPreview.Configuration
 	{
 		private const string ConfigurationFileName = "EVE-O Preview.json";
 
-		private readonly IApplicationConfiguration _configuration;
+		private readonly IAppConfig _configuration;
 
-		public ConfigurationStorage(IApplicationConfiguration configuration)
+		public ConfigurationStorage(IAppConfig configuration)
 		{
 			this._configuration = configuration;
 		}

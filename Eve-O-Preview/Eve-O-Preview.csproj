@@ -97,7 +97,7 @@
     <Compile Include="ApplicationBase\Presenter.cs" />
     <Compile Include="ApplicationBase\PresenterGeneric.cs" />
     <Compile Include="Configuration\ConfigurationStorage.cs" />
-    <Compile Include="Configuration\IApplicationConfiguration.cs" />
+    <Compile Include="Configuration\IAppConfig.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
     <Compile Include="DwmAPI\DWM_BLURBEHIND.cs" />
     <Compile Include="DwmAPI\DWM_THUMBNAIL_PROPERTIES.cs" />
@@ -118,7 +118,7 @@
     <Compile Include="UI\Interface\IThumbnailDescriptionView.cs" />
     <Compile Include="UI\Interface\IThumbnailDescriptionViewFactory.cs" />
     <Compile Include="UI\Interface\ViewZoomAnchor.cs" />
-    <Compile Include="Configuration\ApplicationConfiguration.cs" />
+    <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Hotkeys\HotkeyHandler.cs" />
     <Compile Include="Hotkeys\HotkeyHandlerNativeMethods.cs" />
     <Compile Include="UI\Implementation\MainForm.cs">

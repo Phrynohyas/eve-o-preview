@@ -12,13 +12,13 @@ namespace EveOPreview.UI
 	{
 		bool MinimizeToTray { get; set; }
 
-		double ThumbnailsOpacity { get; set; }
+		double ThumbnailOpacity { get; set; }
 
 		bool EnableClientLayoutTracking { get; set; }
 		bool HideActiveClientThumbnail { get; set; }
 		bool ShowThumbnailsAlwaysOnTop { get; set; }
 		bool HideThumbnailsOnLostFocus { get; set; }
-		bool EnablePerClientThumbnailsLayouts { get; set; }
+		bool EnablePerClientThumbnailLayouts { get; set; }
 
 		Size ThumbnailSize { get; set; }
 
@@ -28,6 +28,9 @@ namespace EveOPreview.UI
 
 		bool ShowThumbnailOverlays { get; set; }
 		bool ShowThumbnailFrames { get; set; }
+
+		bool EnableActiveClientHighlight { get; set; }
+		Color ActiveClientHighlightColor { get; set; }
 
 		void SetForumUrl(string url);
 		void SetThumbnailSizeLimitations(Size minimumSize, Size maximumSize);

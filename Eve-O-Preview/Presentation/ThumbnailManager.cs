@@ -14,7 +14,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		#region Private fields
-		private readonly IApplicationConfiguration _configuration;
+		private readonly IAppConfig _configuration;
 		private readonly IConfigurationStorage _configurationStorage;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
@@ -27,7 +27,7 @@ namespace EveOPreview.UI
 		private bool _isHoverEffectActive;
 		#endregion
 
-		public ThumbnailManager(IApplicationConfiguration configuration, IConfigurationStorage configurationStorage, IThumbnailViewFactory factory)
+		public ThumbnailManager(IAppConfig configuration, IConfigurationStorage configurationStorage, IThumbnailViewFactory factory)
 		{
 			this._configuration = configuration;
 			this._configurationStorage = configurationStorage;
@@ -127,11 +127,13 @@ namespace EveOPreview.UI
 				{
 					// No need to move Thumbnails while one of them is highlighted
 					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
-					view.SetOpacity(this._configuration.ThumbnailsOpacity);
+					view.SetOpacity(this._configuration.ThumbnailOpacity);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 				}
 
 				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
+
+				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClientHandle), this._configuration.ActiveClientHighlightColor);
 
 				if (!view.IsActive)
 				{
@@ -289,7 +291,7 @@ namespace EveOPreview.UI
 			view.SetTopMost(true);
 			view.SetOpacity(1.0);
 
-			if (this._configuration.EnableThumbnailZoom)
+			if (this._configuration.ThumbnailZoomEnabled)
 			{
 				this.ThumbnailZoomIn(view);
 			}
@@ -304,12 +306,12 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			if (this._configuration.EnableThumbnailZoom)
+			if (this._configuration.ThumbnailZoomEnabled)
 			{
 				this.ThumbnailZoomOut(view);
 			}
 
-			view.SetOpacity(this._configuration.ThumbnailsOpacity);
+			view.SetOpacity(this._configuration.ThumbnailOpacity);
 
 			this._isHoverEffectActive = false;
 		}
