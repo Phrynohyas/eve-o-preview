@@ -32,8 +32,8 @@ namespace EveOPreview.Configuration
 			this.ShowThumbnailOverlays = true;
 			this.ShowThumbnailFrames = true;
 
-			this.EnableActiveClientHighlight = true;
-			this.ActiveClientHighlightColor = Color.GreenYellow;
+			this.EnableActiveClientHighlight = false;
+			this.ActiveClientHighlightColor = Color.Yellow;
 
 			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
 			this.FlatLayout = new Dictionary<string, Point>();
