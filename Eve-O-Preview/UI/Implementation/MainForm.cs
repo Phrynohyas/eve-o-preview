@@ -44,15 +44,25 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public double ThumbnailsOpacity
+		public double ThumbnailOpacity
 		{
 			get
 			{
-				return Math.Min(this.ThumbnailsOpacityScrollBar.Value / 100.00, 1.00);
+				return Math.Min(this.ThumbnailOpacityTrackBar.Value / 100.00, 1.00);
 			}
 			set
 			{
-				this.ThumbnailsOpacityScrollBar.Value = Math.Min(100, (int)(100.0 * value));
+				int barValue = (int)(100.0 * value);
+				if (barValue > 100)
+				{
+					barValue = 100;
+				}
+				else if (barValue < 10)
+				{
+					barValue = 10;
+				}
+
+				this.ThumbnailOpacityTrackBar.Value = barValue;
 			}
 		}
 
@@ -104,7 +114,7 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public bool EnablePerClientThumbnailsLayouts
+		public bool EnablePerClientThumbnailLayouts
 		{
 			get
 			{
@@ -207,6 +217,10 @@ namespace EveOPreview.UI
 				this.ShowThumbnailFramesCheckBox.Checked = value;
 			}
 		}
+
+		public bool EnableActiveClientHighlight { get; set; }
+
+		public Color ActiveClientHighlightColor { get; set; }
 
 		public new void Show()
 		{
