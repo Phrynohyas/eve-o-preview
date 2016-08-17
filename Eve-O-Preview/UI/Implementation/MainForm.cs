@@ -218,9 +218,31 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public bool EnableActiveClientHighlight { get; set; }
+		public bool EnableActiveClientHighlight
+		{
+			get
+			{
+				return this.EnableActiveClientHighlightCheckBox.Checked;
+			}
+			set
+			{
+				this.EnableActiveClientHighlightCheckBox.Checked = value;
+			}
+		}
 
-		public Color ActiveClientHighlightColor { get; set; }
+		public Color ActiveClientHighlightColor
+		{
+			get
+			{
+				return this._activeClientHighlightColor;
+			}
+			set
+			{
+				this._activeClientHighlightColor = value;
+				this.ActiveClientHighlightColorButton.BackColor = value;
+			}
+		}
+		private Color _activeClientHighlightColor;
 
 		public new void Show()
 		{
@@ -343,6 +365,23 @@ namespace EveOPreview.UI
 			this._suppressEvents = false;
 
 			this.ThumbnailsSizeChanged?.Invoke();
+		}
+
+		private void ActiveClientHighlightColorButton_Click(object sender, EventArgs e)
+		{
+			using (ColorDialog dialog = new ColorDialog())
+			{
+				dialog.Color = this.ActiveClientHighlightColor;
+
+				if (dialog.ShowDialog() != DialogResult.OK)
+				{
+					return;
+				}
+
+				this.ActiveClientHighlightColor = dialog.Color;
+			}
+
+			this.OptionChanged_Handler(sender, e);
 		}
 
 		private void ThumbnailsList_ItemCheck_Handler(object sender, ItemCheckEventArgs e)
