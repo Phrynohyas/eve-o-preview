@@ -24,6 +24,9 @@ namespace EveOPreview.Configuration
 			string rawData = File.ReadAllText(ConfigurationStorage.ConfigurationFileName);
 
 			JsonConvert.PopulateObject(rawData, this._configuration);
+
+			// Validate data after loading it
+			this._configuration.ApplyRestrictions();
 		}
 
 		public void Save()

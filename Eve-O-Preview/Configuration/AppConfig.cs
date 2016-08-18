@@ -157,5 +157,32 @@ namespace EveOPreview.Configuration
 		{
 			this.ClientHotkey[currentClient] = (new KeysConverter()).ConvertToInvariantString(hotkey);
 		}
+
+		/// <summary>
+		/// Applies restrictions to different parameters of the config
+		/// </summary>
+		public void ApplyRestrictions()
+		{
+			this.ThumbnailRefreshPeriod = AppConfig.ApplyRestrictions(this.ThumbnailRefreshPeriod, 300, 1000);
+			this.ThumbnailSize = new Size(AppConfig.ApplyRestrictions(this.ThumbnailSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
+				AppConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
+			this.ThumbnailOpacity = AppConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
+			this.ThumbnailZoomFactor = AppConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
+		}
+
+		private static int ApplyRestrictions(int value, int minimum, int maximum)
+		{
+			if (value <= minimum)
+			{
+				return minimum;
+			}
+
+			if (value >= maximum)
+			{
+				return maximum;
+			}
+
+			return value;
+		}
 	}
 }
