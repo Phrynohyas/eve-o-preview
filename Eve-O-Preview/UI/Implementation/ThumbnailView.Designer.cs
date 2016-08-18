@@ -33,9 +33,11 @@ namespace EveOPreview.UI
 			this.ShowInTaskbar = false;
 			this.Text = "Preview";
 			this.TopMost = true;
-			this.MouseLeave += new System.EventHandler(this.LostFocus_Handler);
-			this.MouseHover += new System.EventHandler(this.Focused_Handler);
-			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ThumbnailActivated_Handler);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDown_Handler);
+			this.MouseEnter += new System.EventHandler(this.MouseEnter_Handler);
+			this.MouseLeave += new System.EventHandler(this.MouseLeave_Handler);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMove_Handler);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MouseUp_Handler);
 			this.Move += new System.EventHandler(this.Move_Handler);
 			this.Resize += new System.EventHandler(this.Resize_Handler);
 			this.ResumeLayout(false);

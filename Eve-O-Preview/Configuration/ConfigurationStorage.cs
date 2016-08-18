@@ -7,9 +7,9 @@ namespace EveOPreview.Configuration
 	{
 		private const string ConfigurationFileName = "EVE-O Preview.json";
 
-		private readonly IApplicationConfiguration _configuration;
+		private readonly IAppConfig _configuration;
 
-		public ConfigurationStorage(IApplicationConfiguration configuration)
+		public ConfigurationStorage(IAppConfig configuration)
 		{
 			this._configuration = configuration;
 		}
@@ -24,6 +24,9 @@ namespace EveOPreview.Configuration
 			string rawData = File.ReadAllText(ConfigurationStorage.ConfigurationFileName);
 
 			JsonConvert.PopulateObject(rawData, this._configuration);
+
+			// Validate data after loading it
+			this._configuration.ApplyRestrictions();
 		}
 
 		public void Save()

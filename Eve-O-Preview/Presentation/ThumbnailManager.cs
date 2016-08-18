@@ -11,11 +11,11 @@ namespace EveOPreview.UI
 	{
 		#region Private constants
 		private const string ClientProcessName = "ExeFile";
+		private const string DefaultClientTitle = "EVE";
 		#endregion
 
 		#region Private fields
-		private readonly IApplicationConfiguration _configuration;
-		private readonly IConfigurationStorage _configurationStorage;
+		private readonly IAppConfig _configuration;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
@@ -27,14 +27,13 @@ namespace EveOPreview.UI
 		private bool _isHoverEffectActive;
 		#endregion
 
-		public ThumbnailManager(IApplicationConfiguration configuration, IConfigurationStorage configurationStorage, IThumbnailViewFactory factory)
+		public ThumbnailManager(IAppConfig configuration, IThumbnailViewFactory factory)
 		{
 			this._configuration = configuration;
-			this._configurationStorage = configurationStorage;
 			this._thumbnailViewFactory = factory;
 
 			this._activeClientHandle = (IntPtr)0;
-			this._activeClientTitle = "EVE";
+			this._activeClientTitle = ThumbnailManager.DefaultClientTitle;
 
 			this.EnableViewEvents();
 			this._isHoverEffectActive = false;
@@ -93,10 +92,10 @@ namespace EveOPreview.UI
 			this.EnableViewEvents();
 		}
 
-		public void RefreshThumbnails()
+		private void RefreshThumbnails()
 		{
-			IntPtr foregroundWindowHandle = DwmApiNativeMethods.GetForegroundWindow();
-			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !DwmApiNativeMethods.DwmIsCompositionEnabled();
+			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
+			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !WindowManagerNativeMethods.DwmIsCompositionEnabled();
 
 			this.DisableViewEvents();
 
@@ -123,15 +122,22 @@ namespace EveOPreview.UI
 					continue;
 				}
 
+				// No need to update Thumbnails while one of them is highlighted
 				if (!this._isHoverEffectActive)
 				{
-					// No need to move Thumbnails while one of them is highlighted
-					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
-					view.SetOpacity(this._configuration.ThumbnailsOpacity);
+					// Do not even move thumbnails with default caption
+					if (view.Title != ThumbnailManager.DefaultClientTitle)
+					{
+						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+					}
+
+					view.SetOpacity(this._configuration.ThumbnailOpacity);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 				}
 
 				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
+
+				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClientHandle), this._configuration.ActiveClientHighlightColor);
 
 				if (!view.IsActive)
 				{
@@ -184,7 +190,7 @@ namespace EveOPreview.UI
 			Process[] clientProcesses = ThumbnailManager.GetClientProcesses();
 			List<IntPtr> processHandles = new List<IntPtr>(clientProcesses.Length);
 
-			IntPtr foregroundWindowHandle = DwmApiNativeMethods.GetForegroundWindow();
+			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
 
 			List<IThumbnailView> viewsAdded = new List<IThumbnailView>();
 			List<IThumbnailView> viewsUpdated = new List<IThumbnailView>();
@@ -284,14 +290,33 @@ namespace EveOPreview.UI
 
 			this._isHoverEffectActive = true;
 
-			IThumbnailView view = this._thumbnailViews[id];
+			IThumbnailView focusedView = null;
 
-			view.SetTopMost(true);
-			view.SetOpacity(1.0);
-
-			if (this._configuration.EnableThumbnailZoom)
+			foreach (KeyValuePair<IntPtr, IThumbnailView> valuePair in this._thumbnailViews)
 			{
-				this.ThumbnailZoomIn(view);
+				IThumbnailView view = valuePair.Value;
+
+				if (view.Id != id)
+				{
+					view.SetTopMost(false);
+				}
+				else
+				{
+					focusedView = view;
+				}
+			}
+
+			if (focusedView == null)
+			{
+				return; // This should neve happen!
+			}
+
+			focusedView.SetTopMost(true);
+			focusedView.SetOpacity(1.0);
+
+			if (this._configuration.ThumbnailZoomEnabled)
+			{
+				this.ThumbnailZoomIn(focusedView);
 			}
 		}
 
@@ -304,30 +329,32 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			if (this._configuration.EnableThumbnailZoom)
+			if (this._configuration.ThumbnailZoomEnabled)
 			{
 				this.ThumbnailZoomOut(view);
 			}
 
-			view.SetOpacity(this._configuration.ThumbnailsOpacity);
+			view.SetOpacity(this._configuration.ThumbnailOpacity);
 
 			this._isHoverEffectActive = false;
 		}
 
 		private void ThumbnailActivated(IntPtr id)
 		{
-			DwmApiNativeMethods.SetForegroundWindow(id);
-
-			int style = DwmApiNativeMethods.GetWindowLong(id, DwmApiNativeMethods.GWL_STYLE);
-			// If the window was minimized then its thumbnail should be reset
-			if ((style & DwmApiNativeMethods.WS_MINIMIZE) == DwmApiNativeMethods.WS_MINIMIZE)
+			IThumbnailView view;
+			if (this._thumbnailViews.TryGetValue(id, out view))
 			{
-				DwmApiNativeMethods.ShowWindowAsync(id, DwmApiNativeMethods.SW_SHOWNORMAL);
-				IThumbnailView view;
-				if (this._thumbnailViews.TryGetValue(id, out view))
-				{
-					view.Refresh(true);
-				}
+				this._activeClientHandle = view.Id;
+				this._activeClientTitle = view.Title;
+			}
+
+			WindowManagerNativeMethods.SetForegroundWindow(id);
+
+			int style = WindowManagerNativeMethods.GetWindowLong(id, WindowManagerNativeMethods.GWL_STYLE);
+			// If the window was minimized then its thumbnail should be reset
+			if ((style & WindowManagerNativeMethods.WS_MINIMIZE) == WindowManagerNativeMethods.WS_MINIMIZE)
+			{
+				WindowManagerNativeMethods.ShowWindowAsync(id, WindowManagerNativeMethods.SW_SHOWNORMAL);
 			}
 
 			if (this._configuration.EnableClientLayoutTracking)
@@ -337,7 +364,7 @@ namespace EveOPreview.UI
 
 			this.RefreshThumbnails();
 
-			this._configurationStorage.Save();
+			view?.Refresh(true);
 		}
 
 		private void ThumbnailViewResized(IntPtr id)
@@ -418,7 +445,7 @@ namespace EveOPreview.UI
 				return;
 			}
 
-			DwmApiNativeMethods.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height, true);
+			WindowManagerNativeMethods.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height, true);
 		}
 
 		private void UpdateClientLayouts()
@@ -428,7 +455,7 @@ namespace EveOPreview.UI
 			foreach (Process process in clientProcesses)
 			{
 				RECT rect;
-				DwmApiNativeMethods.GetWindowRect(process.MainWindowHandle, out rect);
+				WindowManagerNativeMethods.GetWindowRect(process.MainWindowHandle, out rect);
 
 				int left = Math.Abs(rect.Left);
 				int right = Math.Abs(rect.Right);

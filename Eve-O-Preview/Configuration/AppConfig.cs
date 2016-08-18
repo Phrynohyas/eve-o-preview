@@ -5,15 +5,15 @@ using Newtonsoft.Json;
 
 namespace EveOPreview.Configuration
 {
-	public class ApplicationConfiguration : IApplicationConfiguration
+	public class AppConfig : IAppConfig
 	{
-		public ApplicationConfiguration()
+		public AppConfig()
 		{
 			// Default values
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
 
-			this.ThumbnailsOpacity = 0.5;
+			this.ThumbnailOpacity = 0.5;
 
 			this.EnableClientLayoutTracking = false;
 			this.HideActiveClientThumbnail = false;
@@ -25,12 +25,15 @@ namespace EveOPreview.Configuration
 			this.ThumbnailMinimumSize = new Size(100, 80);
 			this.ThumbnailMaximumSize = new Size(640, 400);
 
-			this.EnableThumbnailZoom = false;
+			this.ThumbnailZoomEnabled = false;
 			this.ThumbnailZoomFactor = 2;
 			this.ThumbnailZoomAnchor = ZoomAnchor.NW;
 
 			this.ShowThumbnailOverlays = true;
 			this.ShowThumbnailFrames = true;
+
+			this.EnableActiveClientHighlight = false;
+			this.ActiveClientHighlightColor = Color.Yellow;
 
 			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
 			this.FlatLayout = new Dictionary<string, Point>();
@@ -41,7 +44,8 @@ namespace EveOPreview.Configuration
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
 
-		public double ThumbnailsOpacity { get; set; }
+		[JsonProperty("ThumbnailsOpacity")]
+		public double ThumbnailOpacity { get; set; }
 
 		public bool EnableClientLayoutTracking { get; set; }
 		public bool HideActiveClientThumbnail { get; set; }
@@ -53,12 +57,16 @@ namespace EveOPreview.Configuration
 		public Size ThumbnailMaximumSize { get; set; }
 		public Size ThumbnailMinimumSize { get; set; }
 
-		public bool EnableThumbnailZoom { get; set; }
+		[JsonProperty("EnableThumbnailZoom")]
+		public bool ThumbnailZoomEnabled { get; set; }
 		public int ThumbnailZoomFactor { get; set; }
 		public ZoomAnchor ThumbnailZoomAnchor { get; set; }
 
 		public bool ShowThumbnailOverlays { get; set; }
 		public bool ShowThumbnailFrames { get; set; }
+
+		public bool EnableActiveClientHighlight { get; set; }
+		public Color ActiveClientHighlightColor { get; set; }
 
 		[JsonProperty]
 		private Dictionary<string, Dictionary<string, Point>> PerClientLayout { get; set; }
@@ -148,6 +156,33 @@ namespace EveOPreview.Configuration
 		public void SetClientHotkey(string currentClient, Keys hotkey)
 		{
 			this.ClientHotkey[currentClient] = (new KeysConverter()).ConvertToInvariantString(hotkey);
+		}
+
+		/// <summary>
+		/// Applies restrictions to different parameters of the config
+		/// </summary>
+		public void ApplyRestrictions()
+		{
+			this.ThumbnailRefreshPeriod = AppConfig.ApplyRestrictions(this.ThumbnailRefreshPeriod, 300, 1000);
+			this.ThumbnailSize = new Size(AppConfig.ApplyRestrictions(this.ThumbnailSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
+				AppConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
+			this.ThumbnailOpacity = AppConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
+			this.ThumbnailZoomFactor = AppConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
+		}
+
+		private static int ApplyRestrictions(int value, int minimum, int maximum)
+		{
+			if (value <= minimum)
+			{
+				return minimum;
+			}
+
+			if (value >= maximum)
+			{
+				return maximum;
+			}
+
+			return value;
 		}
 	}
 }
