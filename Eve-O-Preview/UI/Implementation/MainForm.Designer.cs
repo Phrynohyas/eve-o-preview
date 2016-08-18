@@ -152,12 +152,12 @@ namespace EveOPreview.UI
 			this.ThumbnailOpacityTrackBar.LargeChange = 10;
 			this.ThumbnailOpacityTrackBar.Location = new System.Drawing.Point(51, 22);
 			this.ThumbnailOpacityTrackBar.Maximum = 100;
-			this.ThumbnailOpacityTrackBar.Minimum = 10;
+			this.ThumbnailOpacityTrackBar.Minimum = 20;
 			this.ThumbnailOpacityTrackBar.Name = "ThumbnailOpacityTrackBar";
 			this.ThumbnailOpacityTrackBar.Size = new System.Drawing.Size(208, 22);
 			this.ThumbnailOpacityTrackBar.TabIndex = 1;
 			this.ThumbnailOpacityTrackBar.TickFrequency = 10;
-			this.ThumbnailOpacityTrackBar.Value = 10;
+			this.ThumbnailOpacityTrackBar.Value = 20;
 			this.ThumbnailOpacityTrackBar.ValueChanged += new System.EventHandler(this.OptionChanged_Handler);
 			// 
 			// MinimizeToTrayCheckBox
@@ -493,7 +493,7 @@ namespace EveOPreview.UI
             0,
             0});
 			this.ThumbnailZoomFactorNumericEdit.Minimum = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
             0});
@@ -501,7 +501,7 @@ namespace EveOPreview.UI
 			this.ThumbnailZoomFactorNumericEdit.Size = new System.Drawing.Size(38, 20);
 			this.ThumbnailZoomFactorNumericEdit.TabIndex = 1;
 			this.ThumbnailZoomFactorNumericEdit.Value = new decimal(new int[] {
-            1,
+            2,
             0,
             0,
             0});
