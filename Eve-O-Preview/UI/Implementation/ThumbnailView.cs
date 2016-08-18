@@ -354,7 +354,7 @@ namespace EveOPreview.UI
 			this._isPositionChanged = false;
 			this._overlay.Size = overlaySize;
 			this._overlay.Location = overlayLocation;
-			this._overlay.Invalidate();
+			this._overlay.Refresh();
 		}
 
 		#region GUI events

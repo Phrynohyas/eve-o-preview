@@ -40,7 +40,7 @@ namespace EveOPreview.UI
 
 		public void EnableHighlight(bool enabled, Color color)
 		{
-			if (!enabled && !this._highlightEnabled)
+			if (enabled == this._highlightEnabled)
 			{
 				// Nothing to do here
 				return;

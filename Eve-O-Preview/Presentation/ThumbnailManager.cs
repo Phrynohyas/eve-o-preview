@@ -11,11 +11,11 @@ namespace EveOPreview.UI
 	{
 		#region Private constants
 		private const string ClientProcessName = "ExeFile";
+		private const string DefaultClientTitle = "EVE";
 		#endregion
 
 		#region Private fields
 		private readonly IAppConfig _configuration;
-		private readonly IConfigurationStorage _configurationStorage;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
@@ -27,14 +27,13 @@ namespace EveOPreview.UI
 		private bool _isHoverEffectActive;
 		#endregion
 
-		public ThumbnailManager(IAppConfig configuration, IConfigurationStorage configurationStorage, IThumbnailViewFactory factory)
+		public ThumbnailManager(IAppConfig configuration, IThumbnailViewFactory factory)
 		{
 			this._configuration = configuration;
-			this._configurationStorage = configurationStorage;
 			this._thumbnailViewFactory = factory;
 
 			this._activeClientHandle = (IntPtr)0;
-			this._activeClientTitle = "EVE";
+			this._activeClientTitle = ThumbnailManager.DefaultClientTitle;
 
 			this.EnableViewEvents();
 			this._isHoverEffectActive = false;
@@ -93,7 +92,7 @@ namespace EveOPreview.UI
 			this.EnableViewEvents();
 		}
 
-		public void RefreshThumbnails()
+		private void RefreshThumbnails()
 		{
 			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
 			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !WindowManagerNativeMethods.DwmIsCompositionEnabled();
@@ -123,10 +122,15 @@ namespace EveOPreview.UI
 					continue;
 				}
 
+				// No need to update Thumbnails while one of them is highlighted
 				if (!this._isHoverEffectActive)
 				{
-					// No need to move Thumbnails while one of them is highlighted
-					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+					// Do not even move thumbnails with default caption
+					if (view.Title != ThumbnailManager.DefaultClientTitle)
+					{
+						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+					}
+
 					view.SetOpacity(this._configuration.ThumbnailOpacity);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 				}
@@ -286,14 +290,33 @@ namespace EveOPreview.UI
 
 			this._isHoverEffectActive = true;
 
-			IThumbnailView view = this._thumbnailViews[id];
+			IThumbnailView focusedView = null;
 
-			view.SetTopMost(true);
-			view.SetOpacity(1.0);
+			foreach (KeyValuePair<IntPtr, IThumbnailView> valuePair in this._thumbnailViews)
+			{
+				IThumbnailView view = valuePair.Value;
+
+				if (view.Id != id)
+				{
+					view.SetTopMost(false);
+				}
+				else
+				{
+					focusedView = view;
+				}
+			}
+
+			if (focusedView == null)
+			{
+				return; // This should neve happen!
+			}
+
+			focusedView.SetTopMost(true);
+			focusedView.SetOpacity(1.0);
 
 			if (this._configuration.ThumbnailZoomEnabled)
 			{
-				this.ThumbnailZoomIn(view);
+				this.ThumbnailZoomIn(focusedView);
 			}
 		}
 
@@ -318,6 +341,13 @@ namespace EveOPreview.UI
 
 		private void ThumbnailActivated(IntPtr id)
 		{
+			IThumbnailView view;
+			if (this._thumbnailViews.TryGetValue(id, out view))
+			{
+				this._activeClientHandle = view.Id;
+				this._activeClientTitle = view.Title;
+			}
+
 			WindowManagerNativeMethods.SetForegroundWindow(id);
 
 			int style = WindowManagerNativeMethods.GetWindowLong(id, WindowManagerNativeMethods.GWL_STYLE);
@@ -325,11 +355,6 @@ namespace EveOPreview.UI
 			if ((style & WindowManagerNativeMethods.WS_MINIMIZE) == WindowManagerNativeMethods.WS_MINIMIZE)
 			{
 				WindowManagerNativeMethods.ShowWindowAsync(id, WindowManagerNativeMethods.SW_SHOWNORMAL);
-				IThumbnailView view;
-				if (this._thumbnailViews.TryGetValue(id, out view))
-				{
-					view.Refresh(true);
-				}
 			}
 
 			if (this._configuration.EnableClientLayoutTracking)
@@ -339,7 +364,7 @@ namespace EveOPreview.UI
 
 			this.RefreshThumbnails();
 
-			this._configurationStorage.Save();
+			view?.Refresh(true);
 		}
 
 		private void ThumbnailViewResized(IntPtr id)

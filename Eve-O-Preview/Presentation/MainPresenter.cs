@@ -147,7 +147,6 @@ namespace EveOPreview.UI
 			this.View.RefreshZoomSettings();
 
 			this._thumbnailManager.SetupThumbnailFrames();
-			this._thumbnailManager.RefreshThumbnails();
 		}
 
 		private void ThumbnailsAdded(IList<IThumbnailView> thumbnails)
