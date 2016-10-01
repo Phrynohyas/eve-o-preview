@@ -1,6 +1,6 @@
-Created to aid playing with multiple clients in CCP game EVE-Online.
+The purpose of this tool is to provide a simple way to keep an eye on several simultaneously running EVE Online clients and to easily switch between them. While running it shows a set of live thumbnails for each of the active EVE Online clients. These thumbnails allow fast switch to the corresponding EVE Online client either using mouse or a configurable hotkey.
 
-It's essentially a task switcher, it does not relay any keyboard/mouse events and suchlike. The program works with EVE, EVE through Steam, or any combination thereof.
+It's essentially a task switcher, it does not relay any keyboard/mouse events and suchlike. The app works with EVE, EVE through Steam, or any combination thereof.
 
 The program does NOT (and will NOT ever) do the following things:
 * modify EVE Online interface

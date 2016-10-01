@@ -290,33 +290,14 @@ namespace EveOPreview.UI
 
 			this._isHoverEffectActive = true;
 
-			IThumbnailView focusedView = null;
+			IThumbnailView view = this._thumbnailViews[id];
 
-			foreach (KeyValuePair<IntPtr, IThumbnailView> valuePair in this._thumbnailViews)
-			{
-				IThumbnailView view = valuePair.Value;
-
-				if (view.Id != id)
-				{
-					view.SetTopMost(false);
-				}
-				else
-				{
-					focusedView = view;
-				}
-			}
-
-			if (focusedView == null)
-			{
-				return; // This should neve happen!
-			}
-
-			focusedView.SetTopMost(true);
-			focusedView.SetOpacity(1.0);
+			view.SetTopMost(true);
+			view.SetOpacity(1.0);
 
 			if (this._configuration.ThumbnailZoomEnabled)
 			{
-				this.ThumbnailZoomIn(focusedView);
+				this.ThumbnailZoomIn(view);
 			}
 		}
 
