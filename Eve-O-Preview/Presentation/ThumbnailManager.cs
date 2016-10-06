@@ -215,6 +215,8 @@ namespace EveOPreview.UI
 					view.SetFrames(this._configuration.ShowThumbnailFrames);
 					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
 
+					this._thumbnailViews.Add(processHandle, view);
+
 					view.ThumbnailResized = this.ThumbnailViewResized;
 					view.ThumbnailMoved = this.ThumbnailViewMoved;
 					view.ThumbnailFocused = this.ThumbnailViewFocused;
@@ -222,8 +224,6 @@ namespace EveOPreview.UI
 					view.ThumbnailActivated = this.ThumbnailActivated;
 
 					view.RegisterHotkey(this._configuration.GetClientHotkey(processTitle));
-
-					this._thumbnailViews.Add(processHandle, view);
 
 					this.ApplyClientLayout(processHandle, processTitle);
 
