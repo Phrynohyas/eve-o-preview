@@ -7,21 +7,23 @@ namespace EveOPreview.Configuration
 	{
 		private const string ConfigurationFileName = "EVE-O Preview.json";
 
-		private readonly IAppConfig _configuration;
+		private readonly IThumbnailConfig _configuration;
 
-		public ConfigurationStorage(IAppConfig configuration)
+		public ConfigurationStorage(IThumbnailConfig configuration)
 		{
 			this._configuration = configuration;
 		}
 
 		public void Load()
 		{
-			if (!File.Exists(ConfigurationStorage.ConfigurationFileName))
+			string filename = this.GetConfigFileName();
+
+			if (!File.Exists(filename))
 			{
 				return;
 			}
 
-			string rawData = File.ReadAllText(ConfigurationStorage.ConfigurationFileName);
+			string rawData = File.ReadAllText(filename);
 
 			JsonConvert.PopulateObject(rawData, this._configuration);
 
@@ -33,7 +35,12 @@ namespace EveOPreview.Configuration
 		{
 			string rawData = JsonConvert.SerializeObject(this._configuration, Formatting.Indented);
 
-			File.WriteAllText(ConfigurationStorage.ConfigurationFileName, rawData);
+			File.WriteAllText(this.GetConfigFileName(), rawData);
+		}
+
+		private string GetConfigFileName()
+		{
+			return string.IsNullOrEmpty(this._configuration.ConfigFileName) ? ConfigurationStorage.ConfigurationFileName : this._configuration.ConfigFileName;
 		}
 	}
 }

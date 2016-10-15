@@ -7,9 +7,11 @@ namespace EveOPreview
 {
 	static class Program
 	{
+		private static string ConfigParameterName = "--config:";
+
 		/// <summary>The main entry point for the application.</summary>
 		[STAThread]
-		static void Main()
+		static void Main(string[] args)
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -29,9 +31,41 @@ namespace EveOPreview
 				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
 				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
 				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
-				.RegisterInstance<IAppConfig>(new AppConfig());
+				.RegisterInstance<IThumbnailConfig>(new ThumbnailConfig());
+
+			controller.Create<IThumbnailConfig>().ConfigFileName = Program.GetCustomConfigFile(args);
 
 			controller.Run<MainPresenter>();
+		}
+
+		// Parse startup parameters
+		// Simple approach is used because something like NParams would be an overkill here
+		private static string GetCustomConfigFile(string[] args)
+		{
+			string configFile = null;
+			foreach (string arg in args)
+			{
+				if ((arg.Length <= Program.ConfigParameterName.Length) || !arg.StartsWith(Program.ConfigParameterName, StringComparison.Ordinal))
+				{
+					continue;
+				}
+
+				configFile = arg.Substring(Program.ConfigParameterName.Length);
+				break;
+			}
+
+			if (string.IsNullOrEmpty(configFile))
+			{
+				return "";
+			}
+
+			// One more check to drop trailing "
+			if ((configFile.Length > 3) && (configFile[0] == '"') && (configFile[configFile.Length - 1] == '"'))
+			{
+				configFile = configFile.Substring(1, configFile.Length - 2);
+			}
+
+			return configFile;
 		}
 	}
 }

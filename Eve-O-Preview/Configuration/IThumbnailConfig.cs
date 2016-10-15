@@ -3,8 +3,10 @@ using System.Windows.Forms;
 
 namespace EveOPreview.Configuration
 {
-	public interface IAppConfig
+	public interface IThumbnailConfig
 	{
+		string ConfigFileName { get; set; }
+
 		bool MinimizeToTray { get; set; }
 		int ThumbnailRefreshPeriod { get; set; }
 

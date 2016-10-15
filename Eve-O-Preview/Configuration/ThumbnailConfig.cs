@@ -5,11 +5,13 @@ using Newtonsoft.Json;
 
 namespace EveOPreview.Configuration
 {
-	public class AppConfig : IAppConfig
+	public class ThumbnailConfig : IThumbnailConfig
 	{
-		public AppConfig()
+		public ThumbnailConfig()
 		{
 			// Default values
+			this.ConfigFileName = null;
+
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
 
@@ -40,6 +42,9 @@ namespace EveOPreview.Configuration
 			this.ClientLayout = new Dictionary<string, ClientLayout>();
 			this.ClientHotkey = new Dictionary<string, string>();
 		}
+
+		[JsonIgnore]
+		public string ConfigFileName { get; set; }
 
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
@@ -163,11 +168,11 @@ namespace EveOPreview.Configuration
 		/// </summary>
 		public void ApplyRestrictions()
 		{
-			this.ThumbnailRefreshPeriod = AppConfig.ApplyRestrictions(this.ThumbnailRefreshPeriod, 300, 1000);
-			this.ThumbnailSize = new Size(AppConfig.ApplyRestrictions(this.ThumbnailSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
-				AppConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
-			this.ThumbnailOpacity = AppConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
-			this.ThumbnailZoomFactor = AppConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
+			this.ThumbnailRefreshPeriod = ThumbnailConfig.ApplyRestrictions(this.ThumbnailRefreshPeriod, 300, 1000);
+			this.ThumbnailSize = new Size(ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
+				ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
+			this.ThumbnailOpacity = ThumbnailConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
+			this.ThumbnailZoomFactor = ThumbnailConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
 		}
 
 		private static int ApplyRestrictions(int value, int minimum, int maximum)

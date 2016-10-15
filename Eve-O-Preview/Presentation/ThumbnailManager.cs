@@ -15,7 +15,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		#region Private fields
-		private readonly IAppConfig _configuration;
+		private readonly IThumbnailConfig _configuration;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
@@ -27,7 +27,7 @@ namespace EveOPreview.UI
 		private bool _isHoverEffectActive;
 		#endregion
 
-		public ThumbnailManager(IAppConfig configuration, IThumbnailViewFactory factory)
+		public ThumbnailManager(IThumbnailConfig configuration, IThumbnailViewFactory factory)
 		{
 			this._configuration = configuration;
 			this._thumbnailViewFactory = factory;
