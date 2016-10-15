@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Windows.Forms;
 using EveOPreview.Configuration;
 using EveOPreview.UI;
@@ -7,16 +8,28 @@ namespace EveOPreview
 {
 	static class Program
 	{
+		private static string MutexName = "EVE-O Preview Single Instance Mutex";
 		private static string ConfigParameterName = "--config:";
 
 		/// <summary>The main entry point for the application.</summary>
 		[STAThread]
 		static void Main(string[] args)
 		{
+			// The very usual Mutex-based single-instance screening
+			// 'token' variable is used to store reference to the instance Mutex
+			// during the app lifetime
+			object token = Program.GetInstanceToken();
+
+			// If it was not possible to aquite the app token then another app instance is already running
+			// Nothing to do here
+			if (token == null)
+			{
+				return;
+			}
+
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			// TODO Switch to another container that provides signed assemblies
 			IIocContainer container = new LightInjectContainer();
 
 			// UI classes
@@ -37,6 +50,8 @@ namespace EveOPreview
 			controller.Create<IAppConfig>().ConfigFileName = Program.GetCustomConfigFile(args);
 
 			controller.Run<MainPresenter>();
+
+			token = null;
 		}
 
 		// Parse startup parameters
@@ -67,6 +82,31 @@ namespace EveOPreview
 			}
 
 			return configFile;
+		}
+
+		private static object GetInstanceToken()
+		{
+			// The code might look overcomplicated here for a single Mutex operation
+			// Yet we had already experienced a Windows-level issue
+			// where .NET finalizer theread was literally paralyzed by
+			// a failed Mutex operation. That did lead to weird OutOfMemory
+			// exceptions later
+			try
+			{
+				Mutex mutex = Mutex.OpenExisting(Program.MutexName);
+				// if that didn't fail then anotherinstance is already running
+				return null;
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return null;
+			}
+			catch (Exception)
+			{
+				bool result;
+				Mutex token = new Mutex(true, Program.MutexName, out result);
+				return result ? token : null;
+			}
 		}
 	}
 }
