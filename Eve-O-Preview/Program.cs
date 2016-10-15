@@ -27,37 +27,21 @@ namespace EveOPreview
 				return;
 			}
 
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			Program.InitializeWinFormsGui();
 
-			IIocContainer container = new LightInjectContainer();
+			IApplicationController controller = Program.InitializeApplicationController();
 
-			// UI classes
-			IApplicationController controller = new ApplicationController(container)
-				.RegisterView<IMainView, MainForm>()
-				.RegisterView<IThumbnailView, ThumbnailView>()
-				.RegisterView<IThumbnailDescriptionView, ThumbnailDescriptionView>()
-				.RegisterInstance(new ApplicationContext());
-
-			// Application services
-			controller.RegisterService<IThumbnailManager, ThumbnailManager>()
-				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
-				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
-				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
-				.RegisterInstance<IAppConfig>(new AppConfig())
-				.RegisterInstance<IThumbnailConfig>(new ThumbnailConfig());
-
-			controller.Create<IAppConfig>().ConfigFileName = Program.GetCustomConfigFile(args);
+			Program.SetupApplicationConttroller(controller, Program.GetCustomConfigFile(args));
 
 			controller.Run<MainPresenter>();
 
 			token = null;
 		}
 
-		// Parse startup parameters
-		// Simple approach is used because something like NParams would be an overkill here
 		private static string GetCustomConfigFile(string[] args)
 		{
+			// Parse startup parameters
+			// Simple approach is used because something like NParams would be an overkill here
 			string configFile = null;
 			foreach (string arg in args)
 			{
@@ -107,6 +91,39 @@ namespace EveOPreview
 				Mutex token = new Mutex(true, Program.MutexName, out result);
 				return result ? token : null;
 			}
+		}
+
+		private static void InitializeWinFormsGui()
+		{
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+		}
+
+		private static IApplicationController InitializeApplicationController()
+		{
+			IIocContainer container = new LightInjectContainer();
+
+			// UI classes
+			IApplicationController controller = new ApplicationController(container)
+				.RegisterView<IMainView, MainForm>()
+				.RegisterView<IThumbnailView, ThumbnailView>()
+				.RegisterView<IThumbnailDescriptionView, ThumbnailDescriptionView>()
+				.RegisterInstance(new ApplicationContext());
+
+			// Application services
+			controller.RegisterService<IThumbnailManager, ThumbnailManager>()
+				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
+				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
+				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
+				.RegisterInstance<IAppConfig>(new AppConfig())
+				.RegisterInstance<IThumbnailConfig>(new ThumbnailConfig());
+
+			return controller;
+		}
+
+		private static void SetupApplicationConttroller(IApplicationController controller, string configFile)
+		{
+			controller.Create<IAppConfig>().ConfigFileName = configFile;
 		}
 	}
 }
