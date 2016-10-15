@@ -96,7 +96,9 @@
     <Compile Include="ApplicationBase\LightInjectContainer.cs" />
     <Compile Include="ApplicationBase\Presenter.cs" />
     <Compile Include="ApplicationBase\PresenterGeneric.cs" />
+    <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\ConfigurationStorage.cs" />
+    <Compile Include="Configuration\IAppConfig.cs" />
     <Compile Include="Configuration\IThumbnailConfig.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
     <Compile Include="DwmAPI\DWM_BLURBEHIND.cs" />

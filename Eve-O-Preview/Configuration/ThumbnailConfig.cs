@@ -5,13 +5,10 @@ using Newtonsoft.Json;
 
 namespace EveOPreview.Configuration
 {
-	public class ThumbnailConfig : IThumbnailConfig
+	class ThumbnailConfig : IThumbnailConfig
 	{
 		public ThumbnailConfig()
 		{
-			// Default values
-			this.ConfigFileName = null;
-
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
 
@@ -42,9 +39,6 @@ namespace EveOPreview.Configuration
 			this.ClientLayout = new Dictionary<string, ClientLayout>();
 			this.ClientHotkey = new Dictionary<string, string>();
 		}
-
-		[JsonIgnore]
-		public string ConfigFileName { get; set; }
 
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }

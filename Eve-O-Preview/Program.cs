@@ -31,9 +31,10 @@ namespace EveOPreview
 				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
 				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
 				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
+				.RegisterInstance<IAppConfig>(new AppConfig())
 				.RegisterInstance<IThumbnailConfig>(new ThumbnailConfig());
 
-			controller.Create<IThumbnailConfig>().ConfigFileName = Program.GetCustomConfigFile(args);
+			controller.Create<IAppConfig>().ConfigFileName = Program.GetCustomConfigFile(args);
 
 			controller.Run<MainPresenter>();
 		}
