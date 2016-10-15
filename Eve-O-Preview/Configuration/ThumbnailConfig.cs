@@ -78,27 +78,26 @@ namespace EveOPreview.Configuration
 
 		public Point GetThumbnailLocation(string currentClient, string activeClient, Point defaultLocation)
 		{
-			Dictionary<string, Point> layoutSource = null;
+			Point location;
 
-			if (this.EnablePerClientThumbnailLayouts)
+			// What this code does:
+			// If Per-Client layouts are enabled
+			//    and client name is known
+			//    and there is a separate thumbnails layout for this client
+			//    and this layout contains an entry for the current client
+			// then return that entry
+			// otherwise try to get client layout from the flat all-clients layout
+			// If there is no layout too then use the default one
+			if (this.EnablePerClientThumbnailLayouts && !string.IsNullOrEmpty(activeClient))
 			{
-				if (!string.IsNullOrEmpty(activeClient))
+				Dictionary<string, Point> layoutSource;
+				if (this.PerClientLayout.TryGetValue(activeClient, out layoutSource) && layoutSource.TryGetValue(currentClient, out location))
 				{
-					this.PerClientLayout.TryGetValue(activeClient, out layoutSource);
+					return location;
 				}
 			}
-			else
-			{
-				layoutSource = this.FlatLayout;
-			}
 
-			if (layoutSource == null)
-			{
-				return defaultLocation;
-			}
-
-			Point location;
-			return layoutSource.TryGetValue(currentClient, out location) ? location : defaultLocation;
+			return this.FlatLayout.TryGetValue(currentClient, out location) ? location : defaultLocation;
 		}
 
 		public void SetThumbnailLocation(string currentClient, string activeClient, Point location)
