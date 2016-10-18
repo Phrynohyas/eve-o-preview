@@ -210,9 +210,11 @@ namespace EveOPreview.UI
 					view = this._thumbnailViewFactory.Create(processHandle, processTitle, this._configuration.ThumbnailSize);
 					view.IsEnabled = true;
 					view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
+					view.SetFrames(this._configuration.ShowThumbnailFrames);
+					// Max/Min size limitations should be set AFTER the frames are disabled
+					// Otherwise thumbnail window will be unnecessary resized
 					view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
-					view.SetFrames(this._configuration.ShowThumbnailFrames);
 					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
 
 					this._thumbnailViews.Add(processHandle, view);
