@@ -8,8 +8,12 @@ namespace EveOPreview.UI
 	{
 		#region Private fields
 		private readonly Action<object, MouseEventArgs> _areaClickAction;
-		private bool _highlightEnabled;
+		private bool _isHighlightEnabled;
 		private Color _highlightColor;
+		private int _highlightWidthLeft;
+		private int _highlightWidthTop;
+		private int _highlightWidthRight;
+		private int _highlightWidthBottom;
 		#endregion
 
 		public ThumbnailOverlay(Form owner, Action<object, MouseEventArgs> areaClickAction)
@@ -17,7 +21,7 @@ namespace EveOPreview.UI
 			this.Owner = owner;
 			this._areaClickAction = areaClickAction;
 
-			this._highlightEnabled = false;
+			this._isHighlightEnabled = false;
 			this._highlightColor = Color.Red;
 
 			InitializeComponent();
@@ -38,15 +42,23 @@ namespace EveOPreview.UI
 			this.OverlayLabel.Visible = enable;
 		}
 
+		public void SetHighlightWidth(int left, int top, int right, int bottom)
+		{
+			this._highlightWidthLeft = left;
+			this._highlightWidthTop = top;
+			this._highlightWidthRight = right;
+			this._highlightWidthBottom = bottom;
+		}
+
 		public void EnableHighlight(bool enabled, Color color)
 		{
-			if (enabled == this._highlightEnabled)
+			if (enabled == this._isHighlightEnabled)
 			{
 				// Nothing to do here
 				return;
 			}
 
-			this._highlightEnabled = enabled;
+			this._isHighlightEnabled = enabled;
 			this._highlightColor = color;
 			this.Refresh();
 		}
@@ -65,13 +77,13 @@ namespace EveOPreview.UI
 		{
 			base.OnPaint(e);
 
-			if (this._highlightEnabled)
+			if (this._isHighlightEnabled)
 			{
 				ControlPaint.DrawBorder(e.Graphics, this.ClientRectangle,
-											this._highlightColor, 4, ButtonBorderStyle.Solid,
-											this._highlightColor, 4, ButtonBorderStyle.Solid,
-											this._highlightColor, 4, ButtonBorderStyle.Solid,
-											this._highlightColor, 4, ButtonBorderStyle.Solid);
+											this._highlightColor, this._highlightWidthLeft, ButtonBorderStyle.Solid,
+											this._highlightColor, this._highlightWidthTop, ButtonBorderStyle.Solid,
+											this._highlightColor, this._highlightWidthRight, ButtonBorderStyle.Solid,
+											this._highlightColor, this._highlightWidthBottom, ButtonBorderStyle.Solid);
 			}
 		}
 	}

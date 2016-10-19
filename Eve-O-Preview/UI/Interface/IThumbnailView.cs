@@ -21,7 +21,7 @@ namespace EveOPreview.UI
 		void SetOpacity(double opacity);
 		void SetFrames(bool enable);
 		void SetTopMost(bool enableTopmost);
-		void SetHighlight(bool enabled, Color color);
+		void SetHighlight(bool enabled, Color color, int width);
 
 		void ZoomIn(ViewZoomAnchor anchor, int zoomFactor);
 		void ZoomOut();

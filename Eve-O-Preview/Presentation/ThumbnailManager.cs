@@ -137,7 +137,7 @@ namespace EveOPreview.UI
 
 				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 
-				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClientHandle), this._configuration.ActiveClientHighlightColor);
+				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClientHandle), this._configuration.ActiveClientHighlightColor, 3);
 
 				if (!view.IsActive)
 				{
