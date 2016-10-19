@@ -65,7 +65,22 @@ namespace EveOPreview.Configuration
 		public bool ShowThumbnailFrames { get; set; }
 
 		public bool EnableActiveClientHighlight { get; set; }
-		public Color ActiveClientHighlightColor { get; set; }
+
+		public Color ActiveClientHighlightColor
+		{
+			get
+			{
+				return this._activeClientHighlightColor;
+			}
+			set
+			{
+				// Some WinForms magic
+				// True Black color cannot be used as highlight frame color
+				// So a somewhat less-Black one is used
+				this._activeClientHighlightColor = (value != Color.Black) ? value : Color.FromArgb(1, 1, 1);
+			}
+		}
+		private Color _activeClientHighlightColor;
 
 		[JsonProperty]
 		private Dictionary<string, Dictionary<string, Point>> PerClientLayout { get; set; }
