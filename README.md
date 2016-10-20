@@ -21,7 +21,7 @@ The program does NOT (and will NOT ever) do the following things:
 1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc)
 ..* **Note**: Please do not install the program into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
-3. Adjust settings as you see fit. Program options are described [here](https://github.com/Phrynohyas/eve-o-preview/wiki/EVE-O-Preview-Program-Options)
+3. Adjust settings as you see fit. Program options are described below
 
 ***
 
@@ -40,6 +40,47 @@ CCP FoxFour wrote:
 > interact with it.
 
 ***
+---
+
+**Startup Parameters**
+
+_Left Blank_
+
+**Program options**
+
+| Option | Description |
+| --- | --- |
+| Minimize to System Tray | Determines whether the main window form be minimized to windows tray when it is closed |
+| Opacity | Determines the inactive EVE thumbnails opacity (from almost invisible 20% to 100% solid) |
+| Track client locations | Determines whether the client's window position should be restored when it is activated or started |
+| Hide preview of active EVE client | Determines whether the thumbnail corresponding to the active EVE client is not displayed |
+| Previews always on top | Determines whether EVE client thumbnails should stay on top of all other windows |
+| Hide previews when EVE client is not active | Determines whether all thumbnails should be visible only when an EVE client is active |
+| Unique layout for each EVE client | Determines whether thumbnails positions are different depending on the EVE client being active (f.e. links char have thumbnails of the Falcon and DPS char in the right bottom corner while DPS and Falcon alts have them placed at the top of the main EVE window ) |
+| Thumbnail width | Thumbnails width. Can be set to any value from **100** to **640** points |
+| Thumbnail height | Thumbnails Height. Can be set to any value from **80** to **400** points |
+| Zoom on hover | Determines whether a thumbnail should be zoomed when the mouse pointer is over it  |
+| Zoom factor | Thumbnail zoom factor. Can be set to any value from **2** to **10** |
+| Zoom anchor | Sets the starting point of the thumbnail zoom |
+| Show overlay | Determines whether a name of the corresponding EVE cliet should be displayed on the thumbnail |
+| Show frames | Determines whether thumbnails should be displayd with window caption and borders |
+| Highlight active client | Determines whether the thumbnail of the active EVE client should be highlighted with a bright border |
+| Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
+| Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
+
+**Mouse Gestures**
+
+_Left Blank_
+
+**Configuration File Options**
+
+_Left Blank_
+
+**Hotkey Setup**
+
+_Left Blank_
+
+---
 
 **Created by**
 
@@ -48,21 +89,23 @@ CCP FoxFour wrote:
 
 **Maintained by**
 
-* StinkRay
+* Phrynohyas Tig-Rah
  
 * Makari Aeron
 
-* Phrynohyas Tig-Rah
+* StinkRay
 
 
 **With contributions from**
 
 * CCP FoxFour
 
+
 **Original threads**
 
 https://forums.eveonline.com/default.aspx?g=posts&t=389086
 https://forums.eveonline.com/default.aspx?g=posts&t=246157
+
 
 **Original repository**
 
