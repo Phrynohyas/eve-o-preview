@@ -1,4 +1,4 @@
-The purpose of this tool is to provide a simple way to keep an eye on several simultaneously running EVE Online clients and to easily switch between them. While running it shows a set of live thumbnails for each of the active EVE Online clients. These thumbnails allow fast switch to the corresponding EVE Online client either using mouse or a configurable hotkey.
+The purpose of this application is to provide a simple way to keep an eye on several simultaneously running EVE Online clients and to easily switch between them. While running it shows a set of live thumbnails for each of the active EVE Online clients. These thumbnails allow fast switch to the corresponding EVE Online client either using mouse or a configurable hotkey.
 
 It's essentially a task switcher, it does not relay any keyboard/mouse events and suchlike. The app works with EVE, EVE through Steam, or any combination thereof.
 
@@ -44,7 +44,9 @@ CCP FoxFour wrote:
 
 **Startup Parameters**
 
-_Left Blank_
+| Parameter | Description |
+| --- | --- |
+| **config** | This option allows to start the application with a custom configuration file. If the provided file doesn't exists it will be created with default values.<br />For example **"Eve-O&nbsp;Preview.exe"&nbsp;--config:TestSetup.json** |
 
 **Program options**
 
