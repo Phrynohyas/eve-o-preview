@@ -95,7 +95,32 @@ Some of the application options are not exposed in the GUI. They can be ajusted 
 
 ##Hotkey Setup
 
-_Left Blank_
+It is possible to set a key kombinations to immediately jump to cetrain EVE window. However currently EVE-O Preview doesn't provide any GUI to set the these hotkeys. It should be done via editind the configuration file directly. Don't forget to make a backup copy of the file before editing it.
+
+**Note**: Don't forget to make a backup copy of the file before editing it.
+
+Open the file using any text editor. find the entry **ClientHotkey**. Most probably it will look like
+
+    "ClientHotkey": {},
+
+This means that no hotkeys are defined. Edit it to be like
+
+    "ClientHotkey": {
+      "EVE - Phrynohyas Tig-Rah": "F1",
+      "EVE - Ondatra Patrouette": "F2"
+    }
+
+This simple edit will assign **F1** as a hotkey for Phrynohyas Tig-Rah and **F2** as a hotkey for Ondatra Patrouette, so pressing F1 anywhere in Windows will immediately open EVE client for Phrynohyas Tig-Rah if he is logged on.
+
+The following hotkey is described as `modifier+key` where `modifier` can be **Control**, **Alt**, **Shift**, or their combination. F.e. it is possible to setup the hotkey as
+
+    "ClientHotkey": {
+      "EVE - Phrynohyas Tig-Rah": "F1",
+      "EVE - Ondatra Patrouette": "Control+Shift+F4"
+    }
+
+**Note:** Do not set hotkeys to use the key combinations already used by EVE. It won't work as "_I set hotkey for my DPS char to F1 and when I'll press F1 it will automatically open the DPS char's window and activate guns_". Key combination will be swallowed by EVE-O Preview and NOT retranslated to EVE window. So it will be only "_it will automatically open the DPS char's window_".
+
 
 ---
 
