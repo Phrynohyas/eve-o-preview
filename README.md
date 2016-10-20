@@ -72,7 +72,13 @@ CCP FoxFour wrote:
 
 **Mouse Gestures**
 
-_Left Blank_
+Mouse gestures are applied to the thumbnail window currently being hovered over.
+
+| Action | Gesture |
+| --- | --- |
+| Move thumbnail to a new position | Press right mouse button and move the mouse |
+| Adjust thumbnail height | Press both left and right mouse buttons and move the mouse up or down |
+| Adjust thumbnail width | Press both left and right mouse buttons and move the mouse left or right |
 
 **Configuration File Options**
 
