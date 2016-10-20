@@ -329,9 +329,9 @@ namespace EveOPreview.UI
 
 					int actualHeight = baseHeight - 2 * this._highlightWidth;
 					double desiredWidth = actualHeight * baseAspectRatio;
-					int actualWidth = (int)Math.Round(desiredWidth);
-					int highlightWidthLeft = Math.Min(5, (baseWidth - actualWidth) / 2);
-					int highlightWidthRight = Math.Min(5, baseWidth - actualWidth - highlightWidthLeft);
+					int actualWidth = (int)Math.Round(desiredWidth, MidpointRounding.AwayFromZero);
+					int highlightWidthLeft = Math.Min(4, (baseWidth - actualWidth) / 2);
+					int highlightWidthRight = Math.Min(4, baseWidth - actualWidth - highlightWidthLeft);
 
 					this._overlay.SetHighlightWidth(highlightWidthLeft, this._highlightWidth, highlightWidthRight, this._highlightWidth);
 					this._thumbnail.rcDestination = new RECT(0 + highlightWidthLeft, 0 + this._highlightWidth, actualWidth + highlightWidthLeft, actualHeight + this._highlightWidth);

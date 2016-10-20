@@ -32,7 +32,8 @@ namespace EveOPreview.Configuration
 			this.ShowThumbnailFrames = true;
 
 			this.EnableActiveClientHighlight = false;
-			this.ActiveClientHighlightColor = Color.Yellow;
+			this.ActiveClientHighlightColor = Color.GreenYellow;
+			this.ActiveClientHighlightThickness = 3;
 
 			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
 			this.FlatLayout = new Dictionary<string, Point>();
@@ -81,6 +82,8 @@ namespace EveOPreview.Configuration
 			}
 		}
 		private Color _activeClientHighlightColor;
+
+		public int ActiveClientHighlightThickness { get; set; }
 
 		[JsonProperty]
 		private Dictionary<string, Dictionary<string, Point>> PerClientLayout { get; set; }
@@ -181,6 +184,7 @@ namespace EveOPreview.Configuration
 				ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
 			this.ThumbnailOpacity = ThumbnailConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
 			this.ThumbnailZoomFactor = ThumbnailConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
+			this.ActiveClientHighlightThickness = ThumbnailConfig.ApplyRestrictions(this.ActiveClientHighlightThickness, 1, 3);
 		}
 
 		private static int ApplyRestrictions(int value, int minimum, int maximum)
