@@ -1,3 +1,5 @@
+#Overview
+
 The purpose of this application is to provide a simple way to keep an eye on several simultaneously running EVE Online clients and to easily switch between them. While running it shows a set of live thumbnails for each of the active EVE Online clients. These thumbnails allow fast switch to the corresponding EVE Online client either using mouse or a configurable hotkey.
 
 It's essentially a task switcher, it does not relay any keyboard/mouse events and suchlike. The app works with EVE, EVE through Steam, or any combination thereof.
@@ -9,21 +11,21 @@ The program does NOT (and will NOT ever) do the following things:
 * anyhow interact with EVE Online except of bringing its main window to foreground or resizing it
 
 
-**System Requirements**
+#System Requirements
 
 * Windows Vista, Windows 7, Windows 8/8.1, Windows 10
 * Windows Aero Enabled
 * Microsoft .NET Framework 4.5+
 
 
-**How To Install & Use**
+#How To Install & Use
 
 1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc)
 ..* **Note**: Please do not install the program into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described below
 
-***
+#EULA/ToS
 
 This program is legal under the EULA/ToS:
 
@@ -39,16 +41,15 @@ CCP FoxFour wrote:
 > to bring the respective EVE Client to the front/put the window focus on it, in order to
 > interact with it.
 
-***
----
+#Application Options
 
-**Startup Parameters**
+##Startup Parameters
 
 | Parameter | Description |
 | --- | --- |
 | **config** | This option allows to start the application with a custom configuration file. If the provided file doesn't exists it will be created with default values.<br />For example **"Eve-O&nbsp;Preview.exe"&nbsp;--config:TestSetup.json** |
 
-**Program options**
+##Application Options Available Via GUI
 
 | Option | Description |
 | --- | --- |
@@ -70,7 +71,7 @@ CCP FoxFour wrote:
 | Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
 | Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
 
-**Mouse Gestures**
+##Mouse Gestures
 
 Mouse gestures are applied to the thumbnail window currently being hovered over.
 
@@ -80,22 +81,32 @@ Mouse gestures are applied to the thumbnail window currently being hovered over.
 | Adjust thumbnail height | Press both left and right mouse buttons and move the mouse up or down |
 | Adjust thumbnail width | Press both left and right mouse buttons and move the mouse left or right |
 
-**Configuration File Options**
+##Configuration File-Only Options
 
-_Left Blank_
+Some of the application options are not exposed in the GUI. They can be ajusted directly in the configuration file.
 
-**Hotkey Setup**
+**Note:** Do any changes to the configuration file only while the EVE-O Preview itself is closed. Otherwise the changes you made might be lost.
+
+| Option | Description |
+| --- | --- |
+| **ActiveClientHighlightThickness** | Thickness of the border used to highlight the active client's thumbnail.<br />Allowed values are **1**, **2**, **3**.<br />The default value is **3**<br />For example: **"ActiveClientHighlightThickness": 3,** |
+| **ThumbnailMinimumSize** | Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80",** |
+| **ThumbnailMaximumSize** | Maximum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"640, 400"**.<br />For example: **"ThumbnailMaximumSize": "640, 400",** |
+
+##Hotkey Setup
 
 _Left Blank_
 
 ---
 
-**Created by**
+#Credits
+
+##Created by
 
 * StinkRay
 
 
-**Maintained by**
+##Maintained by
 
 * Phrynohyas Tig-Rah
  
@@ -104,17 +115,17 @@ _Left Blank_
 * StinkRay
 
 
-**With contributions from**
+##With contributions from
 
 * CCP FoxFour
 
 
-**Original threads**
+##Original threads
 
 https://forums.eveonline.com/default.aspx?g=posts&t=389086
 https://forums.eveonline.com/default.aspx?g=posts&t=246157
 
 
-**Original repository**
+##Original repository
 
 https://bitbucket.org/ulph/eve-o-preview-git
