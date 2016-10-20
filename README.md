@@ -28,7 +28,7 @@ If you have find out that some of the features or their combination of EVE-O Pre
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described below
 
-#EULA/ToS
+#EVE Online EULA/ToS
 
 This program is legal under the EULA/ToS:
 
