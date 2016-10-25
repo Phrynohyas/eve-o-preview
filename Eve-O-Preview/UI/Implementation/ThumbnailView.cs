@@ -203,10 +203,24 @@ namespace EveOPreview.UI
 
 		public void SetHighlight(bool enabled, Color color, int width)
 		{
-			this._isSizeChanged = this._isSizeChanged || (this._isHighlightEnabled != enabled);
-			this._isHighlightEnabled = enabled;
-			this._highlightWidth = width;
-			this._overlay.EnableHighlight(enabled, color);
+			if (this._isHighlightEnabled == enabled)
+			{
+				return;
+			}
+
+			if (enabled)
+			{
+				this._isHighlightEnabled = true;
+				this._highlightWidth = width;
+				this.BackColor = color;
+			}
+			else
+			{
+				this._isHighlightEnabled = false;
+				this.BackColor = SystemColors.Control;
+			}
+
+			this._isSizeChanged = true;
 		}
 
 		public void ZoomIn(ViewZoomAnchor anchor, int zoomFactor)
@@ -330,11 +344,10 @@ namespace EveOPreview.UI
 					int actualHeight = baseHeight - 2 * this._highlightWidth;
 					double desiredWidth = actualHeight * baseAspectRatio;
 					int actualWidth = (int)Math.Round(desiredWidth, MidpointRounding.AwayFromZero);
-					int highlightWidthLeft = Math.Min(4, (baseWidth - actualWidth) / 2);
-					int highlightWidthRight = Math.Min(4, baseWidth - actualWidth - highlightWidthLeft);
+					int highlightWidthLeft = (baseWidth - actualWidth) / 2;
+					int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
 
-					this._overlay.SetHighlightWidth(highlightWidthLeft, this._highlightWidth, highlightWidthRight, this._highlightWidth);
-					this._thumbnail.rcDestination = new RECT(0 + highlightWidthLeft, 0 + this._highlightWidth, actualWidth + highlightWidthLeft, actualHeight + this._highlightWidth);
+					this._thumbnail.rcDestination = new RECT(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
 				}
 				else
 				{
@@ -378,8 +391,9 @@ namespace EveOPreview.UI
 			Size overlaySize = this.ClientSize;
 			Point overlayLocation = this.Location;
 
-			overlayLocation.X += (this.Size.Width - this.ClientSize.Width) / 2;
-			overlayLocation.Y += (this.Size.Height - this.ClientSize.Height) - (this.Size.Width - this.ClientSize.Width) / 2;
+			int borderWidth = (this.Size.Width - this.ClientSize.Width) / 2;
+			overlayLocation.X += borderWidth;
+			overlayLocation.Y += (this.Size.Height - this.ClientSize.Height) - borderWidth;
 
 			this._isPositionChanged = false;
 			this._overlay.Size = overlaySize;

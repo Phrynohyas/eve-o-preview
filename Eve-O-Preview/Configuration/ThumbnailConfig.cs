@@ -67,21 +67,7 @@ namespace EveOPreview.Configuration
 
 		public bool EnableActiveClientHighlight { get; set; }
 
-		public Color ActiveClientHighlightColor
-		{
-			get
-			{
-				return this._activeClientHighlightColor;
-			}
-			set
-			{
-				// Some WinForms magic
-				// True Black color cannot be used as highlight frame color
-				// So a somewhat less-Black one is used
-				this._activeClientHighlightColor = (value != Color.Black) ? value : Color.FromArgb(1, 1, 1);
-			}
-		}
-		private Color _activeClientHighlightColor;
+		public Color ActiveClientHighlightColor { get; set; }
 
 		public int ActiveClientHighlightThickness { get; set; }
 
@@ -184,7 +170,7 @@ namespace EveOPreview.Configuration
 				ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
 			this.ThumbnailOpacity = ThumbnailConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
 			this.ThumbnailZoomFactor = ThumbnailConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
-			this.ActiveClientHighlightThickness = ThumbnailConfig.ApplyRestrictions(this.ActiveClientHighlightThickness, 1, 3);
+			this.ActiveClientHighlightThickness = ThumbnailConfig.ApplyRestrictions(this.ActiveClientHighlightThickness, 1, 6);
 		}
 
 		private static int ApplyRestrictions(int value, int minimum, int maximum)
