@@ -18,6 +18,8 @@ namespace EveOPreview.UI
 		private bool _isPositionChanged;
 		private bool _isSizeChanged;
 		private bool _isCustomMouseModeActive;
+		private bool _isHighlightEnabled;
+		private int _highlightWidth;
 		private DateTime _suppressResizeEventsTimestamp;
 		private DWM_THUMBNAIL_PROPERTIES _thumbnail;
 		private IntPtr _thumbnailHandle;
@@ -42,6 +44,8 @@ namespace EveOPreview.UI
 			this._isPositionChanged = true;
 			this._isSizeChanged = true;
 			this._isCustomMouseModeActive = false;
+
+			this._isHighlightEnabled = false;
 
 			this._suppressResizeEventsTimestamp = DateTime.UtcNow;
 
@@ -197,9 +201,26 @@ namespace EveOPreview.UI
 			this._isTopMost = enableTopmost;
 		}
 
-		public void SetHighlight(bool enabled, Color color)
+		public void SetHighlight(bool enabled, Color color, int width)
 		{
-			this._overlay.EnableHighlight(enabled, color);
+			if (this._isHighlightEnabled == enabled)
+			{
+				return;
+			}
+
+			if (enabled)
+			{
+				this._isHighlightEnabled = true;
+				this._highlightWidth = width;
+				this.BackColor = color;
+			}
+			else
+			{
+				this._isHighlightEnabled = false;
+				this.BackColor = SystemColors.Control;
+			}
+
+			this._isSizeChanged = true;
 		}
 
 		public void ZoomIn(ViewZoomAnchor anchor, int zoomFactor)
@@ -310,7 +331,29 @@ namespace EveOPreview.UI
 
 			if (sizeChanged)
 			{
-				this._thumbnail.rcDestination = new RECT(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+				// This approach would work only for square-shaped thumbnail window
+				// To get PROPER results we have to do some crazy math
+				//int delta = this._isHighlightEnabled ? this._highlightWidth : 0;
+				//this._thumbnail.rcDestination = new RECT(0 + delta, 0 + delta, this.ClientSize.Width - delta, this.ClientSize.Height - delta);
+				if (this._isHighlightEnabled)
+				{
+					int baseWidth = this.ClientSize.Width;
+					int baseHeight = this.ClientSize.Height;
+					double baseAspectRatio = ((double)baseWidth) / baseHeight;
+
+					int actualHeight = baseHeight - 2 * this._highlightWidth;
+					double desiredWidth = actualHeight * baseAspectRatio;
+					int actualWidth = (int)Math.Round(desiredWidth, MidpointRounding.AwayFromZero);
+					int highlightWidthLeft = (baseWidth - actualWidth) / 2;
+					int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
+
+					this._thumbnail.rcDestination = new RECT(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
+				}
+				else
+				{
+					//No highlighting enables, so no odd math required
+					this._thumbnail.rcDestination = new RECT(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+				}
 				try
 				{
 					WindowManagerNativeMethods.DwmUpdateThumbnailProperties(this._thumbnailHandle, this._thumbnail);
@@ -348,8 +391,9 @@ namespace EveOPreview.UI
 			Size overlaySize = this.ClientSize;
 			Point overlayLocation = this.Location;
 
-			overlayLocation.X += (this.Size.Width - this.ClientSize.Width) / 2;
-			overlayLocation.Y += (this.Size.Height - this.ClientSize.Height) - (this.Size.Width - this.ClientSize.Width) / 2;
+			int borderWidth = (this.Size.Width - this.ClientSize.Width) / 2;
+			overlayLocation.X += borderWidth;
+			overlayLocation.Y += (this.Size.Height - this.ClientSize.Height) - borderWidth;
 
 			this._isPositionChanged = false;
 			this._overlay.Size = overlaySize;

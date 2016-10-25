@@ -15,7 +15,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		#region Private fields
-		private readonly IAppConfig _configuration;
+		private readonly IThumbnailConfig _configuration;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
@@ -27,7 +27,7 @@ namespace EveOPreview.UI
 		private bool _isHoverEffectActive;
 		#endregion
 
-		public ThumbnailManager(IAppConfig configuration, IThumbnailViewFactory factory)
+		public ThumbnailManager(IThumbnailConfig configuration, IThumbnailViewFactory factory)
 		{
 			this._configuration = configuration;
 			this._thumbnailViewFactory = factory;
@@ -137,7 +137,8 @@ namespace EveOPreview.UI
 
 				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 
-				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClientHandle), this._configuration.ActiveClientHighlightColor);
+				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClientHandle),
+										this._configuration.ActiveClientHighlightColor, this._configuration.ActiveClientHighlightThickness);
 
 				if (!view.IsActive)
 				{
@@ -210,10 +211,14 @@ namespace EveOPreview.UI
 					view = this._thumbnailViewFactory.Create(processHandle, processTitle, this._configuration.ThumbnailSize);
 					view.IsEnabled = true;
 					view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
+					view.SetFrames(this._configuration.ShowThumbnailFrames);
+					// Max/Min size limitations should be set AFTER the frames are disabled
+					// Otherwise thumbnail window will be unnecessary resized
 					view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
-					view.SetFrames(this._configuration.ShowThumbnailFrames);
 					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
+
+					this._thumbnailViews.Add(processHandle, view);
 
 					view.ThumbnailResized = this.ThumbnailViewResized;
 					view.ThumbnailMoved = this.ThumbnailViewMoved;
@@ -222,8 +227,6 @@ namespace EveOPreview.UI
 					view.ThumbnailActivated = this.ThumbnailActivated;
 
 					view.RegisterHotkey(this._configuration.GetClientHotkey(processTitle));
-
-					this._thumbnailViews.Add(processHandle, view);
 
 					this.ApplyClientLayout(processHandle, processTitle);
 

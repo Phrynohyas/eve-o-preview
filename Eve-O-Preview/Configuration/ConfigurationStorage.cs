@@ -3,37 +3,46 @@ using Newtonsoft.Json;
 
 namespace EveOPreview.Configuration
 {
-	public class ConfigurationStorage : IConfigurationStorage
+	class ConfigurationStorage : IConfigurationStorage
 	{
 		private const string ConfigurationFileName = "EVE-O Preview.json";
 
-		private readonly IAppConfig _configuration;
+		private readonly IAppConfig _appConfig;
+		private readonly IThumbnailConfig _thumbnailConfig;
 
-		public ConfigurationStorage(IAppConfig configuration)
+		public ConfigurationStorage(IAppConfig appConfig, IThumbnailConfig thumbnailConfig)
 		{
-			this._configuration = configuration;
+			this._appConfig = appConfig;
+			this._thumbnailConfig = thumbnailConfig;
 		}
 
 		public void Load()
 		{
-			if (!File.Exists(ConfigurationStorage.ConfigurationFileName))
+			string filename = this.GetConfigFileName();
+
+			if (!File.Exists(filename))
 			{
 				return;
 			}
 
-			string rawData = File.ReadAllText(ConfigurationStorage.ConfigurationFileName);
+			string rawData = File.ReadAllText(filename);
 
-			JsonConvert.PopulateObject(rawData, this._configuration);
+			JsonConvert.PopulateObject(rawData, this._thumbnailConfig);
 
 			// Validate data after loading it
-			this._configuration.ApplyRestrictions();
+			this._thumbnailConfig.ApplyRestrictions();
 		}
 
 		public void Save()
 		{
-			string rawData = JsonConvert.SerializeObject(this._configuration, Formatting.Indented);
+			string rawData = JsonConvert.SerializeObject(this._thumbnailConfig, Formatting.Indented);
 
-			File.WriteAllText(ConfigurationStorage.ConfigurationFileName, rawData);
+			File.WriteAllText(this.GetConfigFileName(), rawData);
+		}
+
+		private string GetConfigFileName()
+		{
+			return string.IsNullOrEmpty(this._appConfig.ConfigFileName) ? ConfigurationStorage.ConfigurationFileName : this._appConfig.ConfigFileName;
 		}
 	}
 }
