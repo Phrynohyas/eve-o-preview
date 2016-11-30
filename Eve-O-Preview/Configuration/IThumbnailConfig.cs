@@ -19,7 +19,7 @@ namespace EveOPreview.Configuration
 		bool HideThumbnailsOnLostFocus { get; set; }
 		bool EnablePerClientThumbnailLayouts { get; set; }
 
-		Size ThumbnailSize { get; set; }
+		Size ThumbnailDefaultSize { get; set; }
 		Size ThumbnailMinimumSize { get; set; }
 		Size ThumbnailMaximumSize { get; set; }
 

@@ -131,7 +131,7 @@ namespace EveOPreview.UI
 					if (view.Title != ThumbnailManager.DefaultClientTitle)
 					{
 						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
-                        view.ThumbnailSize = this._configuration.GetThumbnailSize(view.Title, this._activeClientTitle, this._configuration.ThumbnailSize);
+                        view.ThumbnailSize = this._configuration.GetThumbnailSize(view.Title, this._activeClientTitle, this._configuration.ThumbnailDefaultSize);
                     }
 
 					view.SetOpacity(this._configuration.ThumbnailOpacity);
@@ -211,7 +211,7 @@ namespace EveOPreview.UI
 
 				if ((view == null) && (processTitle != ""))
 				{
-					view = this._thumbnailViewFactory.Create(processHandle, processTitle, this._configuration.ThumbnailSize);
+					view = this._thumbnailViewFactory.Create(processHandle, processTitle, this._configuration.ThumbnailDefaultSize);
 					view.IsEnabled = true;
 					view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 					view.SetFrames(this._configuration.ShowThumbnailFrames);
@@ -221,7 +221,7 @@ namespace EveOPreview.UI
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 
                     view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
-                    view.ThumbnailSize = this._configuration.GetThumbnailSize(processTitle, this._activeClientTitle, this._configuration.ThumbnailSize);
+                    view.ThumbnailSize = this._configuration.GetThumbnailSize(processTitle, this._activeClientTitle, this._configuration.ThumbnailDefaultSize);
 
 					this._thumbnailViews.Add(processHandle, view);
 

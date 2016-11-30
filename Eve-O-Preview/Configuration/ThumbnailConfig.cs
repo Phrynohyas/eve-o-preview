@@ -20,7 +20,7 @@ namespace EveOPreview.Configuration
 			this.HideThumbnailsOnLostFocus = false;
 			this.EnablePerClientThumbnailLayouts = false;
 
-			this.ThumbnailSize = new Size(250, 150);
+			this.ThumbnailDefaultSize = new Size(250, 150);
 			this.ThumbnailMinimumSize = new Size(100, 80);
 			this.ThumbnailMaximumSize = new Size(640, 400);
 
@@ -56,7 +56,7 @@ namespace EveOPreview.Configuration
 		public bool HideThumbnailsOnLostFocus { get; set; }
 		public bool EnablePerClientThumbnailLayouts { get; set; }
 
-		public Size ThumbnailSize { get; set; }
+		public Size ThumbnailDefaultSize { get; set; }
 		public Size ThumbnailMaximumSize { get; set; }
 		public Size ThumbnailMinimumSize { get; set; }
 
@@ -223,8 +223,8 @@ namespace EveOPreview.Configuration
 		public void ApplyRestrictions()
 		{
 			this.ThumbnailRefreshPeriod = ThumbnailConfig.ApplyRestrictions(this.ThumbnailRefreshPeriod, 300, 1000);
-			this.ThumbnailSize = new Size(ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
-				ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
+			this.ThumbnailDefaultSize = new Size(ThumbnailConfig.ApplyRestrictions(this.ThumbnailDefaultSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
+				ThumbnailConfig.ApplyRestrictions(this.ThumbnailDefaultSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
 			this.ThumbnailOpacity = ThumbnailConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
 			this.ThumbnailZoomFactor = ThumbnailConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
 			this.ActiveClientHighlightThickness = ThumbnailConfig.ApplyRestrictions(this.ActiveClientHighlightThickness, 1, 6);
