@@ -77,15 +77,17 @@ namespace EveOPreview.UI
 			thumbnail.IsEnabled = !hideAlways;
 		}
 
-		public void SetThumbnailsSize(Size size)
+		public void SetThumbnailsSize(IntPtr id, Size size)
 		{
 			this.DisableViewEvents();
 
-			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
-			{
-				entry.Value.ThumbnailSize = size;
-				entry.Value.Refresh(false);
-			}
+            IThumbnailView view;
+
+            if(this._thumbnailViews.TryGetValue(id, out view))
+            {
+                view.ThumbnailSize = size;
+                view.Refresh(false);
+            }
 
 			this.ThumbnailSizeChanged?.Invoke(size);
 
@@ -360,7 +362,9 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this.SetThumbnailsSize(view.ThumbnailSize);
+			this.SetThumbnailsSize(id, view.ThumbnailSize);
+
+            this._configuration.SetThumbnailSize(view.Title, this._activeClientTitle, view.ThumbnailSize);
 
 			view.Refresh(false);
 		}
