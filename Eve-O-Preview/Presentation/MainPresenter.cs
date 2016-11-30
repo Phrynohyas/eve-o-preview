@@ -88,7 +88,7 @@ namespace EveOPreview.UI
 
 		private void UpdateThumbnailsSize()
 		{
-			this._thumbnailManager.SetThumbnailsSize(this.View.ThumbnailSize);
+			//this._thumbnailManager.SetThumbnailsSize(this.View.ThumbnailSize);
 			this.SaveApplicationSettings();
 		}
 
@@ -208,7 +208,7 @@ namespace EveOPreview.UI
 
 		private void ThumbnailSizeChanged(Size size)
 		{
-			this.View.ThumbnailSize = size;
+			//don't need to change anything here
 		}
 
 		private void UpdateThumbnailState(IntPtr thumbnailId)
