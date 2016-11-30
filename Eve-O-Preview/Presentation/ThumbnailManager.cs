@@ -131,7 +131,8 @@ namespace EveOPreview.UI
 					if (view.Title != ThumbnailManager.DefaultClientTitle)
 					{
 						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
-					}
+                        view.ThumbnailSize = this._configuration.GetThumbnailSize(view.Title, this._activeClientTitle, this._configuration.ThumbnailSize);
+                    }
 
 					view.SetOpacity(this._configuration.ThumbnailOpacity);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
@@ -218,7 +219,9 @@ namespace EveOPreview.UI
 					// Otherwise thumbnail window will be unnecessary resized
 					view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
-					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
+
+                    view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
+                    view.ThumbnailSize = this._configuration.GetThumbnailSize(processTitle, this._activeClientTitle, this._configuration.ThumbnailSize);
 
 					this._thumbnailViews.Add(processHandle, view);
 
