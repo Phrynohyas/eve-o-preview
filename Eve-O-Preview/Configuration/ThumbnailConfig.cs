@@ -35,7 +35,10 @@ namespace EveOPreview.Configuration
 			this.ActiveClientHighlightColor = Color.GreenYellow;
 			this.ActiveClientHighlightThickness = 3;
 
-			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
+            this.PerClientSizes = new Dictionary<string, Dictionary<string, Size>>();
+            this.FlatSizes = new Dictionary<string, Size>();
+            
+            this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
 			this.FlatLayout = new Dictionary<string, Point>();
 			this.ClientLayout = new Dictionary<string, ClientLayout>();
 			this.ClientHotkey = new Dictionary<string, string>();
@@ -71,7 +74,12 @@ namespace EveOPreview.Configuration
 
 		public int ActiveClientHighlightThickness { get; set; }
 
-		[JsonProperty]
+        [JsonProperty]
+        private Dictionary<string, Dictionary<string, Size>> PerClientSizes { get; set; }
+        [JsonProperty]
+        private Dictionary<string, Size> FlatSizes { get; set; }
+
+        [JsonProperty]
 		private Dictionary<string, Dictionary<string, Point>> PerClientLayout { get; set; }
 		[JsonProperty]
 		private Dictionary<string, Point> FlatLayout { get; set; }
@@ -129,7 +137,56 @@ namespace EveOPreview.Configuration
 			layoutSource[currentClient] = location;
 		}
 
-		public ClientLayout GetClientLayout(string currentClient)
+        public Size GetThumbnailSize(string currentClient, string activeClient, Size defaultSize)
+        {
+            Size size;
+
+            // What this code does:
+            // If Per-Client layouts are enabled
+            //    and client name is known
+            //    and there is a separate thumbnails layout for this client
+            //    and this layout contains an entry for the current client
+            // then return that entry
+            // otherwise try to get client layout from the flat all-clients layout
+            // If there is no layout too then use the default one
+            if (this.EnablePerClientThumbnailLayouts && !string.IsNullOrEmpty(activeClient))
+            {
+                Dictionary<string, Size> layoutSource;
+                if (this.PerClientSizes.TryGetValue(activeClient, out layoutSource) && layoutSource.TryGetValue(currentClient, out size))
+                {
+                    return size;
+                }
+            }
+
+            return this.FlatSizes.TryGetValue(currentClient, out size) ? size : defaultSize;
+        }
+
+        public void SetThumbnailSize(string currentClient, string activeClient, Size size)
+        {
+            Dictionary<string, Size> layoutSource;
+
+            if (this.EnablePerClientThumbnailLayouts)
+            {
+                if (string.IsNullOrEmpty(activeClient))
+                {
+                    return;
+                }
+
+                if (!this.PerClientSizes.TryGetValue(activeClient, out layoutSource))
+                {
+                    layoutSource = new Dictionary<string, Size>();
+                    this.PerClientSizes[activeClient] = layoutSource;
+                }
+            }
+            else
+            {
+                layoutSource = this.FlatSizes;
+            }
+
+            layoutSource[currentClient] = size;
+        }
+
+        public ClientLayout GetClientLayout(string currentClient)
 		{
 			ClientLayout layout;
 			this.ClientLayout.TryGetValue(currentClient, out layout);
