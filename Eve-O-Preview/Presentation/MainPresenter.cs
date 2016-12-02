@@ -88,8 +88,13 @@ namespace EveOPreview.UI
 
 		private void UpdateThumbnailsSize()
 		{
-			//this._thumbnailManager.SetThumbnailsSize(this.View.ThumbnailSize);
+			
 			this.SaveApplicationSettings();
+
+			if (this.View.SyncThumbnailSizes)
+			{
+				this._thumbnailManager.Activate();
+			}
 		}
 
 		private void LoadApplicationSettings()
@@ -117,6 +122,8 @@ namespace EveOPreview.UI
 			this.View.ShowThumbnailFrames = this._configuration.ShowThumbnailFrames;
 			this.View.EnableActiveClientHighlight = this._configuration.EnableActiveClientHighlight;
 			this.View.ActiveClientHighlightColor = this._configuration.ActiveClientHighlightColor;
+
+			this.View.SyncThumbnailSizes = this._configuration.SyncThumbnailSizes;
 		}
 
 		private void SaveApplicationSettings()
@@ -141,6 +148,8 @@ namespace EveOPreview.UI
 			this._configuration.ShowThumbnailFrames = this.View.ShowThumbnailFrames;
 			this._configuration.EnableActiveClientHighlight = this.View.EnableActiveClientHighlight;
 			this._configuration.ActiveClientHighlightColor = this.View.ActiveClientHighlightColor;
+
+			this._configuration.SyncThumbnailSizes = this.View.SyncThumbnailSizes;
 
 			this._configurationStorage.Save();
 

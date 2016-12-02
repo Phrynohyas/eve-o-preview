@@ -94,7 +94,7 @@ namespace EveOPreview.UI
 			this.EnableViewEvents();
 		}
 
-		private void RefreshThumbnails()
+		public void RefreshThumbnails()
 		{
 			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
 			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !WindowManagerNativeMethods.DwmIsCompositionEnabled();
@@ -131,8 +131,8 @@ namespace EveOPreview.UI
 					if (view.Title != ThumbnailManager.DefaultClientTitle)
 					{
 						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
-                        view.ThumbnailSize = this._configuration.GetThumbnailSize(view.Title, this._activeClientTitle, this._configuration.ThumbnailDefaultSize);
-                    }
+                        view.ThumbnailSize = this._configuration.SyncThumbnailSizes ? this._configuration.ThumbnailDefaultSize : this._configuration.GetThumbnailSize(view.Title, this._activeClientTitle, view.ThumbnailSize);
+					}
 
 					view.SetOpacity(this._configuration.ThumbnailOpacity);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
@@ -221,7 +221,7 @@ namespace EveOPreview.UI
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 
                     view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
-                    view.ThumbnailSize = this._configuration.GetThumbnailSize(processTitle, this._activeClientTitle, this._configuration.ThumbnailDefaultSize);
+                    view.ThumbnailSize = this._configuration.SyncThumbnailSizes ? this._configuration.ThumbnailDefaultSize : this._configuration.GetThumbnailSize(processTitle, this._activeClientTitle, view.ThumbnailSize);
 
 					this._thumbnailViews.Add(processHandle, view);
 

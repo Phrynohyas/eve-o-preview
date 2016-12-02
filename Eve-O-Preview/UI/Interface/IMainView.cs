@@ -42,6 +42,8 @@ namespace EveOPreview.UI
 		void RemoveThumbnails(IList<IThumbnailDescriptionView> thumbnails);
 		void RefreshZoomSettings();
 
+		bool SyncThumbnailSizes { get; set; }
+
 		Action ApplicationExitRequested { get; set; }
 		Action FormActivated { get; set; }
 		Action FormMinimized { get; set; }

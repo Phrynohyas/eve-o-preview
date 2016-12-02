@@ -35,10 +35,12 @@ namespace EveOPreview.Configuration
 			this.ActiveClientHighlightColor = Color.GreenYellow;
 			this.ActiveClientHighlightThickness = 3;
 
-            this.PerClientSizes = new Dictionary<string, Dictionary<string, Size>>();
+			this.SyncThumbnailSizes = false;
+
+			this.PerClientSizes = new Dictionary<string, Dictionary<string, Size>>();
             this.FlatSizes = new Dictionary<string, Size>();
-            
-            this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
+
+			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
 			this.FlatLayout = new Dictionary<string, Point>();
 			this.ClientLayout = new Dictionary<string, ClientLayout>();
 			this.ClientHotkey = new Dictionary<string, string>();
@@ -56,6 +58,7 @@ namespace EveOPreview.Configuration
 		public bool HideThumbnailsOnLostFocus { get; set; }
 		public bool EnablePerClientThumbnailLayouts { get; set; }
 
+		[JsonProperty("ThumbnailSize")]
 		public Size ThumbnailDefaultSize { get; set; }
 		public Size ThumbnailMaximumSize { get; set; }
 		public Size ThumbnailMinimumSize { get; set; }
@@ -73,6 +76,9 @@ namespace EveOPreview.Configuration
 		public Color ActiveClientHighlightColor { get; set; }
 
 		public int ActiveClientHighlightThickness { get; set; }
+
+		[JsonProperty("SyncSizesToDefault")]
+		public bool SyncThumbnailSizes { get; set; }
 
         [JsonProperty]
         private Dictionary<string, Dictionary<string, Size>> PerClientSizes { get; set; }

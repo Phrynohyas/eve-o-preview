@@ -244,6 +244,18 @@ namespace EveOPreview.UI
 		}
 		private Color _activeClientHighlightColor;
 
+		public bool SyncThumbnailSizes
+		{
+			get
+			{
+				return this.SyncCheckbox.Checked;
+			}
+			set
+			{
+				this.SyncCheckbox.Checked = value;
+			}
+		}
+
 		public new void Show()
 		{
 			// Registers the current instance as the application's Main Form
@@ -445,6 +457,11 @@ namespace EveOPreview.UI
 			this._zoomAnchorMap[ViewZoomAnchor.SW] = this.ZoomAanchorSWRadioButton;
 			this._zoomAnchorMap[ViewZoomAnchor.S] = this.ZoomAanchorSRadioButton;
 			this._zoomAnchorMap[ViewZoomAnchor.SE] = this.ZoomAanchorSERadioButton;
+		}
+
+		private void SyncCheckbox_CheckedChanged(object sender, EventArgs e)
+		{
+			this.ApplicationSettingsChanged?.Invoke();
 		}
 	}
 }
