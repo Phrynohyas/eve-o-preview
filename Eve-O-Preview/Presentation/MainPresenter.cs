@@ -56,12 +56,16 @@ namespace EveOPreview.UI
 		{
 			this.LoadApplicationSettings();
 			this.View.SetForumUrl(MainPresenter.ForumUrl);
+
 			if (this._configuration.MinimizeToTray)
 			{
 				this.View.Minimize();
 			}
 
 			this._thumbnailManager.Activate();
+
+			this.SyncChanged();
+			this.LockChanged();
 		}
 
 		private void Minimize()
@@ -102,6 +106,7 @@ namespace EveOPreview.UI
 		private void SyncChanged()
 		{
 			this._thumbnailManager.SetThumbnailResizeLock(this.View.SyncThumbnailSizes || this.View.LockThumbnails);  //if either is true, lock resize
+			this._thumbnailManager.Activate();
 		}
 
 		private void LockChanged()
@@ -137,7 +142,7 @@ namespace EveOPreview.UI
 			this.View.ActiveClientHighlightColor = this._configuration.ActiveClientHighlightColor;
 
 			this.View.SyncThumbnailSizes = this._configuration.SyncThumbnailSizes;
-
+			
 			this.View.LockThumbnails = this._configuration.LockThumbnails;
 		}
 
@@ -178,6 +183,8 @@ namespace EveOPreview.UI
 		private void ThumbnailsAdded(IList<IThumbnailView> thumbnails)
 		{
 			this.View.AddThumbnails(this.GetThumbnailViews(thumbnails, false));
+			this.LockChanged();
+			this.SyncChanged();
 		}
 
 		private void ThumbnailsUpdated(IList<IThumbnailView> thumbnails)

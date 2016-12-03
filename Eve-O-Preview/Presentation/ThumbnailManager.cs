@@ -383,7 +383,10 @@ namespace EveOPreview.UI
 
 			this.SetThumbnailsSize(id, view.ThumbnailSize);
 
-            this._configuration.SetThumbnailSize(view.Title, this._activeClientTitle, view.ThumbnailSize);
+			if (!this._configuration.SyncThumbnailSizes)
+			{
+				this._configuration.SetThumbnailSize(view.Title, this._activeClientTitle, view.ThumbnailSize);
+			}
 
 			view.Refresh(false);
 		}

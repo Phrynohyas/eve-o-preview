@@ -175,7 +175,7 @@ namespace EveOPreview.UI
 		{
 			//if enabled, sets style to fiexd or sizable depending on what the current state is
 			FormBorderStyle style = enable 
-				? (this.ResizeLocked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.SizableToolWindow) 
+				? FormBorderStyle.SizableToolWindow
 				: FormBorderStyle.None;
 
 			// No need to change the borders style if it is ALREADY correct
@@ -412,9 +412,7 @@ namespace EveOPreview.UI
 		public void SetResizeLocked(bool locked)
 		{
 			this.ResizeLocked = locked;
-
-			if(this.FormBorderStyle != FormBorderStyle.None)
-				this.FormBorderStyle = locked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.SizableToolWindow;
+			
 		}
 
 		private bool PositionLocked { get; set; }
@@ -422,6 +420,20 @@ namespace EveOPreview.UI
 		public void SetPositionLocked(bool locked)
 		{
 			this.PositionLocked = locked;
+		}
+
+		protected override void WndProc(ref Message message)
+		{
+			const int WM_NCHITTEST = 0x0084;
+			const int HTCLIENT = 0x01;
+
+			if (message.Msg == WM_NCHITTEST && this.ResizeLocked)
+			{
+				message.Result = new IntPtr(HTCLIENT);
+				return;
+			}
+
+			base.WndProc(ref message);
 		}
 
 		#region GUI events
@@ -444,11 +456,6 @@ namespace EveOPreview.UI
 		private void Resize_Handler(object sender, EventArgs e)
 		{
 			if (DateTime.UtcNow < this._suppressResizeEventsTimestamp)
-			{
-				return;
-			}
-
-			if (this.ResizeLocked)
 			{
 				return;
 			}
