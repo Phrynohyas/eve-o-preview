@@ -410,7 +410,8 @@ namespace EveOPreview.UI
 		{
 			this.ResizeLocked = locked;
 
-			this.FormBorderStyle = locked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.SizableToolWindow;
+			if(this.FormBorderStyle != FormBorderStyle.None)
+				this.FormBorderStyle = locked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.SizableToolWindow;
 		}
 
 		#region GUI events
