@@ -37,6 +37,8 @@ namespace EveOPreview.Configuration
 
 			this.SyncThumbnailSizes = false;
 
+			this.LockThumbnails = false;
+
 			this.PerClientSizes = new Dictionary<string, Dictionary<string, Size>>();
             this.FlatSizes = new Dictionary<string, Size>();
 
@@ -80,7 +82,9 @@ namespace EveOPreview.Configuration
 		[JsonProperty("SyncSizesToDefault")]
 		public bool SyncThumbnailSizes { get; set; }
 
-        [JsonProperty]
+		public bool LockThumbnails { get; set; }
+
+		[JsonProperty]
         private Dictionary<string, Dictionary<string, Size>> PerClientSizes { get; set; }
         [JsonProperty]
         private Dictionary<string, Size> FlatSizes { get; set; }

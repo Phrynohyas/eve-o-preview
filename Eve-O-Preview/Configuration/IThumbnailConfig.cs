@@ -36,6 +36,8 @@ namespace EveOPreview.Configuration
 
 		bool SyncThumbnailSizes { get; set; }
 
+		bool LockThumbnails { get; set; }
+
 		Point GetThumbnailLocation(string currentClient, string activeClient, Point defaultLocation);
 		void SetThumbnailLocation(string currentClient, string activeClient, Point location);
 

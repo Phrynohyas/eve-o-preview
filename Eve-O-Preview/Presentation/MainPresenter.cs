@@ -44,6 +44,7 @@ namespace EveOPreview.UI
 			this.View.ForumUrlLinkActivated = this.OpenForumUrlLink;
 			this.View.ApplicationExitRequested = this.ExitApplication;
 			this.View.SyncChanged = this.SyncChanged;
+			this.View.LockChanged = this.LockChanged;
 
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
@@ -100,7 +101,13 @@ namespace EveOPreview.UI
 
 		private void SyncChanged()
 		{
-			this._thumbnailManager.SetThumbnailLock(this.View.SyncThumbnailSizes);
+			this._thumbnailManager.SetThumbnailResizeLock(this.View.SyncThumbnailSizes || this.View.LockThumbnails);  //if either is true, lock resize
+		}
+
+		private void LockChanged()
+		{
+			this._thumbnailManager.SetThumbnailPositionLock(this.View.LockThumbnails);
+			this._thumbnailManager.SetThumbnailResizeLock(this.View.SyncThumbnailSizes || this.View.LockThumbnails);
 		}
 
 		private void LoadApplicationSettings()
@@ -130,6 +137,8 @@ namespace EveOPreview.UI
 			this.View.ActiveClientHighlightColor = this._configuration.ActiveClientHighlightColor;
 
 			this.View.SyncThumbnailSizes = this._configuration.SyncThumbnailSizes;
+
+			this.View.LockThumbnails = this._configuration.LockThumbnails;
 		}
 
 		private void SaveApplicationSettings()
@@ -156,6 +165,8 @@ namespace EveOPreview.UI
 			this._configuration.ActiveClientHighlightColor = this.View.ActiveClientHighlightColor;
 
 			this._configuration.SyncThumbnailSizes = this.View.SyncThumbnailSizes;
+
+			this._configuration.LockThumbnails = this.View.LockThumbnails;
 
 			this._configurationStorage.Save();
 

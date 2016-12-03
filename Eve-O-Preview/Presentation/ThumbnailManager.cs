@@ -94,11 +94,19 @@ namespace EveOPreview.UI
 			this.EnableViewEvents();
 		}
 
-		public void SetThumbnailLock(bool locked)
+		public void SetThumbnailResizeLock(bool locked)
 		{
 			foreach(IThumbnailView view in this._thumbnailViews.Values)
 			{
 				view.SetResizeLocked(locked);
+			}
+		}
+
+		public void SetThumbnailPositionLock(bool locked)
+		{
+			foreach (IThumbnailView view in this._thumbnailViews.Values)
+			{
+				view.SetPositionLocked(locked);
 			}
 		}
 

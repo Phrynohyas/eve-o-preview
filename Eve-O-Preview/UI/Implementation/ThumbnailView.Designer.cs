@@ -42,7 +42,6 @@ namespace EveOPreview.UI
 			this.Move += new System.EventHandler(this.Move_Handler);
 			this.Resize += new System.EventHandler(this.Resize_Handler);
 			this.ResumeLayout(false);
-			this.ResizeLocked = true;
 
         }
 

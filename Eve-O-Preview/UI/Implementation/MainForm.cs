@@ -256,6 +256,18 @@ namespace EveOPreview.UI
 			}
 		}
 
+		public bool LockThumbnails
+		{
+			get
+			{
+				return this.LockCheckbox.Checked;
+			}
+			set
+			{
+				this.LockCheckbox.Checked = value;
+			}
+		}
+
 		public new void Show()
 		{
 			// Registers the current instance as the application's Main Form
@@ -351,6 +363,8 @@ namespace EveOPreview.UI
 		public Action ForumUrlLinkActivated { get; set; }
 
 		public Action SyncChanged { get; set; }
+
+		public Action LockChanged { get; set; }
 
 		#region UI events
 		private void OptionChanged_Handler(object sender, EventArgs e)
@@ -465,6 +479,12 @@ namespace EveOPreview.UI
 		{
 			this.ApplicationSettingsChanged?.Invoke();
 			this.SyncChanged?.Invoke();
+		}
+
+		private void LockCheckbox_CheckedChanged(object sender, EventArgs e)
+		{
+			this.ApplicationSettingsChanged?.Invoke();
+			this.LockChanged?.Invoke();
 		}
 	}
 }

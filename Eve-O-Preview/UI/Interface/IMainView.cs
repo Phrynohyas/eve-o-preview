@@ -44,6 +44,8 @@ namespace EveOPreview.UI
 
 		bool SyncThumbnailSizes { get; set; }
 
+		bool LockThumbnails { get; set; }
+
 		Action ApplicationExitRequested { get; set; }
 		Action FormActivated { get; set; }
 		Action FormMinimized { get; set; }
@@ -53,5 +55,6 @@ namespace EveOPreview.UI
 		Action<IntPtr> ThumbnailStateChanged { get; set; }
 		Action ForumUrlLinkActivated { get; set; }
 		Action SyncChanged { get; set; }
+		Action LockChanged { get; set; }
 	}
 }

@@ -49,6 +49,9 @@ namespace EveOPreview.UI
 
 			this._suppressResizeEventsTimestamp = DateTime.UtcNow;
 
+			this.PositionLocked = false;
+			this.ResizeLocked = false;
+
 			InitializeComponent();
 
 			this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
@@ -414,6 +417,13 @@ namespace EveOPreview.UI
 				this.FormBorderStyle = locked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.SizableToolWindow;
 		}
 
+		private bool PositionLocked { get; set; }
+
+		public void SetPositionLocked(bool locked)
+		{
+			this.PositionLocked = locked;
+		}
+
 		#region GUI events
 		protected override CreateParams CreateParams
 		{
@@ -570,7 +580,7 @@ namespace EveOPreview.UI
 				this.Size = new Size(this.Size.Width + offsetX, this.Size.Height + offsetY);
 				this._baseZoomSize = this.Size;
 			}
-			else
+			else if(!this.PositionLocked)
 			{
 				this.Location = new Point(this.Location.X + offsetX, this.Location.Y + offsetY);
 				this._baseZoomLocation = this.Location;
