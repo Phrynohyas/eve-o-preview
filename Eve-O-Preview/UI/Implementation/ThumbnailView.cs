@@ -170,7 +170,10 @@ namespace EveOPreview.UI
 
 		public void SetFrames(bool enable)
 		{
-			FormBorderStyle style = enable ? FormBorderStyle.SizableToolWindow : FormBorderStyle.None;
+			//if enabled, sets style to fiexd or sizable depending on what the current state is
+			FormBorderStyle style = enable 
+				? (this.ResizeLocked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.SizableToolWindow) 
+				: FormBorderStyle.None;
 
 			// No need to change the borders style if it is ALREADY correct
 			if (this.FormBorderStyle == style)
@@ -401,6 +404,15 @@ namespace EveOPreview.UI
 			this._overlay.Refresh();
 		}
 
+		private bool ResizeLocked { get; set; }
+
+		public void SetResizeLocked(bool locked)
+		{
+			this.ResizeLocked = locked;
+
+			this.FormBorderStyle = locked ? FormBorderStyle.FixedToolWindow : FormBorderStyle.SizableToolWindow;
+		}
+
 		#region GUI events
 		protected override CreateParams CreateParams
 		{
@@ -421,6 +433,11 @@ namespace EveOPreview.UI
 		private void Resize_Handler(object sender, EventArgs e)
 		{
 			if (DateTime.UtcNow < this._suppressResizeEventsTimestamp)
+			{
+				return;
+			}
+
+			if (this.ResizeLocked)
 			{
 				return;
 			}
@@ -545,9 +562,9 @@ namespace EveOPreview.UI
 			int offsetY = mousePosition.Y - this._baseMousePosition.Y;
 			this._baseMousePosition = mousePosition;
 
-			// Left + Right buttons trigger thumbnail resize
+			// Left + Right buttons trigger thumbnail resize, if the window isn't fixed
 			// Right button only trigger thumbnail movement
-			if (leftButton && rightButton)
+			if (leftButton && rightButton && !this.ResizeLocked)
 			{
 				this.Size = new Size(this.Size.Width + offsetX, this.Size.Height + offsetY);
 				this._baseZoomSize = this.Size;

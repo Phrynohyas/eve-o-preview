@@ -350,6 +350,8 @@ namespace EveOPreview.UI
 
 		public Action ForumUrlLinkActivated { get; set; }
 
+		public Action SyncChanged { get; set; }
+
 		#region UI events
 		private void OptionChanged_Handler(object sender, EventArgs e)
 		{
@@ -462,6 +464,7 @@ namespace EveOPreview.UI
 		private void SyncCheckbox_CheckedChanged(object sender, EventArgs e)
 		{
 			this.ApplicationSettingsChanged?.Invoke();
+			this.SyncChanged?.Invoke();
 		}
 	}
 }

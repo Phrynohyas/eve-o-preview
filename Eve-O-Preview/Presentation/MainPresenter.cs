@@ -43,6 +43,7 @@ namespace EveOPreview.UI
 			this.View.ThumbnailStateChanged = this.UpdateThumbnailState;
 			this.View.ForumUrlLinkActivated = this.OpenForumUrlLink;
 			this.View.ApplicationExitRequested = this.ExitApplication;
+			this.View.SyncChanged = this.SyncChanged;
 
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
@@ -95,6 +96,11 @@ namespace EveOPreview.UI
 			{
 				this._thumbnailManager.Activate();
 			}
+		}
+
+		private void SyncChanged()
+		{
+			this._thumbnailManager.SetThumbnailLock(this.View.SyncThumbnailSizes);
 		}
 
 		private void LoadApplicationSettings()

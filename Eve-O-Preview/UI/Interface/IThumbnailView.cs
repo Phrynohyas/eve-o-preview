@@ -31,6 +31,8 @@ namespace EveOPreview.UI
 
 		void Refresh(bool forceRefresh);
 
+		void SetResizeLocked(bool locked);
+
 		Action<IntPtr> ThumbnailResized { get; set; }
 		Action<IntPtr> ThumbnailMoved { get; set; }
 		Action<IntPtr> ThumbnailFocused { get; set; }

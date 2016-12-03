@@ -52,5 +52,6 @@ namespace EveOPreview.UI
 		Action ThumbnailsSizeChanged { get; set; }
 		Action<IntPtr> ThumbnailStateChanged { get; set; }
 		Action ForumUrlLinkActivated { get; set; }
+		Action SyncChanged { get; set; }
 	}
 }

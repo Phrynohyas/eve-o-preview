@@ -31,6 +31,7 @@ namespace EveOPreview.UI
 			this.Opacity = 0.1D;
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Preview";
 			this.TopMost = true;
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDown_Handler);
@@ -41,6 +42,7 @@ namespace EveOPreview.UI
 			this.Move += new System.EventHandler(this.Move_Handler);
 			this.Resize += new System.EventHandler(this.Resize_Handler);
 			this.ResumeLayout(false);
+			this.ResizeLocked = true;
 
         }
 

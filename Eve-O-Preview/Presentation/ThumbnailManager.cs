@@ -94,7 +94,15 @@ namespace EveOPreview.UI
 			this.EnableViewEvents();
 		}
 
-		public void RefreshThumbnails()
+		public void SetThumbnailLock(bool locked)
+		{
+			foreach(IThumbnailView view in this._thumbnailViews.Values)
+			{
+				view.SetResizeLocked(locked);
+			}
+		}
+
+		private void RefreshThumbnails()
 		{
 			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
 			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !WindowManagerNativeMethods.DwmIsCompositionEnabled();

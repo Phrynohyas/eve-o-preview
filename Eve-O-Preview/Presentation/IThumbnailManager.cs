@@ -13,6 +13,8 @@ namespace EveOPreview.UI
 		void SetThumbnailsSize(IntPtr id, Size size);
 		void SetupThumbnailFrames();
 
+		void SetThumbnailLock(bool locked);
+
 		Action<IList<IThumbnailView>> ThumbnailsAdded { get; set; }
 		Action<IList<IThumbnailView>> ThumbnailsUpdated { get; set; }
 		Action<IList<IThumbnailView>> ThumbnailsRemoved { get; set; }
