@@ -10,8 +10,11 @@ namespace EveOPreview.UI
 		void Deactivate();
 
 		void SetThumbnailState(IntPtr thumbnailId, bool hideAlways);
-		void SetThumbnailsSize(Size size);
+		void SetThumbnailsSize(IntPtr id, Size size);
 		void SetupThumbnailFrames();
+
+		void SetThumbnailResizeLock(bool locked);
+		void SetThumbnailPositionLock(bool locked);
 
 		Action<IList<IThumbnailView>> ThumbnailsAdded { get; set; }
 		Action<IList<IThumbnailView>> ThumbnailsUpdated { get; set; }

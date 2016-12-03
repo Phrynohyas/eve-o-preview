@@ -19,8 +19,8 @@ namespace EveOPreview.UI
 			// ThumbnailView
 			// 
 			this.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
 			this.ClientSize = new System.Drawing.Size(153, 89);
 			this.ControlBox = false;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -31,6 +31,7 @@ namespace EveOPreview.UI
 			this.Opacity = 0.1D;
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Preview";
 			this.TopMost = true;
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDown_Handler);

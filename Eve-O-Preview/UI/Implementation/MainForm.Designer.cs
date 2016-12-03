@@ -54,6 +54,7 @@ namespace EveOPreview.UI
 			this.ShowThumbnailsAlwaysOnTopCheckBox = new System.Windows.Forms.CheckBox();
 			this.HideThumbnailsOnLostFocusCheckBox = new System.Windows.Forms.CheckBox();
 			this.EnablePerClientThumbnailsLayoutsCheckBox = new System.Windows.Forms.CheckBox();
+			this.SyncCheckbox = new System.Windows.Forms.CheckBox();
 			this.ThumbnailsWidthNumericEdit = new System.Windows.Forms.NumericUpDown();
 			this.ThumbnailsHeightNumericEdit = new System.Windows.Forms.NumericUpDown();
 			this.ZoomAnchorPanel = new System.Windows.Forms.Panel();
@@ -77,6 +78,7 @@ namespace EveOPreview.UI
 			this.ForumLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.LockCheckbox = new System.Windows.Forms.CheckBox();
 			OpacityLabel = new System.Windows.Forms.Label();
 			RestoreWindowMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -133,6 +135,7 @@ namespace EveOPreview.UI
 			MainOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			MainOptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			MainOptionsPanel.Controls.Add(this.LockCheckbox);
 			MainOptionsPanel.Controls.Add(this.ThumbnailOpacityTrackBar);
 			MainOptionsPanel.Controls.Add(this.MinimizeToTrayCheckBox);
 			MainOptionsPanel.Controls.Add(this.EnableClientLayoutTrackingCheckBox);
@@ -143,7 +146,7 @@ namespace EveOPreview.UI
 			MainOptionsPanel.Controls.Add(OpacityLabel);
 			MainOptionsPanel.Location = new System.Drawing.Point(3, 3);
 			MainOptionsPanel.Name = "MainOptionsPanel";
-			MainOptionsPanel.Size = new System.Drawing.Size(264, 164);
+			MainOptionsPanel.Size = new System.Drawing.Size(264, 187);
 			MainOptionsPanel.TabIndex = 0;
 			// 
 			// ThumbnailOpacityTrackBar
@@ -237,22 +240,34 @@ namespace EveOPreview.UI
 			// 
 			// ThumbnailSizePanel
 			// 
-			ThumbnailSizePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			ThumbnailSizePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			ThumbnailSizePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			ThumbnailSizePanel.Controls.Add(this.SyncCheckbox);
 			ThumbnailSizePanel.Controls.Add(HeigthLabel);
 			ThumbnailSizePanel.Controls.Add(WidthLabel);
 			ThumbnailSizePanel.Controls.Add(this.ThumbnailsWidthNumericEdit);
 			ThumbnailSizePanel.Controls.Add(this.ThumbnailsHeightNumericEdit);
-			ThumbnailSizePanel.Location = new System.Drawing.Point(3, 173);
+			ThumbnailSizePanel.Location = new System.Drawing.Point(3, 196);
 			ThumbnailSizePanel.Name = "ThumbnailSizePanel";
-			ThumbnailSizePanel.Size = new System.Drawing.Size(264, 28);
+			ThumbnailSizePanel.Size = new System.Drawing.Size(264, 54);
 			ThumbnailSizePanel.TabIndex = 1;
+			// 
+			// SyncCheckbox
+			// 
+			this.SyncCheckbox.AutoSize = true;
+			this.SyncCheckbox.Location = new System.Drawing.Point(3, 30);
+			this.SyncCheckbox.Name = "SyncCheckbox";
+			this.SyncCheckbox.Size = new System.Drawing.Size(123, 17);
+			this.SyncCheckbox.TabIndex = 16;
+			this.SyncCheckbox.Text = "Sync sizes to default";
+			this.SyncCheckbox.UseVisualStyleBackColor = true;
+			this.SyncCheckbox.CheckedChanged += new System.EventHandler(this.SyncCheckbox_CheckedChanged);
 			// 
 			// HeigthLabel
 			// 
 			HeigthLabel.AutoSize = true;
-			HeigthLabel.Location = new System.Drawing.Point(150, 5);
+			HeigthLabel.Location = new System.Drawing.Point(178, 5);
 			HeigthLabel.Name = "HeigthLabel";
 			HeigthLabel.Size = new System.Drawing.Size(38, 13);
 			HeigthLabel.TabIndex = 14;
@@ -263,9 +278,9 @@ namespace EveOPreview.UI
 			WidthLabel.AutoSize = true;
 			WidthLabel.Location = new System.Drawing.Point(0, 5);
 			WidthLabel.Name = "WidthLabel";
-			WidthLabel.Size = new System.Drawing.Size(87, 13);
+			WidthLabel.Size = new System.Drawing.Size(124, 13);
 			WidthLabel.TabIndex = 13;
-			WidthLabel.Text = "Thumbnail Width";
+			WidthLabel.Text = "Default Thumbnail Width";
 			// 
 			// ThumbnailsWidthNumericEdit
 			// 
@@ -277,7 +292,7 @@ namespace EveOPreview.UI
             0,
             0,
             0});
-			this.ThumbnailsWidthNumericEdit.Location = new System.Drawing.Point(92, 3);
+			this.ThumbnailsWidthNumericEdit.Location = new System.Drawing.Point(124, 3);
 			this.ThumbnailsWidthNumericEdit.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -321,7 +336,7 @@ namespace EveOPreview.UI
 			// 
 			// ZoomOptionsPanel
 			// 
-			ZoomOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			ZoomOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			ZoomOptionsPanel.BackColor = System.Drawing.SystemColors.Control;
 			ZoomOptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -330,7 +345,7 @@ namespace EveOPreview.UI
 			ZoomOptionsPanel.Controls.Add(ZoomAnchorLabel);
 			ZoomOptionsPanel.Controls.Add(this.EnableThumbnailZoomCheckBox);
 			ZoomOptionsPanel.Controls.Add(this.ThumbnailZoomFactorNumericEdit);
-			ZoomOptionsPanel.Location = new System.Drawing.Point(3, 207);
+			ZoomOptionsPanel.Location = new System.Drawing.Point(3, 256);
 			ZoomOptionsPanel.Name = "ZoomOptionsPanel";
 			ZoomOptionsPanel.Size = new System.Drawing.Size(264, 82);
 			ZoomOptionsPanel.TabIndex = 2;
@@ -509,13 +524,12 @@ namespace EveOPreview.UI
 			// 
 			// ThumbnailListPanel
 			// 
-			ThumbnailListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			ThumbnailListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			ThumbnailListPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			ThumbnailListPanel.Controls.Add(this.ThumbnailsList);
 			ThumbnailListPanel.Controls.Add(ThumbnailsListLabel);
-			ThumbnailListPanel.Location = new System.Drawing.Point(3, 350);
+			ThumbnailListPanel.Location = new System.Drawing.Point(3, 399);
 			ThumbnailListPanel.Name = "ThumbnailListPanel";
 			ThumbnailListPanel.Size = new System.Drawing.Size(264, 125);
 			ThumbnailListPanel.TabIndex = 5;
@@ -531,7 +545,7 @@ namespace EveOPreview.UI
 			this.ThumbnailsList.IntegralHeight = false;
 			this.ThumbnailsList.Location = new System.Drawing.Point(3, 18);
 			this.ThumbnailsList.Name = "ThumbnailsList";
-			this.ThumbnailsList.Size = new System.Drawing.Size(256, 100);
+			this.ThumbnailsList.Size = new System.Drawing.Size(256, 78);
 			this.ThumbnailsList.TabIndex = 0;
 			this.ThumbnailsList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ThumbnailsList_ItemCheck_Handler);
 			// 
@@ -558,7 +572,7 @@ namespace EveOPreview.UI
 			// 
 			// OverlayOptionsPanel
 			// 
-			OverlayOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			OverlayOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			OverlayOptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			OverlayOptionsPanel.Controls.Add(this.HighlightColorLabel);
@@ -566,7 +580,7 @@ namespace EveOPreview.UI
 			OverlayOptionsPanel.Controls.Add(this.EnableActiveClientHighlightCheckBox);
 			OverlayOptionsPanel.Controls.Add(this.ShowThumbnailOverlaysCheckBox);
 			OverlayOptionsPanel.Controls.Add(this.ShowThumbnailFramesCheckBox);
-			OverlayOptionsPanel.Location = new System.Drawing.Point(3, 295);
+			OverlayOptionsPanel.Location = new System.Drawing.Point(3, 344);
 			OverlayOptionsPanel.Name = "OverlayOptionsPanel";
 			OverlayOptionsPanel.Size = new System.Drawing.Size(264, 49);
 			OverlayOptionsPanel.TabIndex = 3;
@@ -635,7 +649,7 @@ namespace EveOPreview.UI
 			// 
 			this.ForumLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.ForumLinkLabel.Location = new System.Drawing.Point(4, 478);
+			this.ForumLinkLabel.Location = new System.Drawing.Point(4, 527);
 			this.ForumLinkLabel.Name = "ForumLinkLabel";
 			this.ForumLinkLabel.Size = new System.Drawing.Size(264, 33);
 			this.ForumLinkLabel.TabIndex = 0;
@@ -662,12 +676,23 @@ namespace EveOPreview.UI
 			this.TrayMenu.Name = "contextMenuStrip1";
 			this.TrayMenu.Size = new System.Drawing.Size(152, 76);
 			// 
+			// LockCheckbox
+			// 
+			this.LockCheckbox.AutoSize = true;
+			this.LockCheckbox.Location = new System.Drawing.Point(3, 163);
+			this.LockCheckbox.Name = "LockCheckbox";
+			this.LockCheckbox.Size = new System.Drawing.Size(107, 17);
+			this.LockCheckbox.TabIndex = 7;
+			this.LockCheckbox.Text = "Lock Thumbnails";
+			this.LockCheckbox.UseVisualStyleBackColor = true;
+			this.LockCheckbox.CheckedChanged += new System.EventHandler(this.LockCheckbox_CheckedChanged);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(270, 511);
+			this.ClientSize = new System.Drawing.Size(270, 561);
 			this.Controls.Add(OverlayOptionsPanel);
 			this.Controls.Add(MainOptionsPanel);
 			this.Controls.Add(ThumbnailSizePanel);
@@ -736,5 +761,7 @@ namespace EveOPreview.UI
 		private CheckBox EnableActiveClientHighlightCheckBox;
 		private Label HighlightColorLabel;
 		private Panel ActiveClientHighlightColorButton;
+		private CheckBox SyncCheckbox;
+		private CheckBox LockCheckbox;
 	}
 }

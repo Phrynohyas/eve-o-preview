@@ -244,6 +244,30 @@ namespace EveOPreview.UI
 		}
 		private Color _activeClientHighlightColor;
 
+		public bool SyncThumbnailSizes
+		{
+			get
+			{
+				return this.SyncCheckbox.Checked;
+			}
+			set
+			{
+				this.SyncCheckbox.Checked = value;
+			}
+		}
+
+		public bool LockThumbnails
+		{
+			get
+			{
+				return this.LockCheckbox.Checked;
+			}
+			set
+			{
+				this.LockCheckbox.Checked = value;
+			}
+		}
+
 		public new void Show()
 		{
 			// Registers the current instance as the application's Main Form
@@ -337,6 +361,10 @@ namespace EveOPreview.UI
 		public Action<IntPtr> ThumbnailStateChanged { get; set; }
 
 		public Action ForumUrlLinkActivated { get; set; }
+
+		public Action SyncChanged { get; set; }
+
+		public Action LockChanged { get; set; }
 
 		#region UI events
 		private void OptionChanged_Handler(object sender, EventArgs e)
@@ -445,6 +473,18 @@ namespace EveOPreview.UI
 			this._zoomAnchorMap[ViewZoomAnchor.SW] = this.ZoomAanchorSWRadioButton;
 			this._zoomAnchorMap[ViewZoomAnchor.S] = this.ZoomAanchorSRadioButton;
 			this._zoomAnchorMap[ViewZoomAnchor.SE] = this.ZoomAanchorSERadioButton;
+		}
+
+		private void SyncCheckbox_CheckedChanged(object sender, EventArgs e)
+		{
+			this.ApplicationSettingsChanged?.Invoke();
+			this.SyncChanged?.Invoke();
+		}
+
+		private void LockCheckbox_CheckedChanged(object sender, EventArgs e)
+		{
+			this.ApplicationSettingsChanged?.Invoke();
+			this.LockChanged?.Invoke();
 		}
 	}
 }

@@ -20,7 +20,7 @@ namespace EveOPreview.Configuration
 			this.HideThumbnailsOnLostFocus = false;
 			this.EnablePerClientThumbnailLayouts = false;
 
-			this.ThumbnailSize = new Size(250, 150);
+			this.ThumbnailDefaultSize = new Size(250, 150);
 			this.ThumbnailMinimumSize = new Size(100, 80);
 			this.ThumbnailMaximumSize = new Size(640, 400);
 
@@ -34,6 +34,13 @@ namespace EveOPreview.Configuration
 			this.EnableActiveClientHighlight = false;
 			this.ActiveClientHighlightColor = Color.GreenYellow;
 			this.ActiveClientHighlightThickness = 3;
+
+			this.SyncThumbnailSizes = false;
+
+			this.LockThumbnails = false;
+
+			this.PerClientSizes = new Dictionary<string, Dictionary<string, Size>>();
+            this.FlatSizes = new Dictionary<string, Size>();
 
 			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
 			this.FlatLayout = new Dictionary<string, Point>();
@@ -53,7 +60,8 @@ namespace EveOPreview.Configuration
 		public bool HideThumbnailsOnLostFocus { get; set; }
 		public bool EnablePerClientThumbnailLayouts { get; set; }
 
-		public Size ThumbnailSize { get; set; }
+		[JsonProperty("ThumbnailSize")]
+		public Size ThumbnailDefaultSize { get; set; }
 		public Size ThumbnailMaximumSize { get; set; }
 		public Size ThumbnailMinimumSize { get; set; }
 
@@ -71,7 +79,17 @@ namespace EveOPreview.Configuration
 
 		public int ActiveClientHighlightThickness { get; set; }
 
+		[JsonProperty("SyncSizesToDefault")]
+		public bool SyncThumbnailSizes { get; set; }
+
+		public bool LockThumbnails { get; set; }
+
 		[JsonProperty]
+        private Dictionary<string, Dictionary<string, Size>> PerClientSizes { get; set; }
+        [JsonProperty]
+        private Dictionary<string, Size> FlatSizes { get; set; }
+
+        [JsonProperty]
 		private Dictionary<string, Dictionary<string, Point>> PerClientLayout { get; set; }
 		[JsonProperty]
 		private Dictionary<string, Point> FlatLayout { get; set; }
@@ -129,7 +147,56 @@ namespace EveOPreview.Configuration
 			layoutSource[currentClient] = location;
 		}
 
-		public ClientLayout GetClientLayout(string currentClient)
+        public Size GetThumbnailSize(string currentClient, string activeClient, Size defaultSize)
+        {
+            Size size;
+
+            // What this code does:
+            // If Per-Client layouts are enabled
+            //    and client name is known
+            //    and there is a separate thumbnails layout for this client
+            //    and this layout contains an entry for the current client
+            // then return that entry
+            // otherwise try to get client layout from the flat all-clients layout
+            // If there is no layout too then use the default one
+            if (this.EnablePerClientThumbnailLayouts && !string.IsNullOrEmpty(activeClient))
+            {
+                Dictionary<string, Size> layoutSource;
+                if (this.PerClientSizes.TryGetValue(activeClient, out layoutSource) && layoutSource.TryGetValue(currentClient, out size))
+                {
+                    return size;
+                }
+            }
+
+            return this.FlatSizes.TryGetValue(currentClient, out size) ? size : defaultSize;
+        }
+
+        public void SetThumbnailSize(string currentClient, string activeClient, Size size)
+        {
+            Dictionary<string, Size> layoutSource;
+
+            if (this.EnablePerClientThumbnailLayouts)
+            {
+                if (string.IsNullOrEmpty(activeClient))
+                {
+                    return;
+                }
+
+                if (!this.PerClientSizes.TryGetValue(activeClient, out layoutSource))
+                {
+                    layoutSource = new Dictionary<string, Size>();
+                    this.PerClientSizes[activeClient] = layoutSource;
+                }
+            }
+            else
+            {
+                layoutSource = this.FlatSizes;
+            }
+
+            layoutSource[currentClient] = size;
+        }
+
+        public ClientLayout GetClientLayout(string currentClient)
 		{
 			ClientLayout layout;
 			this.ClientLayout.TryGetValue(currentClient, out layout);
@@ -166,8 +233,8 @@ namespace EveOPreview.Configuration
 		public void ApplyRestrictions()
 		{
 			this.ThumbnailRefreshPeriod = ThumbnailConfig.ApplyRestrictions(this.ThumbnailRefreshPeriod, 300, 1000);
-			this.ThumbnailSize = new Size(ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
-				ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
+			this.ThumbnailDefaultSize = new Size(ThumbnailConfig.ApplyRestrictions(this.ThumbnailDefaultSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
+				ThumbnailConfig.ApplyRestrictions(this.ThumbnailDefaultSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
 			this.ThumbnailOpacity = ThumbnailConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
 			this.ThumbnailZoomFactor = ThumbnailConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
 			this.ActiveClientHighlightThickness = ThumbnailConfig.ApplyRestrictions(this.ActiveClientHighlightThickness, 1, 6);

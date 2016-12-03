@@ -19,7 +19,7 @@ namespace EveOPreview.Configuration
 		bool HideThumbnailsOnLostFocus { get; set; }
 		bool EnablePerClientThumbnailLayouts { get; set; }
 
-		Size ThumbnailSize { get; set; }
+		Size ThumbnailDefaultSize { get; set; }
 		Size ThumbnailMinimumSize { get; set; }
 		Size ThumbnailMaximumSize { get; set; }
 
@@ -34,10 +34,17 @@ namespace EveOPreview.Configuration
 		Color ActiveClientHighlightColor { get; set; }
 		int ActiveClientHighlightThickness { get; set; }
 
+		bool SyncThumbnailSizes { get; set; }
+
+		bool LockThumbnails { get; set; }
+
 		Point GetThumbnailLocation(string currentClient, string activeClient, Point defaultLocation);
 		void SetThumbnailLocation(string currentClient, string activeClient, Point location);
 
-		ClientLayout GetClientLayout(string currentClient);
+        Size GetThumbnailSize(string currentClient, string activeClient, Size defaultSize);
+        void SetThumbnailSize(string currentClient, string activeClient, Size size);
+
+        ClientLayout GetClientLayout(string currentClient);
 		void SetClientLayout(string currentClient, ClientLayout layout);
 
 		Keys GetClientHotkey(string currentClient);

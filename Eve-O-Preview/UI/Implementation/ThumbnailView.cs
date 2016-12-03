@@ -49,6 +49,9 @@ namespace EveOPreview.UI
 
 			this._suppressResizeEventsTimestamp = DateTime.UtcNow;
 
+			this.PositionLocked = false;
+			this.ResizeLocked = false;
+
 			InitializeComponent();
 
 			this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
@@ -170,7 +173,10 @@ namespace EveOPreview.UI
 
 		public void SetFrames(bool enable)
 		{
-			FormBorderStyle style = enable ? FormBorderStyle.SizableToolWindow : FormBorderStyle.None;
+			//if enabled, sets style to fiexd or sizable depending on what the current state is
+			FormBorderStyle style = enable 
+				? FormBorderStyle.SizableToolWindow
+				: FormBorderStyle.None;
 
 			// No need to change the borders style if it is ALREADY correct
 			if (this.FormBorderStyle == style)
@@ -401,6 +407,35 @@ namespace EveOPreview.UI
 			this._overlay.Refresh();
 		}
 
+		private bool ResizeLocked { get; set; }
+
+		public void SetResizeLocked(bool locked)
+		{
+			this.ResizeLocked = locked;
+			
+		}
+
+		private bool PositionLocked { get; set; }
+
+		public void SetPositionLocked(bool locked)
+		{
+			this.PositionLocked = locked;
+		}
+
+		protected override void WndProc(ref Message message)
+		{
+			const int WM_NCHITTEST = 0x0084;
+			const int HTCLIENT = 0x01;
+
+			if (message.Msg == WM_NCHITTEST && this.ResizeLocked)
+			{
+				message.Result = new IntPtr(HTCLIENT);
+				return;
+			}
+
+			base.WndProc(ref message);
+		}
+
 		#region GUI events
 		protected override CreateParams CreateParams
 		{
@@ -545,14 +580,14 @@ namespace EveOPreview.UI
 			int offsetY = mousePosition.Y - this._baseMousePosition.Y;
 			this._baseMousePosition = mousePosition;
 
-			// Left + Right buttons trigger thumbnail resize
+			// Left + Right buttons trigger thumbnail resize, if the window isn't fixed
 			// Right button only trigger thumbnail movement
-			if (leftButton && rightButton)
+			if (leftButton && rightButton && !this.ResizeLocked)
 			{
 				this.Size = new Size(this.Size.Width + offsetX, this.Size.Height + offsetY);
 				this._baseZoomSize = this.Size;
 			}
-			else
+			else if(!this.PositionLocked)
 			{
 				this.Location = new Point(this.Location.X + offsetX, this.Location.Y + offsetY);
 				this._baseZoomLocation = this.Location;
