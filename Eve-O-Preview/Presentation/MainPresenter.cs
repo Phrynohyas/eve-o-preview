@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using EveOPreview.Configuration;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace EveOPreview.UI
 {
@@ -14,6 +16,7 @@ namespace EveOPreview.UI
 
 		#region Private fields
 		private readonly IThumbnailConfig _configuration;
+		private readonly IAppConfig _appConfig;
 		private readonly IConfigurationStorage _configurationStorage;
 		private readonly IThumbnailDescriptionViewFactory _thumbnailDescriptionViewFactory;
 		private readonly IDictionary<IntPtr, IThumbnailDescriptionView> _thumbnailDescriptionViews;
@@ -22,11 +25,12 @@ namespace EveOPreview.UI
 		private bool _exitApplication;
 		#endregion
 
-		public MainPresenter(IApplicationController controller, IMainView view, IThumbnailConfig configuration, IConfigurationStorage configurationStorage,
+		public MainPresenter(IApplicationController controller, IMainView view, IThumbnailConfig configuration, IAppConfig appConfig, IConfigurationStorage configurationStorage,
 								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
 			: base(controller, view)
 		{
 			this._configuration = configuration;
+			this._appConfig = appConfig;
 			this._configurationStorage = configurationStorage;
 
 			this._thumbnailDescriptionViewFactory = thumbnailDescriptionViewFactory;
@@ -43,6 +47,8 @@ namespace EveOPreview.UI
 			this.View.ThumbnailStateChanged = this.UpdateThumbnailState;
 			this.View.ForumUrlLinkActivated = this.OpenForumUrlLink;
 			this.View.ApplicationExitRequested = this.ExitApplication;
+			this.View.ConfigFileChanged = this.ConfigFileChanged;
+			this.View.ScanForConfigFiles = this.ScanForConfigFiles;
 
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
@@ -94,7 +100,11 @@ namespace EveOPreview.UI
 
 		private void LoadApplicationSettings()
 		{
+
 			this._configurationStorage.Load();
+
+			ScanForConfigFiles();
+			this.View.CurrentConfigFile = this._appConfig.ConfigFileName;
 
 			this.View.MinimizeToTray = this._configuration.MinimizeToTray;
 
@@ -141,6 +151,8 @@ namespace EveOPreview.UI
 			this._configuration.ShowThumbnailFrames = this.View.ShowThumbnailFrames;
 			this._configuration.EnableActiveClientHighlight = this.View.EnableActiveClientHighlight;
 			this._configuration.ActiveClientHighlightColor = this.View.ActiveClientHighlightColor;
+
+			this._appConfig.ConfigFileName = this.View.CurrentConfigFile;
 
 			this._configurationStorage.Save();
 
@@ -220,6 +232,50 @@ namespace EveOPreview.UI
 		{
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
+		}
+
+		private void ConfigFileChanged()
+		{
+			//TODO make it work
+			this._configurationStorage.Save();  //Save the current config file
+
+			this._appConfig.ConfigFileName = this.View.CurrentConfigFile; //update and save the new config file name without overwriting the incoming config with the current config
+			this._configurationStorage.SaveOnlyAppConfig();
+
+			this.Activate();
+		}
+
+		private void ScanForConfigFiles()
+		{
+
+			Dictionary<string, string> configs = new Dictionary<string, string>();
+
+			//TODO make it work
+			string[] files = Directory.GetFiles("config");
+			foreach(string file in files)
+			{
+
+				IThumbnailConfig config = new ThumbnailConfig();
+
+				if (!File.Exists(file))
+				{
+					continue;
+				}
+
+				string rawData = File.ReadAllText(file);
+
+				JsonConvert.PopulateObject(rawData, config);
+
+				// Validate data after loading it
+				config.ApplyRestrictions();
+				configs.Add(file, config.Name);
+			}
+
+			if(configs != null && configs.Count > 0)
+				this.View.ConfigFiles = configs;
+			
+
+			return;
 		}
 
 		private void ExitApplication()

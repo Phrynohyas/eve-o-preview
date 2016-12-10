@@ -77,6 +77,14 @@ namespace EveOPreview.UI
 			this.ForumLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.ConfigFilePannel = new System.Windows.Forms.Panel();
+			this.RenameConfigButton = new System.Windows.Forms.Button();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.DeleteConfigButton = new System.Windows.Forms.Button();
+			this.CopyConfigButton = new System.Windows.Forms.Button();
+			this.ConfigFileSelector = new System.Windows.Forms.ComboBox();
+			this.ConfigFileLabel = new System.Windows.Forms.Label();
+			this.RefreshConfigsButton = new System.Windows.Forms.Button();
 			OpacityLabel = new System.Windows.Forms.Label();
 			RestoreWindowMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,6 +111,7 @@ namespace EveOPreview.UI
 			ThumbnailListPanel.SuspendLayout();
 			OverlayOptionsPanel.SuspendLayout();
 			this.TrayMenu.SuspendLayout();
+			this.ConfigFilePannel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// OpacityLabel
@@ -130,7 +139,7 @@ namespace EveOPreview.UI
 			// 
 			// MainOptionsPanel
 			// 
-			MainOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			MainOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			MainOptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			MainOptionsPanel.Controls.Add(this.ThumbnailOpacityTrackBar);
@@ -141,7 +150,7 @@ namespace EveOPreview.UI
 			MainOptionsPanel.Controls.Add(this.HideThumbnailsOnLostFocusCheckBox);
 			MainOptionsPanel.Controls.Add(this.EnablePerClientThumbnailsLayoutsCheckBox);
 			MainOptionsPanel.Controls.Add(OpacityLabel);
-			MainOptionsPanel.Location = new System.Drawing.Point(3, 3);
+			MainOptionsPanel.Location = new System.Drawing.Point(3, 99);
 			MainOptionsPanel.Name = "MainOptionsPanel";
 			MainOptionsPanel.Size = new System.Drawing.Size(264, 164);
 			MainOptionsPanel.TabIndex = 0;
@@ -237,14 +246,14 @@ namespace EveOPreview.UI
 			// 
 			// ThumbnailSizePanel
 			// 
-			ThumbnailSizePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			ThumbnailSizePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			ThumbnailSizePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			ThumbnailSizePanel.Controls.Add(HeigthLabel);
 			ThumbnailSizePanel.Controls.Add(WidthLabel);
 			ThumbnailSizePanel.Controls.Add(this.ThumbnailsWidthNumericEdit);
 			ThumbnailSizePanel.Controls.Add(this.ThumbnailsHeightNumericEdit);
-			ThumbnailSizePanel.Location = new System.Drawing.Point(3, 173);
+			ThumbnailSizePanel.Location = new System.Drawing.Point(3, 269);
 			ThumbnailSizePanel.Name = "ThumbnailSizePanel";
 			ThumbnailSizePanel.Size = new System.Drawing.Size(264, 28);
 			ThumbnailSizePanel.TabIndex = 1;
@@ -321,7 +330,7 @@ namespace EveOPreview.UI
 			// 
 			// ZoomOptionsPanel
 			// 
-			ZoomOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			ZoomOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			ZoomOptionsPanel.BackColor = System.Drawing.SystemColors.Control;
 			ZoomOptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -330,7 +339,7 @@ namespace EveOPreview.UI
 			ZoomOptionsPanel.Controls.Add(ZoomAnchorLabel);
 			ZoomOptionsPanel.Controls.Add(this.EnableThumbnailZoomCheckBox);
 			ZoomOptionsPanel.Controls.Add(this.ThumbnailZoomFactorNumericEdit);
-			ZoomOptionsPanel.Location = new System.Drawing.Point(3, 207);
+			ZoomOptionsPanel.Location = new System.Drawing.Point(3, 303);
 			ZoomOptionsPanel.Name = "ZoomOptionsPanel";
 			ZoomOptionsPanel.Size = new System.Drawing.Size(264, 82);
 			ZoomOptionsPanel.TabIndex = 2;
@@ -509,13 +518,12 @@ namespace EveOPreview.UI
 			// 
 			// ThumbnailListPanel
 			// 
-			ThumbnailListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			ThumbnailListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			ThumbnailListPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			ThumbnailListPanel.Controls.Add(this.ThumbnailsList);
 			ThumbnailListPanel.Controls.Add(ThumbnailsListLabel);
-			ThumbnailListPanel.Location = new System.Drawing.Point(3, 350);
+			ThumbnailListPanel.Location = new System.Drawing.Point(3, 446);
 			ThumbnailListPanel.Name = "ThumbnailListPanel";
 			ThumbnailListPanel.Size = new System.Drawing.Size(264, 125);
 			ThumbnailListPanel.TabIndex = 5;
@@ -558,7 +566,7 @@ namespace EveOPreview.UI
 			// 
 			// OverlayOptionsPanel
 			// 
-			OverlayOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			OverlayOptionsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			OverlayOptionsPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			OverlayOptionsPanel.Controls.Add(this.HighlightColorLabel);
@@ -566,7 +574,7 @@ namespace EveOPreview.UI
 			OverlayOptionsPanel.Controls.Add(this.EnableActiveClientHighlightCheckBox);
 			OverlayOptionsPanel.Controls.Add(this.ShowThumbnailOverlaysCheckBox);
 			OverlayOptionsPanel.Controls.Add(this.ShowThumbnailFramesCheckBox);
-			OverlayOptionsPanel.Location = new System.Drawing.Point(3, 295);
+			OverlayOptionsPanel.Location = new System.Drawing.Point(3, 391);
 			OverlayOptionsPanel.Name = "OverlayOptionsPanel";
 			OverlayOptionsPanel.Size = new System.Drawing.Size(264, 49);
 			OverlayOptionsPanel.TabIndex = 3;
@@ -635,7 +643,7 @@ namespace EveOPreview.UI
 			// 
 			this.ForumLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.ForumLinkLabel.Location = new System.Drawing.Point(4, 478);
+			this.ForumLinkLabel.Location = new System.Drawing.Point(4, 574);
 			this.ForumLinkLabel.Name = "ForumLinkLabel";
 			this.ForumLinkLabel.Size = new System.Drawing.Size(264, 33);
 			this.ForumLinkLabel.TabIndex = 0;
@@ -662,12 +670,94 @@ namespace EveOPreview.UI
 			this.TrayMenu.Name = "contextMenuStrip1";
 			this.TrayMenu.Size = new System.Drawing.Size(152, 76);
 			// 
+			// ConfigFilePannel
+			// 
+			this.ConfigFilePannel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.ConfigFilePannel.Controls.Add(this.RefreshConfigsButton);
+			this.ConfigFilePannel.Controls.Add(this.RenameConfigButton);
+			this.ConfigFilePannel.Controls.Add(this.textBox1);
+			this.ConfigFilePannel.Controls.Add(this.DeleteConfigButton);
+			this.ConfigFilePannel.Controls.Add(this.CopyConfigButton);
+			this.ConfigFilePannel.Controls.Add(this.ConfigFileSelector);
+			this.ConfigFilePannel.Controls.Add(this.ConfigFileLabel);
+			this.ConfigFilePannel.Location = new System.Drawing.Point(3, 6);
+			this.ConfigFilePannel.Name = "ConfigFilePannel";
+			this.ConfigFilePannel.Size = new System.Drawing.Size(265, 86);
+			this.ConfigFilePannel.TabIndex = 6;
+			// 
+			// RenameConfigButton
+			// 
+			this.RenameConfigButton.Location = new System.Drawing.Point(203, 28);
+			this.RenameConfigButton.Name = "RenameConfigButton";
+			this.RenameConfigButton.Size = new System.Drawing.Size(56, 23);
+			this.RenameConfigButton.TabIndex = 5;
+			this.RenameConfigButton.Text = "Rename";
+			this.RenameConfigButton.UseVisualStyleBackColor = true;
+			// 
+			// textBox1
+			// 
+			this.textBox1.Location = new System.Drawing.Point(3, 30);
+			this.textBox1.Name = "textBox1";
+			this.textBox1.Size = new System.Drawing.Size(193, 20);
+			this.textBox1.TabIndex = 4;
+			// 
+			// DeleteConfigButton
+			// 
+			this.DeleteConfigButton.Location = new System.Drawing.Point(152, 56);
+			this.DeleteConfigButton.Name = "DeleteConfigButton";
+			this.DeleteConfigButton.Size = new System.Drawing.Size(50, 23);
+			this.DeleteConfigButton.TabIndex = 3;
+			this.DeleteConfigButton.Text = "Delete";
+			this.DeleteConfigButton.UseVisualStyleBackColor = true;
+			this.DeleteConfigButton.Click += new System.EventHandler(this.DeleteConfigButton_Click);
+			// 
+			// CopyConfigButton
+			// 
+			this.CopyConfigButton.Location = new System.Drawing.Point(61, 56);
+			this.CopyConfigButton.Name = "CopyConfigButton";
+			this.CopyConfigButton.Size = new System.Drawing.Size(51, 23);
+			this.CopyConfigButton.TabIndex = 2;
+			this.CopyConfigButton.Text = "Copy";
+			this.CopyConfigButton.UseVisualStyleBackColor = true;
+			this.CopyConfigButton.Click += new System.EventHandler(this.CopyConfigButton_Click);
+			// 
+			// ConfigFileSelector
+			// 
+			this.ConfigFileSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ConfigFileSelector.FormattingEnabled = true;
+			this.ConfigFileSelector.Location = new System.Drawing.Point(66, 3);
+			this.ConfigFileSelector.Name = "ConfigFileSelector";
+			this.ConfigFileSelector.Size = new System.Drawing.Size(164, 21);
+			this.ConfigFileSelector.TabIndex = 1;
+			this.ConfigFileSelector.SelectionChangeCommitted += new System.EventHandler(this.ConfigFileSelector_SelectionChangeCommitted);
+			// 
+			// ConfigFileLabel
+			// 
+			this.ConfigFileLabel.AutoSize = true;
+			this.ConfigFileLabel.Location = new System.Drawing.Point(0, 6);
+			this.ConfigFileLabel.Name = "ConfigFileLabel";
+			this.ConfigFileLabel.Size = new System.Drawing.Size(59, 13);
+			this.ConfigFileLabel.TabIndex = 0;
+			this.ConfigFileLabel.Text = "Config File:";
+			// 
+			// RefreshConfigsButton
+			// 
+			this.RefreshConfigsButton.BackgroundImage = global::EveOPreview.Properties.Resources.refresh;
+			this.RefreshConfigsButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+			this.RefreshConfigsButton.Location = new System.Drawing.Point(236, 1);
+			this.RefreshConfigsButton.Name = "RefreshConfigsButton";
+			this.RefreshConfigsButton.Size = new System.Drawing.Size(23, 23);
+			this.RefreshConfigsButton.TabIndex = 6;
+			this.RefreshConfigsButton.UseVisualStyleBackColor = true;
+			this.RefreshConfigsButton.Click += new System.EventHandler(this.RefreshConfigsButton_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(270, 511);
+			this.ClientSize = new System.Drawing.Size(270, 607);
+			this.Controls.Add(this.ConfigFilePannel);
 			this.Controls.Add(OverlayOptionsPanel);
 			this.Controls.Add(MainOptionsPanel);
 			this.Controls.Add(ThumbnailSizePanel);
@@ -701,6 +791,8 @@ namespace EveOPreview.UI
 			OverlayOptionsPanel.ResumeLayout(false);
 			OverlayOptionsPanel.PerformLayout();
 			this.TrayMenu.ResumeLayout(false);
+			this.ConfigFilePannel.ResumeLayout(false);
+			this.ConfigFilePannel.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -736,5 +828,13 @@ namespace EveOPreview.UI
 		private CheckBox EnableActiveClientHighlightCheckBox;
 		private Label HighlightColorLabel;
 		private Panel ActiveClientHighlightColorButton;
+		private Panel ConfigFilePannel;
+		private ComboBox ConfigFileSelector;
+		private Label ConfigFileLabel;
+		private Button CopyConfigButton;
+		private Button DeleteConfigButton;
+		private Button RenameConfigButton;
+		private TextBox textBox1;
+		private Button RefreshConfigsButton;
 	}
 }

@@ -5,7 +5,8 @@ namespace EveOPreview.Configuration
 {
 	class ConfigurationStorage : IConfigurationStorage
 	{
-		private const string ConfigurationFileName = "EVE-O Preview.json";
+		private const string ConfigurationFileName = "config/EVE-O Preview.json";
+		private const string AppConfigFileName = "EVE-O Preview App Config.json";
 
 		private readonly IAppConfig _appConfig;
 		private readonly IThumbnailConfig _thumbnailConfig;
@@ -18,6 +19,22 @@ namespace EveOPreview.Configuration
 
 		public void Load()
 		{
+
+
+			//App config.  load this first so we use the correct config file
+			string appFilename = this.GetAppConfigFileName();
+
+			if (!File.Exists(appFilename))
+			{
+				return;
+			}
+
+			string appRawData = File.ReadAllText(appFilename);
+
+			JsonConvert.PopulateObject(appRawData, this._appConfig);
+
+
+
 			string filename = this.GetConfigFileName();
 
 			if (!File.Exists(filename))
@@ -31,18 +48,38 @@ namespace EveOPreview.Configuration
 
 			// Validate data after loading it
 			this._thumbnailConfig.ApplyRestrictions();
+
+
 		}
 
 		public void Save()
 		{
+			//App config
+			string appRawData = JsonConvert.SerializeObject(this._appConfig, Formatting.Indented);
+
+			File.WriteAllText(this.GetAppConfigFileName(), appRawData);
+
+
 			string rawData = JsonConvert.SerializeObject(this._thumbnailConfig, Formatting.Indented);
 
 			File.WriteAllText(this.GetConfigFileName(), rawData);
 		}
 
+		public void SaveOnlyAppConfig()
+		{
+			string appRawData = JsonConvert.SerializeObject(this._appConfig, Formatting.Indented);
+
+			File.WriteAllText(this.GetAppConfigFileName(), appRawData);
+		}
+
 		private string GetConfigFileName()
 		{
 			return string.IsNullOrEmpty(this._appConfig.ConfigFileName) ? ConfigurationStorage.ConfigurationFileName : this._appConfig.ConfigFileName;
+		}
+
+		private string GetAppConfigFileName()
+		{
+			return ConfigurationStorage.AppConfigFileName;
 		}
 	}
 }

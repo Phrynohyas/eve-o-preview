@@ -35,6 +35,8 @@ namespace EveOPreview.Configuration
 			this.ActiveClientHighlightColor = Color.GreenYellow;
 			this.ActiveClientHighlightThickness = 3;
 
+			this.Name = "Default";
+
 			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
 			this.FlatLayout = new Dictionary<string, Point>();
 			this.ClientLayout = new Dictionary<string, ClientLayout>();
@@ -70,6 +72,8 @@ namespace EveOPreview.Configuration
 		public Color ActiveClientHighlightColor { get; set; }
 
 		public int ActiveClientHighlightThickness { get; set; }
+
+		public string Name { get; set; }
 
 		[JsonProperty]
 		private Dictionary<string, Dictionary<string, Point>> PerClientLayout { get; set; }

@@ -32,6 +32,11 @@ namespace EveOPreview.UI
 		bool EnableActiveClientHighlight { get; set; }
 		Color ActiveClientHighlightColor { get; set; }
 
+		Dictionary<string, string> ConfigFiles { get; set; }
+
+		string CurrentConfigFile { get; set; }
+		string CurrentConfigName { get; set; }
+
 		void SetForumUrl(string url);
 		void SetThumbnailSizeLimitations(Size minimumSize, Size maximumSize);
 
@@ -50,5 +55,7 @@ namespace EveOPreview.UI
 		Action ThumbnailsSizeChanged { get; set; }
 		Action<IntPtr> ThumbnailStateChanged { get; set; }
 		Action ForumUrlLinkActivated { get; set; }
+		Action ConfigFileChanged { get; set; }
+		Action ScanForConfigFiles { get; set; }
 	}
 }

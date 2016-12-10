@@ -177,6 +177,7 @@
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
     <Content Include="icon.ico" />
+    <Content Include="Resources\refresh.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
