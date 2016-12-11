@@ -26,7 +26,7 @@ namespace EveOPreview.Configuration
 
 			if (!File.Exists(appFilename))
 			{
-				return;
+				SaveOnlyAppConfig(); //writes an empty appconfig file
 			}
 
 			string appRawData = File.ReadAllText(appFilename);
@@ -74,7 +74,16 @@ namespace EveOPreview.Configuration
 
 		private string GetConfigFileName()
 		{
-			return string.IsNullOrEmpty(this._appConfig.ConfigFileName) ? ConfigurationStorage.ConfigurationFileName : this._appConfig.ConfigFileName;
+			if (string.IsNullOrEmpty(this._appConfig.ConfigFileName))
+			{
+				this._appConfig.ConfigFileName = ConfigurationStorage.ConfigurationFileName;
+				this.SaveOnlyAppConfig();
+				return ConfigurationStorage.ConfigurationFileName;
+			}
+			else
+			{
+				return this._appConfig.ConfigFileName;
+			}
 		}
 
 		private string GetAppConfigFileName()

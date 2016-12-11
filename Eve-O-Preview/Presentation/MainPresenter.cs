@@ -248,6 +248,8 @@ namespace EveOPreview.UI
 		private void ScanForConfigFiles()
 		{
 
+			this._configurationStorage.Save(); // saves the current config
+
 			Dictionary<string, string> configs = new Dictionary<string, string>();
 
 			//TODO make it work
@@ -268,7 +270,7 @@ namespace EveOPreview.UI
 
 				// Validate data after loading it
 				config.ApplyRestrictions();
-				configs.Add(file, config.Name);
+				configs.Add(file.Replace("\\", "/"), config.Name);
 			}
 
 			if(configs != null && configs.Count > 0)

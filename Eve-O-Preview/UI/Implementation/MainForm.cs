@@ -335,12 +335,13 @@ namespace EveOPreview.UI
 				string currentConfig = this.CurrentConfigFile;
 
 				this._configFiles = value;
-
+				
 				this.ConfigFileSelector.DataSource = new BindingSource(this._configFiles, null);
 				this.ConfigFileSelector.DisplayMember = "Value";
 				this.ConfigFileSelector.ValueMember = "Key";
 
-				this.CurrentConfigFile = currentConfig;
+				if (!string.IsNullOrEmpty(currentConfig) && !string.IsNullOrWhiteSpace(currentConfig))
+					this.CurrentConfigFile = currentConfig;
 			}
 		}
 
@@ -349,7 +350,12 @@ namespace EveOPreview.UI
 				return (string) this.ConfigFileSelector.SelectedValue;
 			}
 			set {
-				this.ConfigFileSelector.SelectedIndex = new List<string>(this._configFiles.Keys).IndexOf(value);
+				if (!string.IsNullOrEmpty(value))
+				{
+					int index = new List<string>(this._configFiles.Keys).IndexOf(value);
+					this.ConfigFileSelector.SelectedIndex = index;
+				}
+				this.ConfigFileSelector.ResetText();
 			}
 		}
 
@@ -361,7 +367,12 @@ namespace EveOPreview.UI
 			}
 			set
 			{
-				this.ConfigFileSelector.SelectedIndex = new List<string>(this._configFiles.Values).IndexOf(value);
+				if (!string.IsNullOrEmpty(value))
+				{
+					int index = new List<string>(this._configFiles.Values).IndexOf(value);
+					this.ConfigFileSelector.SelectedIndex = index;
+				}
+				this.ConfigFileSelector.Update();
 			}
 		}
 
