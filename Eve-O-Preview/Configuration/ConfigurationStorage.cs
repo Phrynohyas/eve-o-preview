@@ -39,6 +39,8 @@ namespace EveOPreview.Configuration
 
 			if (!File.Exists(filename))
 			{
+				this._appConfig.ConfigFileName = ConfigurationStorage.ConfigurationFileName;
+				filename = ConfigurationStorage.ConfigurationFileName;
 				return;
 			}
 
