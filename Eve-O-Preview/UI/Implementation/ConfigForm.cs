@@ -26,7 +26,14 @@ namespace EveOPreview.UI
 		{
 			set
 			{
-				this.ConfigFilesGridView.DataSource = new BindingList<KeyValuePair<string, string>>(value.ToList());
+				var list = new BindingList<KeyValuePair<string, string>>();
+
+				foreach(var pair in value)
+				{
+					list.Add(new KeyValuePair<string, string>( pair.Key.Substring(7, pair.Key.Length - (7+5) ), pair.Value ));
+				}
+
+				this.ConfigFilesGridView.DataSource = list;
 			}
 		}
 
@@ -62,7 +69,7 @@ namespace EveOPreview.UI
 			{
 
 				string name = (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[3].EditedFormattedValue;
-				string file = (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value;
+				string file = "config/" + (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value + ".json";
 				string oldName = (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[3].Value;
 
 				if (name != oldName && name != this._lastRename)
@@ -74,8 +81,8 @@ namespace EveOPreview.UI
 			}else if (e.ColumnIndex == 2 && e.RowIndex >= 0)
 			{
 
-				string newFile = (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].EditedFormattedValue;
-				string file = (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value;
+				string newFile = "config/" + (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].EditedFormattedValue + ".json";
+				string file = "config/" + (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value + ".json";
 
 				if (newFile != file && newFile != this._lastRename)
 				{
@@ -91,13 +98,13 @@ namespace EveOPreview.UI
 			Debug.WriteLine("Column " + e.ColumnIndex + " and Row " + e.RowIndex);
 			if (e.ColumnIndex == 0 && e.RowIndex >= 0) //copy
 			{
-				string file = (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value;
+				string file = "config/"+(string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value+".json";
 				this.CopyConfigFile(file);
 				Debug.WriteLine("COPY");
 			}
 			else if (e.ColumnIndex == 1 && e.RowIndex >= 0) //delete
 			{
-				string file = (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value;
+				string file = "config/" + (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value;
 				this.DeleteConfigFile(file);
 				Debug.WriteLine("DELETE");
 			}

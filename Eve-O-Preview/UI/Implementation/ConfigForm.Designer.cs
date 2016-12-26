@@ -51,7 +51,8 @@
 			this.ConfigFilesGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ConfigFilesGridView.Location = new System.Drawing.Point(0, 0);
 			this.ConfigFilesGridView.Name = "ConfigFilesGridView";
-			this.ConfigFilesGridView.Size = new System.Drawing.Size(448, 295);
+			this.ConfigFilesGridView.RowHeadersVisible = false;
+			this.ConfigFilesGridView.Size = new System.Drawing.Size(724, 320);
 			this.ConfigFilesGridView.TabIndex = 0;
 			this.ConfigFilesGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ConfigFilesGridView_CellContentClick);
 			this.ConfigFilesGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ConfigFilesGridView_CellDoubleClick);
@@ -74,27 +75,31 @@
 			// 
 			// CopyColumn
 			// 
-			this.CopyColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.CopyColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
 			this.CopyColumn.HeaderText = "Copy";
+			this.CopyColumn.MinimumWidth = 50;
 			this.CopyColumn.Name = "CopyColumn";
 			this.CopyColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.CopyColumn.Text = "Copy";
 			this.CopyColumn.UseColumnTextForButtonValue = true;
+			this.CopyColumn.Width = 50;
 			// 
 			// DeleteColumn
 			// 
-			this.DeleteColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.DeleteColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
 			this.DeleteColumn.HeaderText = "Delete";
+			this.DeleteColumn.MinimumWidth = 50;
 			this.DeleteColumn.Name = "DeleteColumn";
 			this.DeleteColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.DeleteColumn.Text = "Delete";
 			this.DeleteColumn.UseColumnTextForButtonValue = true;
+			this.DeleteColumn.Width = 50;
 			// 
 			// ConfigForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(448, 295);
+			this.ClientSize = new System.Drawing.Size(724, 320);
 			this.Controls.Add(this.ConfigFilesGridView);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "ConfigForm";
