@@ -57,5 +57,6 @@ namespace EveOPreview.UI
 		Action ForumUrlLinkActivated { get; set; }
 		Action ConfigFileChanged { get; set; }
 		Action ScanForConfigFiles { get; set; }
+		Action LaunchConfigDialog { get; set; }
 	}
 }

@@ -21,17 +21,20 @@ namespace EveOPreview.UI
 		private readonly IThumbnailDescriptionViewFactory _thumbnailDescriptionViewFactory;
 		private readonly IDictionary<IntPtr, IThumbnailDescriptionView> _thumbnailDescriptionViews;
 		private readonly IThumbnailManager _thumbnailManager;
+		private readonly IConfigManager _configManager;
 
 		private bool _exitApplication;
 		#endregion
 
-		public MainPresenter(IApplicationController controller, IMainView view, IThumbnailConfig configuration, IAppConfig appConfig, IConfigurationStorage configurationStorage,
+		public MainPresenter(IApplicationController controller, IMainView view, 
+								IThumbnailConfig configuration, IAppConfig appConfig, IConfigurationStorage configurationStorage, IConfigManager configManager,
 								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
 			: base(controller, view)
 		{
 			this._configuration = configuration;
 			this._appConfig = appConfig;
 			this._configurationStorage = configurationStorage;
+			this._configManager = configManager;
 
 			this._thumbnailDescriptionViewFactory = thumbnailDescriptionViewFactory;
 			this._thumbnailManager = thumbnailManager;
@@ -49,11 +52,14 @@ namespace EveOPreview.UI
 			this.View.ApplicationExitRequested = this.ExitApplication;
 			this.View.ConfigFileChanged = this.ConfigFileChanged;
 			this.View.ScanForConfigFiles = this.ScanForConfigFiles;
+			this.View.LaunchConfigDialog = this.LaunchConfigDialog;
 
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
 			this._thumbnailManager.ThumbnailsRemoved = this.ThumbnailsRemoved;
 			this._thumbnailManager.ThumbnailSizeChanged = this.ThumbnailSizeChanged;
+
+			this._configManager.UpdateMainConfigListing = this.UpdateConfigListing;
 		}
 
 		private void Activate()
@@ -233,51 +239,31 @@ namespace EveOPreview.UI
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
 		}
-
-		private void ConfigFileChanged()
+		public void ConfigFileChanged()
 		{
 			//TODO make it work
 			this._configurationStorage.Save();  //Save the current config file
 
-			this._appConfig.ConfigFileName = this.View.CurrentConfigFile; //update and save the new config file name without overwriting the incoming config with the current config
+			this._appConfig.ConfigFileName = this.View.CurrentConfigFile;//TODO make this use the config manager //update and save the new config file name without overwriting the incoming config with the current config
 			this._configurationStorage.SaveOnlyAppConfig();
 
 			this.Activate();
 		}
 
-		private void ScanForConfigFiles()
+		public void ScanForConfigFiles()
 		{
+			this._configManager.ScanForConfigFiles();
+			UpdateConfigListing();
+		}
 
-			this._configurationStorage.Save(); // saves the current config
+		public void UpdateConfigListing()
+		{
+			this.View.ConfigFiles = this._configManager.ConfigFiles;
+		}
 
-			Dictionary<string, string> configs = new Dictionary<string, string>();
-
-			//TODO make it work
-			string[] files = Directory.GetFiles("config");
-			foreach(string file in files)
-			{
-
-				IThumbnailConfig config = new ThumbnailConfig();
-
-				if (!File.Exists(file))
-				{
-					continue;
-				}
-
-				string rawData = File.ReadAllText(file);
-
-				JsonConvert.PopulateObject(rawData, config);
-
-				// Validate data after loading it
-				config.ApplyRestrictions();
-				configs.Add(file.Replace("\\", "/"), config.Name);
-			}
-
-			if(configs != null && configs.Count > 0)
-				this.View.ConfigFiles = configs;
-			
-
-			return;
+		public void LaunchConfigDialog()
+		{
+			this._configManager.LaunchConfigDialog();
 		}
 
 		private void ExitApplication()

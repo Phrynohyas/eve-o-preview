@@ -108,6 +108,7 @@ namespace EveOPreview
 				.RegisterView<IMainView, MainForm>()
 				.RegisterView<IThumbnailView, ThumbnailView>()
 				.RegisterView<IThumbnailDescriptionView, ThumbnailDescriptionView>()
+				.RegisterView<IConfigView, ConfigForm>()
 				.RegisterInstance(new ApplicationContext());
 
 			// Application services
@@ -115,9 +116,9 @@ namespace EveOPreview
 				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
 				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
 				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
+				.RegisterService<IConfigManager, ConfigManager>()
 				.RegisterInstance<IAppConfig>(new AppConfig())
 				.RegisterInstance<IThumbnailConfig>(new ThumbnailConfig());
-
 			return controller;
 		}
 

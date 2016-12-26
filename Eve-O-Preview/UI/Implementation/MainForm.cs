@@ -396,6 +396,8 @@ namespace EveOPreview.UI
 
 		public Action ScanForConfigFiles { get; set; }
 
+		public Action LaunchConfigDialog { get; set; }
+
 		#region UI events
 		private void OptionChanged_Handler(object sender, EventArgs e)
 		{
@@ -513,20 +515,15 @@ namespace EveOPreview.UI
 			
 		}
 
-		private void CopyConfigButton_Click(object sender, EventArgs e)
-		{
-			//TODO make work
-		}
-
-		private void DeleteConfigButton_Click(object sender, EventArgs e)
-		{
-			//TODO make work
-		}
-
 		private void RefreshConfigsButton_Click(object sender, EventArgs e)
 		{
-			//TODO making it work
+			
 			this.ScanForConfigFiles?.Invoke();
+		}
+
+		private void ConfigSettingsButton_Click(object sender, EventArgs e)
+		{
+			this.LaunchConfigDialog?.Invoke();
 		}
 	}
 }
