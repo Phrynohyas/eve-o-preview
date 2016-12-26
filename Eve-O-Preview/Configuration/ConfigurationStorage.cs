@@ -32,9 +32,7 @@ namespace EveOPreview.Configuration
 			string appRawData = File.ReadAllText(appFilename);
 
 			JsonConvert.PopulateObject(appRawData, this._appConfig);
-
-
-
+			
 			string filename = this.GetConfigFileName();
 
 			if (!File.Exists(filename))
@@ -45,6 +43,8 @@ namespace EveOPreview.Configuration
 			}
 
 			string rawData = File.ReadAllText(filename);
+
+			this._thumbnailConfig.ClearValues();
 
 			JsonConvert.PopulateObject(rawData, this._thumbnailConfig);
 

@@ -46,5 +46,6 @@ namespace EveOPreview.Configuration
 		string Name { get; set; }
 
 		void ApplyRestrictions();
+		void ClearValues();
 	}
 }

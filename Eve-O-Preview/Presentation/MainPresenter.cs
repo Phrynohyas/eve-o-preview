@@ -51,7 +51,7 @@ namespace EveOPreview.UI
 			this.View.ForumUrlLinkActivated = this.OpenForumUrlLink;
 			this.View.ApplicationExitRequested = this.ExitApplication;
 			this.View.ConfigFileChanged = this.ConfigFileChanged;
-			this.View.ScanForConfigFiles = this.ScanForConfigFiles;
+			this.View.ScanForConfigFiles = this.UpdateConfigFiles;
 			this.View.LaunchConfigDialog = this.LaunchConfigDialog;
 
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
@@ -59,8 +59,9 @@ namespace EveOPreview.UI
 			this._thumbnailManager.ThumbnailsRemoved = this.ThumbnailsRemoved;
 			this._thumbnailManager.ThumbnailSizeChanged = this.ThumbnailSizeChanged;
 
-			this._configManager.UpdateMainConfigListing = this.UpdateConfigListing;
-			this._configManager.ReloadSettings = this.LoadApplicationSettings;
+			this._configManager.UpdateMainConfigListing = this.UpdateViewConfigListing;
+			this._configManager.LoadSettings = this.Activate;
+			this._configManager.SaveSettings = this.SaveApplicationSettings;
 			this._configManager.SetCurrentConfig = this.SetCurrentConfigFile;
 		}
 
@@ -111,7 +112,10 @@ namespace EveOPreview.UI
 
 			this._configurationStorage.Load();
 
-			ScanForConfigFiles();
+			this.UpdateConfigFiles();
+
+			//this._configuration = this._configurationStorage.ThumbnailConfig;
+
 			this.View.CurrentConfigFile = this._appConfig.ConfigFileName;
 
 			this.View.MinimizeToTray = this._configuration.MinimizeToTray;
@@ -261,13 +265,12 @@ namespace EveOPreview.UI
 			this.Activate();
 		}
 
-		public void ScanForConfigFiles()
+		public void UpdateConfigFiles()
 		{
-			this._configManager.ScanForConfigFiles();
-			UpdateConfigListing();
+			this._configManager.UpdateConfigListing();
 		}
 
-		public void UpdateConfigListing()
+		public void UpdateViewConfigListing()
 		{
 			this.View.ConfigFiles = this._configManager.ConfigFiles;
 		}

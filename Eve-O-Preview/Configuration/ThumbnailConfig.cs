@@ -9,6 +9,11 @@ namespace EveOPreview.Configuration
 	{
 		public ThumbnailConfig()
 		{
+			this.Init();
+		}
+
+		private void Init()
+		{
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
 
@@ -176,6 +181,13 @@ namespace EveOPreview.Configuration
 			this.ThumbnailZoomFactor = ThumbnailConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
 			this.ActiveClientHighlightThickness = ThumbnailConfig.ApplyRestrictions(this.ActiveClientHighlightThickness, 1, 6);
 		}
+		/// <summary>
+		/// Resets all values to their defaults.  Need to update this when new fields are added.
+		/// </summary>
+		public void ClearValues()
+		{
+			this.Init();
+		}
 
 		private static int ApplyRestrictions(int value, int minimum, int maximum)
 		{
@@ -191,5 +203,6 @@ namespace EveOPreview.Configuration
 
 			return value;
 		}
+
 	}
 }

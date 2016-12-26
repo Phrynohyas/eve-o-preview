@@ -35,12 +35,15 @@ namespace EveOPreview.UI
 
 		public Action UpdateMainConfigListing { get; set; }
 
-		public Action ReloadSettings { get; set; }
+		public Action LoadSettings { get; set; }
+		public Action SaveSettings { get; set; }
 
 		public Action<string> SetCurrentConfig { get; set; }
 
 		public void UpdateConfigListing()
 		{
+			this.ScanForConfigFiles();
+
 			this.UpdateMainConfigListing?.Invoke();
 			if(this._activeConfigView != null)
 			{
@@ -48,7 +51,7 @@ namespace EveOPreview.UI
 			}
 		}
 
-		public void ScanForConfigFiles()
+		private void ScanForConfigFiles()
 		{
 			if(File.Exists(this._configurationStorage.GetConfigFileName()))
 				this._configurationStorage.Save(); // saves the current config
@@ -76,15 +79,26 @@ namespace EveOPreview.UI
 				configs.Add(file.Replace("\\", "/"), config.Name);
 			}
 
-			if (configs != null && configs.Count > 0)
+			if (configs != null)
 				this.ConfigFiles = configs;
+
+			if(this.ConfigFiles.Count < 1) //there are no config files, so make a new default one and start over
+			{
+				IThumbnailConfig config = new ThumbnailConfig();
+
+				string rawData = JsonConvert.SerializeObject(config, Formatting.Indented);
+
+				File.WriteAllText(this._configurationStorage.GetConfigFileName(), rawData);
+
+				this._configurationStorage.Load();
+				this.ScanForConfigFiles();
+				return;
+			}
 
 			if (!configs.ContainsKey(this._configurationStorage.GetConfigFileName()))
 			{
 				this.SetCurrentConfig?.Invoke(configs.Keys.ElementAt(0));
 			}
-
-			this.UpdateConfigListing();
 		}
 
 		public void LaunchConfigDialog()
@@ -117,6 +131,8 @@ namespace EveOPreview.UI
 				throw new FileNotFoundException();
 			}
 
+			this.SaveSettings?.Invoke();
+
 			string rawData = File.ReadAllText(fileName);
 
 			IThumbnailConfig config = new ThumbnailConfig();
@@ -137,8 +153,8 @@ namespace EveOPreview.UI
 			}
 
 			this.ConfigFiles.Add(fileName, newName);
-
-			this.UpdateConfigListing();
+			
+			this.LoadSettings?.Invoke();
 		}
 
 		private void RenameConfigFilename(string fileName, string newName)
@@ -147,6 +163,8 @@ namespace EveOPreview.UI
 			{
 				throw new FileNotFoundException();
 			}
+
+			this.SaveSettings?.Invoke();
 
 			File.Move(fileName, newName);
 
@@ -181,9 +199,8 @@ namespace EveOPreview.UI
 			}
 
 			this.ConfigFiles.Add(newName, configName);
-
-			this.UpdateConfigListing();
-			this.ReloadSettings?.Invoke();
+			
+			this.LoadSettings?.Invoke();
 		}
 
 		private void CopyConfigFile(string fileName)
@@ -192,6 +209,8 @@ namespace EveOPreview.UI
 			{
 				throw new FileNotFoundException();
 			}
+
+			this.SaveSettings?.Invoke();
 
 			string newName = fileName.Substring(0, fileName.Length-5) + " - Copy";
 
@@ -210,8 +229,7 @@ namespace EveOPreview.UI
 
 			this.RenameConfigFile(newName, oldName + " - Copy");
 
-			this.UpdateConfigListing();
-
+			this.LoadSettings?.Invoke();
 		}
 
 		private void DeleteConfigFile(string fileName)
@@ -221,11 +239,13 @@ namespace EveOPreview.UI
 				throw new FileNotFoundException();
 			}
 
-			
+			this.SaveSettings?.Invoke();
+
 			this.ConfigFiles.Remove(fileName);
 
 			File.Delete(fileName);
 
+			/*
 			if (this.ConfigFiles.Count == 0)
 			{
 				IConfigurationStorage configStorage = new ConfigurationStorage(new AppConfig(), new ThumbnailConfig());
@@ -234,11 +254,9 @@ namespace EveOPreview.UI
 
 				this._configurationStorage.Load();
 			}
+			*/
 
-			this.ScanForConfigFiles();
-			this.UpdateConfigListing();
-
-			this._configurationStorage.Load();
+			this.LoadSettings?.Invoke();
 		}
 	}
 }
