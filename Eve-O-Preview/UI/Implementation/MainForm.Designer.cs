@@ -77,7 +77,7 @@ namespace EveOPreview.UI
 			this.ForumLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.SperatorMenuItem = new System.Windows.Forms.ToolStripSeparator();
 			this.ConfigFilesListMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.RefreshConfigsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ConfigFilePannel = new System.Windows.Forms.Panel();
@@ -665,7 +665,7 @@ namespace EveOPreview.UI
 			this.TrayMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             TitleMenuItem,
             RestoreWindowMenuItem,
-            this.toolStripSeparator1,
+            this.SperatorMenuItem,
             this.ConfigFilesListMenuItem,
             this.RefreshConfigsMenuItem,
             SeparatorMenuItem,
@@ -673,10 +673,10 @@ namespace EveOPreview.UI
 			this.TrayMenu.Name = "contextMenuStrip1";
 			this.TrayMenu.Size = new System.Drawing.Size(161, 126);
 			// 
-			// toolStripSeparator1
+			// SperatorMenuItem
 			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(157, 6);
+			this.SperatorMenuItem.Name = "SperatorMenuItem";
+			this.SperatorMenuItem.Size = new System.Drawing.Size(157, 6);
 			// 
 			// ConfigFilesListMenuItem
 			// 
@@ -827,7 +827,7 @@ namespace EveOPreview.UI
 		private Label ConfigFileLabel;
 		private Button RefreshConfigsButton;
 		private Button ConfigSettingsButton;
-		private ToolStripSeparator toolStripSeparator1;
+		private ToolStripSeparator SperatorMenuItem;
 		private ToolStripMenuItem ConfigFilesListMenuItem;
 		private ToolStripMenuItem RefreshConfigsMenuItem;
 	}
