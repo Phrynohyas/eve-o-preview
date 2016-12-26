@@ -80,6 +80,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -108,9 +109,18 @@
     <Compile Include="DwmAPI\RECT.cs" />
     <Compile Include="Configuration\ClientLayout.cs" />
     <Compile Include="ApplicationBase\IPresenter.cs" />
+    <Compile Include="Presentation\ConfigManager.cs" />
+    <Compile Include="Presentation\IConfigManager.cs" />
     <Compile Include="Presentation\MainPresenter.cs" />
     <Compile Include="Presentation\ViewCloseRequest.cs" />
     <Compile Include="Presentation\ViewZoomAnchorConverter.cs" />
+    <Compile Include="UI\Implementation\ConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Implementation\ConfigForm.Designer.cs">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Interface\IConfigView.cs" />
     <Compile Include="UI\Interface\IThumbnailViewFactory.cs" />
     <Compile Include="Presentation\IThumbnailManager.cs" />
     <Compile Include="UI\Implementation\ThumbnailDescriptionView.cs" />
@@ -141,6 +151,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="UI\Implementation\ConfigForm.resx">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Implementation\MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -177,6 +190,8 @@
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
     <Content Include="icon.ico" />
+    <None Include="Resources\gear.png" />
+    <Content Include="Resources\refresh.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

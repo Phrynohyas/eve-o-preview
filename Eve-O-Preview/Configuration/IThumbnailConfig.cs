@@ -43,6 +43,9 @@ namespace EveOPreview.Configuration
 		Keys GetClientHotkey(string currentClient);
 		void SetClientHotkey(string currentClient, Keys hotkey);
 
+		string Name { get; set; }
+
 		void ApplyRestrictions();
+		void ClearValues();
 	}
 }

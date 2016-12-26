@@ -25,6 +25,8 @@ namespace EveOPreview.UI
 			this._minimumSize = new Size(80, 60);
 			this._maximumSize = new Size(80, 60);
 
+			this._configFiles = new Dictionary<string, string>();
+
 			InitializeComponent();
 
 			this.ThumbnailsList.DisplayMember = "Title";
@@ -322,6 +324,68 @@ namespace EveOPreview.UI
 			this.ZoomAnchorPanel.Enabled = enableControls;
 		}
 
+		private Dictionary<string, string> _configFiles;
+
+		public Dictionary<string, string> ConfigFiles {
+			get {
+				return this._configFiles;
+			}
+			set {
+
+				string currentConfig = this.CurrentConfigFile;
+
+				this._configFiles = value;
+				
+				this.ConfigFileSelector.DataSource = new BindingSource(this._configFiles, null);
+				this.ConfigFileSelector.DisplayMember = "Value";
+				this.ConfigFileSelector.ValueMember = "Key";
+
+				if (!string.IsNullOrEmpty(currentConfig) && !string.IsNullOrWhiteSpace(currentConfig))
+					this.CurrentConfigFile = currentConfig;
+
+				var dropdown = new ToolStripDropDown();
+
+				foreach (var name in this.ConfigFiles.Values)
+				{
+					dropdown.Items.Add(name);
+				}
+
+				this.ConfigFilesListMenuItem.DropDown = dropdown;
+
+			}
+		}
+
+		public string CurrentConfigFile {
+			get {
+				return (string) this.ConfigFileSelector.SelectedValue;
+			}
+			set {
+				if (!string.IsNullOrEmpty(value))
+				{
+					int index = new List<string>(this._configFiles.Keys).IndexOf(value);
+					this.ConfigFileSelector.SelectedIndex = index;
+				}
+				this.ConfigFileSelector.ResetText();
+			}
+		}
+
+		public string CurrentConfigName
+		{
+			get
+			{
+				return (string)this.ConfigFileSelector.SelectedText;
+			}
+			set
+			{
+				if (!string.IsNullOrEmpty(value))
+				{
+					int index = new List<string>(this._configFiles.Values).IndexOf(value);
+					this.ConfigFileSelector.SelectedIndex = index;
+				}
+				this.ConfigFileSelector.Update();
+			}
+		}
+
 		public Action ApplicationExitRequested { get; set; }
 
 		public Action FormActivated { get; set; }
@@ -337,6 +401,12 @@ namespace EveOPreview.UI
 		public Action<IntPtr> ThumbnailStateChanged { get; set; }
 
 		public Action ForumUrlLinkActivated { get; set; }
+
+		public Action ConfigFileChanged { get; set; }
+
+		public Action ScanForConfigFiles { get; set; }
+
+		public Action LaunchConfigDialog { get; set; }
 
 		#region UI events
 		private void OptionChanged_Handler(object sender, EventArgs e)
@@ -445,6 +515,39 @@ namespace EveOPreview.UI
 			this._zoomAnchorMap[ViewZoomAnchor.SW] = this.ZoomAanchorSWRadioButton;
 			this._zoomAnchorMap[ViewZoomAnchor.S] = this.ZoomAanchorSRadioButton;
 			this._zoomAnchorMap[ViewZoomAnchor.SE] = this.ZoomAanchorSERadioButton;
+		}
+
+		private void ConfigFileSelector_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			//TODO make work
+			this.ConfigFileChanged?.Invoke();
+			this.ApplicationSettingsChanged?.Invoke();
+			
+		}
+
+		private void RefreshConfigsButton_Click(object sender, EventArgs e)
+		{
+			
+			this.ScanForConfigFiles?.Invoke();
+			
+		}
+
+		private void ConfigSettingsButton_Click(object sender, EventArgs e)
+		{
+			this.LaunchConfigDialog?.Invoke();
+		}
+
+		private void RefreshConfigsMenuItem_Click(object sender, EventArgs e)
+		{
+			this.LaunchConfigDialog?.Invoke();
+		}
+
+		private void ConfigFilesListMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+			this.CurrentConfigName = e.ClickedItem.Text;
+			this.ConfigFileChanged?.Invoke();
+			this.ApplicationSettingsChanged?.Invoke();
+
 		}
 	}
 }

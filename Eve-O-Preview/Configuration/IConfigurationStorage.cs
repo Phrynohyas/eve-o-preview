@@ -4,5 +4,8 @@
 	{
 		void Load();
 		void Save();
+		void SaveOnlyAppConfig();
+		string GetConfigFileName();
+		string GetAppConfigFileName();
 	}
 }

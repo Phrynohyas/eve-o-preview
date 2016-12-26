@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using EveOPreview.Configuration;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace EveOPreview.UI
 {
@@ -14,20 +16,25 @@ namespace EveOPreview.UI
 
 		#region Private fields
 		private readonly IThumbnailConfig _configuration;
+		private readonly IAppConfig _appConfig;
 		private readonly IConfigurationStorage _configurationStorage;
 		private readonly IThumbnailDescriptionViewFactory _thumbnailDescriptionViewFactory;
 		private readonly IDictionary<IntPtr, IThumbnailDescriptionView> _thumbnailDescriptionViews;
 		private readonly IThumbnailManager _thumbnailManager;
+		private readonly IConfigManager _configManager;
 
 		private bool _exitApplication;
 		#endregion
 
-		public MainPresenter(IApplicationController controller, IMainView view, IThumbnailConfig configuration, IConfigurationStorage configurationStorage,
+		public MainPresenter(IApplicationController controller, IMainView view, 
+								IThumbnailConfig configuration, IAppConfig appConfig, IConfigurationStorage configurationStorage, IConfigManager configManager,
 								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
 			: base(controller, view)
 		{
 			this._configuration = configuration;
+			this._appConfig = appConfig;
 			this._configurationStorage = configurationStorage;
+			this._configManager = configManager;
 
 			this._thumbnailDescriptionViewFactory = thumbnailDescriptionViewFactory;
 			this._thumbnailManager = thumbnailManager;
@@ -43,11 +50,19 @@ namespace EveOPreview.UI
 			this.View.ThumbnailStateChanged = this.UpdateThumbnailState;
 			this.View.ForumUrlLinkActivated = this.OpenForumUrlLink;
 			this.View.ApplicationExitRequested = this.ExitApplication;
+			this.View.ConfigFileChanged = this.ConfigFileChanged;
+			this.View.ScanForConfigFiles = this.UpdateConfigFiles;
+			this.View.LaunchConfigDialog = this.LaunchConfigDialog;
 
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
 			this._thumbnailManager.ThumbnailsRemoved = this.ThumbnailsRemoved;
 			this._thumbnailManager.ThumbnailSizeChanged = this.ThumbnailSizeChanged;
+
+			this._configManager.UpdateMainConfigListing = this.UpdateViewConfigListing;
+			this._configManager.LoadSettings = this.Activate;
+			this._configManager.SaveSettings = this.SaveApplicationSettings;
+			this._configManager.SetCurrentConfig = this.SetCurrentConfigFile;
 		}
 
 		private void Activate()
@@ -94,7 +109,14 @@ namespace EveOPreview.UI
 
 		private void LoadApplicationSettings()
 		{
+
 			this._configurationStorage.Load();
+
+			this.UpdateConfigFiles();
+
+			//this._configuration = this._configurationStorage.ThumbnailConfig;
+
+			this.View.CurrentConfigFile = this._appConfig.ConfigFileName;
 
 			this.View.MinimizeToTray = this._configuration.MinimizeToTray;
 
@@ -141,6 +163,8 @@ namespace EveOPreview.UI
 			this._configuration.ShowThumbnailFrames = this.View.ShowThumbnailFrames;
 			this._configuration.EnableActiveClientHighlight = this.View.EnableActiveClientHighlight;
 			this._configuration.ActiveClientHighlightColor = this.View.ActiveClientHighlightColor;
+
+			this._appConfig.ConfigFileName = this.View.CurrentConfigFile;
 
 			this._configurationStorage.Save();
 
@@ -220,6 +244,40 @@ namespace EveOPreview.UI
 		{
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
+		}
+		public void ConfigFileChanged()
+		{
+			//TODO make it work
+			this._configurationStorage.Save();  //Save the current config file
+
+			this._appConfig.ConfigFileName = this.View.CurrentConfigFile;//TODO make this use the config manager //update and save the new config file name without overwriting the incoming config with the current config
+			this._configurationStorage.SaveOnlyAppConfig();
+
+			this.Activate();
+		}
+
+		public void SetCurrentConfigFile(string file)
+		{
+			this._appConfig.ConfigFileName = file;
+			this.View.CurrentConfigFile = file;
+			this._configurationStorage.SaveOnlyAppConfig();
+
+			this.Activate();
+		}
+
+		public void UpdateConfigFiles()
+		{
+			this._configManager.UpdateConfigListing();
+		}
+
+		public void UpdateViewConfigListing()
+		{
+			this.View.ConfigFiles = this._configManager.ConfigFiles;
+		}
+
+		public void LaunchConfigDialog()
+		{
+			this._configManager.LaunchConfigDialog();
 		}
 
 		private void ExitApplication()
