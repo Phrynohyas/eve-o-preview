@@ -104,7 +104,7 @@ namespace EveOPreview.UI
 			}
 			else if (e.ColumnIndex == 1 && e.RowIndex >= 0) //delete
 			{
-				string file = "config/" + (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value;
+				string file = "config/" + (string)this.ConfigFilesGridView.Rows[e.RowIndex].Cells[2].Value+".json";
 				this.DeleteConfigFile(file);
 				Debug.WriteLine("DELETE");
 			}

@@ -77,6 +77,9 @@ namespace EveOPreview.UI
 			this.ForumLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.ConfigFilesListMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.RefreshConfigsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ConfigFilePannel = new System.Windows.Forms.Panel();
 			this.ConfigSettingsButton = new System.Windows.Forms.Button();
 			this.RefreshConfigsButton = new System.Windows.Forms.Button();
@@ -123,14 +126,14 @@ namespace EveOPreview.UI
 			// RestoreWindowMenuItem
 			// 
 			RestoreWindowMenuItem.Name = "RestoreWindowMenuItem";
-			RestoreWindowMenuItem.Size = new System.Drawing.Size(151, 22);
+			RestoreWindowMenuItem.Size = new System.Drawing.Size(160, 22);
 			RestoreWindowMenuItem.Text = "Restore";
 			RestoreWindowMenuItem.Click += new System.EventHandler(this.RestoreMainForm_Handler);
 			// 
 			// ExitMenuItem
 			// 
 			ExitMenuItem.Name = "ExitMenuItem";
-			ExitMenuItem.Size = new System.Drawing.Size(151, 22);
+			ExitMenuItem.Size = new System.Drawing.Size(160, 22);
 			ExitMenuItem.Text = "Exit";
 			ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItemClick_Handler);
 			// 
@@ -553,13 +556,13 @@ namespace EveOPreview.UI
 			// 
 			TitleMenuItem.Enabled = false;
 			TitleMenuItem.Name = "TitleMenuItem";
-			TitleMenuItem.Size = new System.Drawing.Size(151, 22);
+			TitleMenuItem.Size = new System.Drawing.Size(160, 22);
 			TitleMenuItem.Text = "EVE-O Preview";
 			// 
 			// SeparatorMenuItem
 			// 
 			SeparatorMenuItem.Name = "SeparatorMenuItem";
-			SeparatorMenuItem.Size = new System.Drawing.Size(148, 6);
+			SeparatorMenuItem.Size = new System.Drawing.Size(157, 6);
 			// 
 			// OverlayOptionsPanel
 			// 
@@ -662,10 +665,32 @@ namespace EveOPreview.UI
 			this.TrayMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             TitleMenuItem,
             RestoreWindowMenuItem,
+            this.toolStripSeparator1,
+            this.ConfigFilesListMenuItem,
+            this.RefreshConfigsMenuItem,
             SeparatorMenuItem,
             ExitMenuItem});
 			this.TrayMenu.Name = "contextMenuStrip1";
-			this.TrayMenu.Size = new System.Drawing.Size(152, 76);
+			this.TrayMenu.Size = new System.Drawing.Size(161, 126);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(157, 6);
+			// 
+			// ConfigFilesListMenuItem
+			// 
+			this.ConfigFilesListMenuItem.Name = "ConfigFilesListMenuItem";
+			this.ConfigFilesListMenuItem.Size = new System.Drawing.Size(160, 22);
+			this.ConfigFilesListMenuItem.Text = "Config Files";
+			this.ConfigFilesListMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ConfigFilesListMenuItem_DropDownItemClicked);
+			// 
+			// RefreshConfigsMenuItem
+			// 
+			this.RefreshConfigsMenuItem.Name = "RefreshConfigsMenuItem";
+			this.RefreshConfigsMenuItem.Size = new System.Drawing.Size(160, 22);
+			this.RefreshConfigsMenuItem.Text = "Config Manager";
+			this.RefreshConfigsMenuItem.Click += new System.EventHandler(this.RefreshConfigsMenuItem_Click);
 			// 
 			// ConfigFilePannel
 			// 
@@ -802,5 +827,8 @@ namespace EveOPreview.UI
 		private Label ConfigFileLabel;
 		private Button RefreshConfigsButton;
 		private Button ConfigSettingsButton;
+		private ToolStripSeparator toolStripSeparator1;
+		private ToolStripMenuItem ConfigFilesListMenuItem;
+		private ToolStripMenuItem RefreshConfigsMenuItem;
 	}
 }

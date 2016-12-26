@@ -342,6 +342,16 @@ namespace EveOPreview.UI
 
 				if (!string.IsNullOrEmpty(currentConfig) && !string.IsNullOrWhiteSpace(currentConfig))
 					this.CurrentConfigFile = currentConfig;
+
+				var dropdown = new ToolStripDropDown();
+
+				foreach (var name in this.ConfigFiles.Values)
+				{
+					dropdown.Items.Add(name);
+				}
+
+				this.ConfigFilesListMenuItem.DropDown = dropdown;
+
 			}
 		}
 
@@ -519,11 +529,25 @@ namespace EveOPreview.UI
 		{
 			
 			this.ScanForConfigFiles?.Invoke();
+			
 		}
 
 		private void ConfigSettingsButton_Click(object sender, EventArgs e)
 		{
 			this.LaunchConfigDialog?.Invoke();
+		}
+
+		private void RefreshConfigsMenuItem_Click(object sender, EventArgs e)
+		{
+			this.LaunchConfigDialog?.Invoke();
+		}
+
+		private void ConfigFilesListMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+			this.CurrentConfigName = e.ClickedItem.Text;
+			this.ConfigFileChanged?.Invoke();
+			this.ApplicationSettingsChanged?.Invoke();
+
 		}
 	}
 }
