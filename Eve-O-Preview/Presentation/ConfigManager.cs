@@ -86,13 +86,20 @@ namespace EveOPreview.UI
 
 				IConfigView configView = new ConfigForm(this.ConfigFiles);
 				configView.RenameConfigFile = this.RenameConfigFile;
+				configView.RenameConfigFilename = this.RenameConfigFilename;
 				configView.CopyConfigFile = this.CopyConfigFile;
 				configView.DeleteConfigFile = this.DeleteConfigFile;
 				configView.UpdateConfigListing = this.UpdateConfigListing;
+				configView.DialogClosed = this.ConfigDialogClosed;
 
 				this._activeConfigView = configView;
 			}
 			this._activeConfigView.Show();
+		}
+
+		private void ConfigDialogClosed()
+		{
+			this._activeConfigView = null;
 		}
 
 		private void RenameConfigFile(string fileName, string newName)
@@ -126,6 +133,47 @@ namespace EveOPreview.UI
 			this.UpdateConfigListing();
 		}
 
+		private void RenameConfigFilename(string fileName, string newName)
+		{
+			if (!File.Exists(fileName))
+			{
+				throw new FileNotFoundException();
+			}
+
+			File.Move(fileName, newName);
+
+			//updating appConfig
+
+			IAppConfig appConfig = new AppConfig();
+			string appFilename = this._configurationStorage.GetAppConfigFileName();
+
+			string appRawData = File.ReadAllText(appFilename);
+
+			JsonConvert.PopulateObject(appRawData, appConfig);
+
+			appConfig.ConfigFileName = newName;
+
+			string rawData = JsonConvert.SerializeObject(appConfig, Formatting.Indented);
+
+			File.WriteAllText(appFilename, rawData);
+
+			this._configurationStorage.Load();
+
+
+			string configName = "";
+
+			this.ConfigFiles.TryGetValue(fileName, out configName);
+
+			if (this.ConfigFiles.ContainsKey(fileName))
+			{
+				this.ConfigFiles.Remove(fileName);
+			}
+
+			this.ConfigFiles.Add(newName, configName);
+
+			this.UpdateConfigListing();
+		}
+
 		private void CopyConfigFile(string fileName)
 		{
 			if (!File.Exists(fileName))
@@ -133,14 +181,15 @@ namespace EveOPreview.UI
 				throw new FileNotFoundException();
 			}
 
-			string newName = fileName + " - Copy";
+			string newName = fileName.Substring(0, fileName.Length-5) + " - Copy";
 
 			int copy = 1;
-			while (File.Exists(newName))
+			while (File.Exists(newName+".json"))
 			{
 				copy++;
 				newName = fileName + " - Copy(" + copy + ")";
 			}
+			newName += ".json";
 
 			File.Copy(fileName, newName);
 
@@ -160,11 +209,32 @@ namespace EveOPreview.UI
 				throw new FileNotFoundException();
 			}
 
+			//updating appConfig
+			/*
+			IAppConfig appConfig = new AppConfig();
+			string appFilename = this._configurationStorage.GetAppConfigFileName();
+
+			string appRawData = File.ReadAllText(appFilename);
+
+			JsonConvert.PopulateObject(appRawData, appConfig);
+
+			if (appConfig.ConfigFileName == fileName) //deleting the current config
+			{
+				appConfig.ConfigFileName = newName;
+			}
+
+			string rawData = JsonConvert.SerializeObject(appConfig, Formatting.Indented);
+
+			File.WriteAllText(appFilename, rawData);
+
+			this._configurationStorage.Load();
+			*/
 			this.ConfigFiles.Remove(fileName);
 
 			File.Delete(fileName);
 
 			this.UpdateConfigListing();
+			this.ScanForConfigFiles();
 		}
 	}
 }

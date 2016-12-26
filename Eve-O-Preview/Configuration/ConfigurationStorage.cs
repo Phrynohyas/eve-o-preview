@@ -74,7 +74,7 @@ namespace EveOPreview.Configuration
 			File.WriteAllText(this.GetAppConfigFileName(), appRawData);
 		}
 
-		private string GetConfigFileName()
+		public string GetConfigFileName()
 		{
 			if (string.IsNullOrEmpty(this._appConfig.ConfigFileName))
 			{
@@ -82,13 +82,18 @@ namespace EveOPreview.Configuration
 				this.SaveOnlyAppConfig();
 				return ConfigurationStorage.ConfigurationFileName;
 			}
-			else
+			else if(File.Exists(this._appConfig.ConfigFileName))
 			{
 				return this._appConfig.ConfigFileName;
+			} else
+			{
+				this._appConfig.ConfigFileName = ConfigurationStorage.ConfigurationFileName;
+				this.SaveOnlyAppConfig();
+				return ConfigurationStorage.ConfigurationFileName;
 			}
 		}
 
-		private string GetAppConfigFileName()
+		public string GetAppConfigFileName()
 		{
 			return ConfigurationStorage.AppConfigFileName;
 		}

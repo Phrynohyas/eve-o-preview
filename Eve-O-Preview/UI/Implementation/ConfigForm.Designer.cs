@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigForm));
 			this.ConfigFilesGridView = new System.Windows.Forms.DataGridView();
 			this.FileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,6 +53,7 @@
 			this.ConfigFilesGridView.Name = "ConfigFilesGridView";
 			this.ConfigFilesGridView.Size = new System.Drawing.Size(448, 295);
 			this.ConfigFilesGridView.TabIndex = 0;
+			this.ConfigFilesGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ConfigFilesGridView_CellContentClick);
 			this.ConfigFilesGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ConfigFilesGridView_CellDoubleClick);
 			this.ConfigFilesGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ConfigFilesGridView_CellValueChanged);
 			// 
@@ -76,6 +78,8 @@
 			this.CopyColumn.HeaderText = "Copy";
 			this.CopyColumn.Name = "CopyColumn";
 			this.CopyColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.CopyColumn.Text = "Copy";
+			this.CopyColumn.UseColumnTextForButtonValue = true;
 			// 
 			// DeleteColumn
 			// 
@@ -83,6 +87,8 @@
 			this.DeleteColumn.HeaderText = "Delete";
 			this.DeleteColumn.Name = "DeleteColumn";
 			this.DeleteColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.DeleteColumn.Text = "Delete";
+			this.DeleteColumn.UseColumnTextForButtonValue = true;
 			// 
 			// ConfigForm
 			// 
@@ -90,8 +96,10 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(448, 295);
 			this.Controls.Add(this.ConfigFilesGridView);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "ConfigForm";
-			this.Text = "ConfigForm";
+			this.Text = "Configuration Settings";
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ConfigForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.ConfigFilesGridView)).EndInit();
 			this.ResumeLayout(false);
 
