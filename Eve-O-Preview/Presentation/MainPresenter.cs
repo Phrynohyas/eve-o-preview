@@ -60,6 +60,7 @@ namespace EveOPreview.UI
 			this._thumbnailManager.ThumbnailSizeChanged = this.ThumbnailSizeChanged;
 
 			this._configManager.UpdateMainConfigListing = this.UpdateConfigListing;
+			this._configManager.ReloadSettings = this.LoadApplicationSettings;
 		}
 
 		private void Activate()

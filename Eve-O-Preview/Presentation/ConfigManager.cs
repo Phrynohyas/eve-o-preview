@@ -35,6 +35,8 @@ namespace EveOPreview.UI
 
 		public Action UpdateMainConfigListing { get; set; }
 
+		public Action ReloadSettings { get; set; }
+
 		public void UpdateConfigListing()
 		{
 			this.UpdateMainConfigListing?.Invoke();
@@ -151,7 +153,10 @@ namespace EveOPreview.UI
 
 			JsonConvert.PopulateObject(appRawData, appConfig);
 
-			appConfig.ConfigFileName = newName;
+			if (appConfig.ConfigFileName == fileName)
+			{
+				appConfig.ConfigFileName = newName;
+			}
 
 			string rawData = JsonConvert.SerializeObject(appConfig, Formatting.Indented);
 
@@ -172,6 +177,7 @@ namespace EveOPreview.UI
 			this.ConfigFiles.Add(newName, configName);
 
 			this.UpdateConfigListing();
+			this.ReloadSettings?.Invoke();
 		}
 
 		private void CopyConfigFile(string fileName)
