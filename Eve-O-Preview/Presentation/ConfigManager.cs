@@ -215,29 +215,19 @@ namespace EveOPreview.UI
 				throw new FileNotFoundException();
 			}
 
-			//updating appConfig
-			/*
-			IAppConfig appConfig = new AppConfig();
-			string appFilename = this._configurationStorage.GetAppConfigFileName();
-
-			string appRawData = File.ReadAllText(appFilename);
-
-			JsonConvert.PopulateObject(appRawData, appConfig);
-
-			if (appConfig.ConfigFileName == fileName) //deleting the current config
-			{
-				appConfig.ConfigFileName = newName;
-			}
-
-			string rawData = JsonConvert.SerializeObject(appConfig, Formatting.Indented);
-
-			File.WriteAllText(appFilename, rawData);
-
-			this._configurationStorage.Load();
-			*/
+			
 			this.ConfigFiles.Remove(fileName);
 
 			File.Delete(fileName);
+
+			if (this.ConfigFiles.Count == 0)
+			{
+				IConfigurationStorage configStorage = new ConfigurationStorage(new AppConfig(), new ThumbnailConfig());
+				configStorage.Save();
+				this.ConfigFiles.Add(configStorage.GetConfigFileName(), "Default");
+			}
+
+			this._configurationStorage.Load();
 
 			this.UpdateConfigListing();
 			this.ScanForConfigFiles();
