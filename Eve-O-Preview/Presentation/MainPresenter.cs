@@ -61,6 +61,7 @@ namespace EveOPreview.UI
 
 			this._configManager.UpdateMainConfigListing = this.UpdateConfigListing;
 			this._configManager.ReloadSettings = this.LoadApplicationSettings;
+			this._configManager.SetCurrentConfig = this.SetCurrentConfigFile;
 		}
 
 		private void Activate()
@@ -246,6 +247,15 @@ namespace EveOPreview.UI
 			this._configurationStorage.Save();  //Save the current config file
 
 			this._appConfig.ConfigFileName = this.View.CurrentConfigFile;//TODO make this use the config manager //update and save the new config file name without overwriting the incoming config with the current config
+			this._configurationStorage.SaveOnlyAppConfig();
+
+			this.Activate();
+		}
+
+		public void SetCurrentConfigFile(string file)
+		{
+			this._appConfig.ConfigFileName = file;
+			this.View.CurrentConfigFile = file;
 			this._configurationStorage.SaveOnlyAppConfig();
 
 			this.Activate();

@@ -17,5 +17,6 @@ namespace EveOPreview.UI
 		void LaunchConfigDialog();
 		Action UpdateMainConfigListing { get; set; }
 		Action ReloadSettings { get; set; }
+		Action<string> SetCurrentConfig { get; set; }
 	}
 }

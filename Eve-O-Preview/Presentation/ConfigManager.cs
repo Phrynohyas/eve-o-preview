@@ -37,6 +37,8 @@ namespace EveOPreview.UI
 
 		public Action ReloadSettings { get; set; }
 
+		public Action<string> SetCurrentConfig { get; set; }
+
 		public void UpdateConfigListing()
 		{
 			this.UpdateMainConfigListing?.Invoke();
@@ -48,8 +50,8 @@ namespace EveOPreview.UI
 
 		public void ScanForConfigFiles()
 		{
-
-			this._configurationStorage.Save(); // saves the current config
+			if(File.Exists(this._configurationStorage.GetConfigFileName()))
+				this._configurationStorage.Save(); // saves the current config
 
 			Dictionary<string, string> configs = new Dictionary<string, string>();
 
@@ -58,12 +60,12 @@ namespace EveOPreview.UI
 			foreach (string file in files)
 			{
 
-				IThumbnailConfig config = new ThumbnailConfig();
-
 				if (!File.Exists(file))
 				{
 					continue;
 				}
+
+				IThumbnailConfig config = new ThumbnailConfig();
 
 				string rawData = File.ReadAllText(file);
 
@@ -77,8 +79,12 @@ namespace EveOPreview.UI
 			if (configs != null && configs.Count > 0)
 				this.ConfigFiles = configs;
 
+			if (!configs.ContainsKey(this._configurationStorage.GetConfigFileName()))
+			{
+				this.SetCurrentConfig?.Invoke(configs.Keys.ElementAt(0));
+			}
 
-			return;
+			this.UpdateConfigListing();
 		}
 
 		public void LaunchConfigDialog()
@@ -225,12 +231,14 @@ namespace EveOPreview.UI
 				IConfigurationStorage configStorage = new ConfigurationStorage(new AppConfig(), new ThumbnailConfig());
 				configStorage.Save();
 				this.ConfigFiles.Add(configStorage.GetConfigFileName(), "Default");
+
+				this._configurationStorage.Load();
 			}
 
-			this._configurationStorage.Load();
-
-			this.UpdateConfigListing();
 			this.ScanForConfigFiles();
+			this.UpdateConfigListing();
+
+			this._configurationStorage.Load();
 		}
 	}
 }

@@ -46,19 +46,21 @@ namespace EveOPreview.UI
 
 		private void ConfigFilesGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			this.ConfigFilesGridView.CurrentCell = this.ConfigFilesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-			if (e.ColumnIndex == 3 || e.ColumnIndex == 2)
+			if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
 			{
-				this.ConfigFilesGridView.CurrentCell.ReadOnly = false;
+				this.ConfigFilesGridView.CurrentCell = this.ConfigFilesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+				if (e.ColumnIndex == 3 || e.ColumnIndex == 2)
+				{
+					this.ConfigFilesGridView.CurrentCell.ReadOnly = false;
+				}
+
+				if (!this.ConfigFilesGridView.CurrentCell.ReadOnly)
+				{
+					this.ConfigFilesGridView.BeginEdit(true);
+				}
+
 			}
-
-			if (!this.ConfigFilesGridView.CurrentCell.ReadOnly)
-			{
-				this.ConfigFilesGridView.BeginEdit(true);
-			}
-
-
 		}
 
 		private string _lastRename = "";
