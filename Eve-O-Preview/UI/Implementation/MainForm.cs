@@ -339,6 +339,31 @@ namespace EveOPreview.UI
 		public Action ForumUrlLinkActivated { get; set; }
 
 		#region UI events
+		private void ContentTabControl_DrawItem(object sender, DrawItemEventArgs e)
+		{
+			TabControl control = (TabControl)sender;
+			TabPage page = control.TabPages[e.Index];
+			Rectangle bounds = control.GetTabRect(e.Index);
+
+			Graphics graphics = e.Graphics;
+
+			Brush textBrush = new SolidBrush(SystemColors.ActiveCaptionText);
+			Brush backgroundBrush = (e.State == DrawItemState.Selected)
+										? new SolidBrush(SystemColors.Control)
+										: new SolidBrush(SystemColors.ControlDark);
+			graphics.FillRectangle(backgroundBrush, e.Bounds);
+
+			// Use our own font
+			Font font = new Font("Arial", this.Font.Size * 1.2f, FontStyle.Bold, GraphicsUnit.Pixel);
+
+			// Draw string and center the text
+			StringFormat stringFlags = new StringFormat();
+			stringFlags.Alignment = StringAlignment.Center;
+			stringFlags.LineAlignment = StringAlignment.Center;
+
+			graphics.DrawString(page.Text, font, textBrush, bounds, stringFlags);
+		}
+
 		private void OptionChanged_Handler(object sender, EventArgs e)
 		{
 			if (this._suppressEvents)
