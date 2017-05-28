@@ -33,6 +33,7 @@ namespace EveOPreview.UI
 		Color ActiveClientHighlightColor { get; set; }
 
 		void SetForumUrl(string url);
+		void SetVersionInfo(string version);
 		void SetThumbnailSizeLimitations(Size minimumSize, Size maximumSize);
 
 		void Minimize();

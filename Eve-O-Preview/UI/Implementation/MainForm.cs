@@ -200,6 +200,11 @@ namespace EveOPreview.UI
 			this.ForumLinkLabel.Text = url;
 		}
 
+		public void SetDocumentationUrl(string url)
+		{
+			this.DocumentationLink.Text = url;
+		}
+
 		public void AddThumbnails(IList<IThumbnailDescriptionView> thumbnails)
 		{
 			if (thumbnails.Count == 0)

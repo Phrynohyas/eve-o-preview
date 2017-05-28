@@ -55,7 +55,6 @@ namespace EveOPreview.UI
 			System.Windows.Forms.Panel AboutPanel;
 			System.Windows.Forms.Label DescriptionLabel;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-			System.Windows.Forms.Label VersionLabel;
 			System.Windows.Forms.Label NameLabel;
 			this.EnableClientLayoutTrackingCheckBox = new System.Windows.Forms.CheckBox();
 			this.HideActiveClientThumbnailCheckBox = new System.Windows.Forms.CheckBox();
@@ -85,10 +84,11 @@ namespace EveOPreview.UI
 			this.ShowThumbnailOverlaysCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowThumbnailFramesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ThumbnailsList = new System.Windows.Forms.CheckedListBox();
+			this.label1 = new System.Windows.Forms.Label();
+			this.VersionLabel = new System.Windows.Forms.Label();
 			this.ForumLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.label1 = new System.Windows.Forms.Label();
 			RestoreWindowMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			TitleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,7 +112,6 @@ namespace EveOPreview.UI
 			AboutTabPage = new System.Windows.Forms.TabPage();
 			AboutPanel = new System.Windows.Forms.Panel();
 			DescriptionLabel = new System.Windows.Forms.Label();
-			VersionLabel = new System.Windows.Forms.Label();
 			NameLabel = new System.Windows.Forms.Label();
 			ContentTabControl.SuspendLayout();
 			GeneralTabPage.SuspendLayout();
@@ -741,7 +740,7 @@ namespace EveOPreview.UI
 			AboutPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			AboutPanel.Controls.Add(this.label1);
 			AboutPanel.Controls.Add(DescriptionLabel);
-			AboutPanel.Controls.Add(VersionLabel);
+			AboutPanel.Controls.Add(this.VersionLabel);
 			AboutPanel.Controls.Add(NameLabel);
 			AboutPanel.Controls.Add(this.ForumLinkLabel);
 			AboutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -749,6 +748,15 @@ namespace EveOPreview.UI
 			AboutPanel.Name = "AboutPanel";
 			AboutPanel.Size = new System.Drawing.Size(262, 210);
 			AboutPanel.TabIndex = 2;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(0, 157);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(206, 13);
+			this.label1.TabIndex = 6;
+			this.label1.Text = "For more information visit our forum thread:";
 			// 
 			// DescriptionLabel
 			// 
@@ -760,13 +768,13 @@ namespace EveOPreview.UI
 			// 
 			// VersionLabel
 			// 
-			VersionLabel.AutoSize = true;
-			VersionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			VersionLabel.Location = new System.Drawing.Point(140, 9);
-			VersionLabel.Name = "VersionLabel";
-			VersionLabel.Size = new System.Drawing.Size(112, 20);
-			VersionLabel.TabIndex = 4;
-			VersionLabel.Text = "v ##.###.###";
+			this.VersionLabel.AutoSize = true;
+			this.VersionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.VersionLabel.Location = new System.Drawing.Point(133, 9);
+			this.VersionLabel.Name = "VersionLabel";
+			this.VersionLabel.Size = new System.Drawing.Size(49, 20);
+			this.VersionLabel.TabIndex = 4;
+			this.VersionLabel.Text = "1.0.0";
 			// 
 			// NameLabel
 			// 
@@ -806,15 +814,6 @@ namespace EveOPreview.UI
             ExitMenuItem});
 			this.TrayMenu.Name = "contextMenuStrip1";
 			this.TrayMenu.Size = new System.Drawing.Size(152, 76);
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(0, 157);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(206, 13);
-			this.label1.TabIndex = 6;
-			this.label1.Text = "For more information visit our forum thread:";
 			// 
 			// MainForm
 			// 
@@ -894,7 +893,8 @@ namespace EveOPreview.UI
 		private CheckBox ShowThumbnailOverlaysCheckBox;
 		private CheckBox ShowThumbnailFramesCheckBox;
 		private CheckedListBox ThumbnailsList;
-		private LinkLabel ForumLinkLabel;
+		private LinkLabel DocumentationLink;
 		private Label label1;
+		private Label VersionLabel;
 	}
 }

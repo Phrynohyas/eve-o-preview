@@ -54,6 +54,7 @@ namespace EveOPreview.UI
 		{
 			this.LoadApplicationSettings();
 			this.View.SetForumUrl(MainPresenter.ForumUrl);
+			this.View.SetVersionInfo(this.GetApplicationVersion());
 			if (this._configuration.MinimizeToTray)
 			{
 				this.View.Minimize();
@@ -220,6 +221,12 @@ namespace EveOPreview.UI
 		{
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
+		}
+
+		private string GetApplicationVersion()
+		{
+			Version version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+			return String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
 		}
 
 		private void ExitApplication()
