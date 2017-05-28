@@ -34,22 +34,13 @@ namespace EveOPreview.UI
 
 		public bool MinimizeToTray
 		{
-			get
-			{
-				return this.MinimizeToTrayCheckBox.Checked;
-			}
-			set
-			{
-				this.MinimizeToTrayCheckBox.Checked = value;
-			}
+			get => this.MinimizeToTrayCheckBox.Checked;
+			set => this.MinimizeToTrayCheckBox.Checked = value;
 		}
 
 		public double ThumbnailOpacity
 		{
-			get
-			{
-				return Math.Min(this.ThumbnailOpacityTrackBar.Value / 100.00, 1.00);
-			}
+			get => Math.Min(this.ThumbnailOpacityTrackBar.Value / 100.00, 1.00);
 			set
 			{
 				int barValue = (int)(100.0 * value);
@@ -68,70 +59,37 @@ namespace EveOPreview.UI
 
 		public bool EnableClientLayoutTracking
 		{
-			get
-			{
-				return this.EnableClientLayoutTrackingCheckBox.Checked;
-			}
-			set
-			{
-				this.EnableClientLayoutTrackingCheckBox.Checked = value;
-			}
+			get => this.EnableClientLayoutTrackingCheckBox.Checked;
+			set => this.EnableClientLayoutTrackingCheckBox.Checked = value;
 		}
 
 		public bool HideActiveClientThumbnail
 		{
-			get
-			{
-				return this.HideActiveClientThumbnailCheckBox.Checked;
-			}
-			set
-			{
-				this.HideActiveClientThumbnailCheckBox.Checked = value;
-			}
+			get => this.HideActiveClientThumbnailCheckBox.Checked;
+			set => this.HideActiveClientThumbnailCheckBox.Checked = value;
 		}
 
 		public bool ShowThumbnailsAlwaysOnTop
 		{
-			get
-			{
-				return this.ShowThumbnailsAlwaysOnTopCheckBox.Checked;
-			}
-			set
-			{
-				this.ShowThumbnailsAlwaysOnTopCheckBox.Checked = value;
-			}
+			get => this.ShowThumbnailsAlwaysOnTopCheckBox.Checked;
+			set => this.ShowThumbnailsAlwaysOnTopCheckBox.Checked = value;
 		}
 
 		public bool HideThumbnailsOnLostFocus
 		{
-			get
-			{
-				return this.HideThumbnailsOnLostFocusCheckBox.Checked;
-			}
-			set
-			{
-				this.HideThumbnailsOnLostFocusCheckBox.Checked = value;
-			}
+			get => this.HideThumbnailsOnLostFocusCheckBox.Checked;
+			set => this.HideThumbnailsOnLostFocusCheckBox.Checked = value;
 		}
 
 		public bool EnablePerClientThumbnailLayouts
 		{
-			get
-			{
-				return this.EnablePerClientThumbnailsLayoutsCheckBox.Checked;
-			}
-			set
-			{
-				this.EnablePerClientThumbnailsLayoutsCheckBox.Checked = value;
-			}
+			get => this.EnablePerClientThumbnailsLayoutsCheckBox.Checked;
+			set => this.EnablePerClientThumbnailsLayoutsCheckBox.Checked = value;
 		}
 
 		public Size ThumbnailSize
 		{
-			get
-			{
-				return new Size((int)this.ThumbnailsWidthNumericEdit.Value, (int)this.ThumbnailsHeightNumericEdit.Value);
-			}
+			get => new Size((int)this.ThumbnailsWidthNumericEdit.Value, (int)this.ThumbnailsHeightNumericEdit.Value);
 			set
 			{
 				this.ThumbnailsWidthNumericEdit.Value = value.Width;
@@ -141,10 +99,7 @@ namespace EveOPreview.UI
 
 		public bool EnableThumbnailZoom
 		{
-			get
-			{
-				return this.EnableThumbnailZoomCheckBox.Checked;
-			}
+			get => this.EnableThumbnailZoomCheckBox.Checked;
 			set
 			{
 				this.EnableThumbnailZoomCheckBox.Checked = value;
@@ -154,14 +109,8 @@ namespace EveOPreview.UI
 
 		public int ThumbnailZoomFactor
 		{
-			get
-			{
-				return (int)this.ThumbnailZoomFactorNumericEdit.Value;
-			}
-			set
-			{
-				this.ThumbnailZoomFactorNumericEdit.Value = value;
-			}
+			get => (int)this.ThumbnailZoomFactorNumericEdit.Value;
+			set => this.ThumbnailZoomFactorNumericEdit.Value = value;
 		}
 
 		public ViewZoomAnchor ThumbnailZoomAnchor
@@ -196,46 +145,25 @@ namespace EveOPreview.UI
 
 		public bool ShowThumbnailOverlays
 		{
-			get
-			{
-				return this.ShowThumbnailOverlaysCheckBox.Checked;
-			}
-			set
-			{
-				this.ShowThumbnailOverlaysCheckBox.Checked = value;
-			}
+			get => this.ShowThumbnailOverlaysCheckBox.Checked;
+			set => this.ShowThumbnailOverlaysCheckBox.Checked = value;
 		}
 
 		public bool ShowThumbnailFrames
 		{
-			get
-			{
-				return this.ShowThumbnailFramesCheckBox.Checked;
-			}
-			set
-			{
-				this.ShowThumbnailFramesCheckBox.Checked = value;
-			}
+			get => this.ShowThumbnailFramesCheckBox.Checked;
+			set => this.ShowThumbnailFramesCheckBox.Checked = value;
 		}
 
 		public bool EnableActiveClientHighlight
 		{
-			get
-			{
-				return this.EnableActiveClientHighlightCheckBox.Checked;
-			}
-			set
-			{
-				this.EnableActiveClientHighlightCheckBox.Checked = value;
-			}
+			get => this.EnableActiveClientHighlightCheckBox.Checked;
+			set => this.EnableActiveClientHighlightCheckBox.Checked = value;
 		}
 
 		public Color ActiveClientHighlightColor
 		{
-			get
-			{
-				return this._activeClientHighlightColor;
-			}
+			get => this._activeClientHighlightColor;
 			set
 			{
 				this._activeClientHighlightColor = value;
