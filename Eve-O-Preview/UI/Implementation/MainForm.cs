@@ -195,9 +195,9 @@ namespace EveOPreview.UI
 			this.WindowState = FormWindowState.Minimized;
 		}
 
-		public void SetForumUrl(string url)
+		public void SetVersionInfo(string version)
 		{
-			this.ForumLinkLabel.Text = url;
+			this.VersionLabel.Text = version;
 		}
 
 		public void SetDocumentationUrl(string url)
@@ -269,7 +269,7 @@ namespace EveOPreview.UI
 
 		public Action<IntPtr> ThumbnailStateChanged { get; set; }
 
-		public Action ForumUrlLinkActivated { get; set; }
+		public Action DocumentationLinkActivated { get; set; }
 
 		#region UI events
 		private void ContentTabControl_DrawItem(object sender, DrawItemEventArgs e)
@@ -354,9 +354,9 @@ namespace EveOPreview.UI
 			this.ThumbnailStateChanged?.Invoke(selectedItem.Id);
 		}
 
-		private void ForumLinkLabelClicked_Handler(object sender, LinkLabelLinkClickedEventArgs e)
+		private void DocumentationLinkClicked_Handler(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			this.ForumUrlLinkActivated?.Invoke();
+			this.DocumentationLinkActivated?.Invoke();
 		}
 
 		private void MainFormResize_Handler(object sender, EventArgs e)

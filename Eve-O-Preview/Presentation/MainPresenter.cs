@@ -41,7 +41,7 @@ namespace EveOPreview.UI
 			this.View.ApplicationSettingsChanged = this.SaveApplicationSettings;
 			this.View.ThumbnailsSizeChanged = this.UpdateThumbnailsSize;
 			this.View.ThumbnailStateChanged = this.UpdateThumbnailState;
-			this.View.ForumUrlLinkActivated = this.OpenForumUrlLink;
+			this.View.DocumentationLinkActivated = this.OpenDocumentationLink;
 			this.View.ApplicationExitRequested = this.ExitApplication;
 
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
@@ -53,7 +53,7 @@ namespace EveOPreview.UI
 		private void Activate()
 		{
 			this.LoadApplicationSettings();
-			this.View.SetForumUrl(MainPresenter.ForumUrl);
+			this.View.SetDocumentationUrl(MainPresenter.ForumUrl);
 			this.View.SetVersionInfo(this.GetApplicationVersion());
 			if (this._configuration.MinimizeToTray)
 			{
@@ -217,7 +217,7 @@ namespace EveOPreview.UI
 			this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
 		}
 
-		private void OpenForumUrlLink()
+		private void OpenDocumentationLink()
 		{
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);

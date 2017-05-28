@@ -53,6 +53,7 @@ namespace EveOPreview.UI
 			System.Windows.Forms.Label ThumbnailsListLabel;
 			System.Windows.Forms.TabPage AboutTabPage;
 			System.Windows.Forms.Panel AboutPanel;
+			System.Windows.Forms.Label DocumentationLinkLabel;
 			System.Windows.Forms.Label DescriptionLabel;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			System.Windows.Forms.Label NameLabel;
@@ -84,9 +85,8 @@ namespace EveOPreview.UI
 			this.ShowThumbnailOverlaysCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowThumbnailFramesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ThumbnailsList = new System.Windows.Forms.CheckedListBox();
-			this.label1 = new System.Windows.Forms.Label();
 			this.VersionLabel = new System.Windows.Forms.Label();
-			this.ForumLinkLabel = new System.Windows.Forms.LinkLabel();
+			this.DocumentationLink = new System.Windows.Forms.LinkLabel();
 			this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			RestoreWindowMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,6 +111,7 @@ namespace EveOPreview.UI
 			ThumbnailsListLabel = new System.Windows.Forms.Label();
 			AboutTabPage = new System.Windows.Forms.TabPage();
 			AboutPanel = new System.Windows.Forms.Panel();
+			DocumentationLinkLabel = new System.Windows.Forms.Label();
 			DescriptionLabel = new System.Windows.Forms.Label();
 			NameLabel = new System.Windows.Forms.Label();
 			ContentTabControl.SuspendLayout();
@@ -738,25 +739,25 @@ namespace EveOPreview.UI
 			// AboutPanel
 			// 
 			AboutPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			AboutPanel.Controls.Add(this.label1);
+			AboutPanel.Controls.Add(DocumentationLinkLabel);
 			AboutPanel.Controls.Add(DescriptionLabel);
 			AboutPanel.Controls.Add(this.VersionLabel);
 			AboutPanel.Controls.Add(NameLabel);
-			AboutPanel.Controls.Add(this.ForumLinkLabel);
+			AboutPanel.Controls.Add(this.DocumentationLink);
 			AboutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			AboutPanel.Location = new System.Drawing.Point(0, 0);
 			AboutPanel.Name = "AboutPanel";
 			AboutPanel.Size = new System.Drawing.Size(262, 210);
 			AboutPanel.TabIndex = 2;
 			// 
-			// label1
+			// DocumentationLinkLabel
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(0, 157);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(206, 13);
-			this.label1.TabIndex = 6;
-			this.label1.Text = "For more information visit our forum thread:";
+			DocumentationLinkLabel.AutoSize = true;
+			DocumentationLinkLabel.Location = new System.Drawing.Point(0, 157);
+			DocumentationLinkLabel.Name = "DocumentationLinkLabel";
+			DocumentationLinkLabel.Size = new System.Drawing.Size(206, 13);
+			DocumentationLinkLabel.TabIndex = 6;
+			DocumentationLinkLabel.Text = "For more information visit our forum thread:";
 			// 
 			// DescriptionLabel
 			// 
@@ -786,16 +787,16 @@ namespace EveOPreview.UI
 			NameLabel.TabIndex = 3;
 			NameLabel.Text = "EVE-O Preview";
 			// 
-			// ForumLinkLabel
+			// DocumentationLink
 			// 
-			this.ForumLinkLabel.Location = new System.Drawing.Point(0, 173);
-			this.ForumLinkLabel.Name = "ForumLinkLabel";
-			this.ForumLinkLabel.Size = new System.Drawing.Size(262, 33);
-			this.ForumLinkLabel.TabIndex = 2;
-			this.ForumLinkLabel.TabStop = true;
-			this.ForumLinkLabel.Text = "to be set from prresenter to be set from prresenter to be set from prresenter to " +
+			this.DocumentationLink.Location = new System.Drawing.Point(0, 173);
+			this.DocumentationLink.Name = "DocumentationLink";
+			this.DocumentationLink.Size = new System.Drawing.Size(262, 33);
+			this.DocumentationLink.TabIndex = 2;
+			this.DocumentationLink.TabStop = true;
+			this.DocumentationLink.Text = "to be set from prresenter to be set from prresenter to be set from prresenter to " +
     "be set from prresenter";
-			this.ForumLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ForumLinkLabelClicked_Handler);
+			this.DocumentationLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.DocumentationLinkClicked_Handler);
 			// 
 			// NotifyIcon
 			// 
@@ -894,7 +895,6 @@ namespace EveOPreview.UI
 		private CheckBox ShowThumbnailFramesCheckBox;
 		private CheckedListBox ThumbnailsList;
 		private LinkLabel DocumentationLink;
-		private Label label1;
 		private Label VersionLabel;
 	}
 }
