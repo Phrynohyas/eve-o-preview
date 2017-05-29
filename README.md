@@ -1,4 +1,4 @@
-#Overview
+# Overview
 
 The purpose of this application is to provide a simple way to keep an eye on several simultaneously running EVE Online clients and to easily switch between them. While running it shows a set of live thumbnails for each of the active EVE Online clients. These thumbnails allow fast switch to the corresponding EVE Online client either using mouse or a configurable hotkey.
 
@@ -14,14 +14,14 @@ Under any conditions you should NOT use EVE-O Preview for any actions that break
 
 If you have find out that some of the features or their combination of EVE-O Preview might cause actions that can be considered as breaking EULA or ToS of EVE Online you should consider them as a bug and immediately notify the Developer ( Phrynohyas Tig-Rah ) via in-game mail.
 
-#System Requirements
+# System Requirements
 
 * Windows Vista, Windows 7, Windows 8/8.1, Windows 10
 * Windows Aero Enabled
 * Microsoft .NET Framework 4.5+
 
 
-#How To Install & Use
+# How To Install & Use
 
 1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc)
 ..* **Note**: Please do not install the program into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
@@ -44,15 +44,15 @@ CCP FoxFour wrote:
 > to bring the respective EVE Client to the front/put the window focus on it, in order to
 > interact with it.
 
-#Application Options
+# Application Options
 
-##Startup Parameters
+## Startup Parameters
 
 | Parameter | Description |
 | --- | --- |
 | **config** | This option allows to start the application with a custom configuration file. If the provided file doesn't exists it will be created with default values.<br />For example **"Eve-O&nbsp;Preview.exe"&nbsp;--config:TestSetup.json** |
 
-##Application Options Available Via GUI
+## Application Options Available Via GUI
 
 | Option | Description |
 | --- | --- |
@@ -74,7 +74,7 @@ CCP FoxFour wrote:
 | Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
 | Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
 
-##Mouse Gestures
+## Mouse Gestures
 
 Mouse gestures are applied to the thumbnail window currently being hovered over.
 
@@ -84,7 +84,7 @@ Mouse gestures are applied to the thumbnail window currently being hovered over.
 | Adjust thumbnail height | Press both left and right mouse buttons and move the mouse up or down |
 | Adjust thumbnail width | Press both left and right mouse buttons and move the mouse left or right |
 
-##Configuration File-Only Options
+## Configuration File-Only Options
 
 Some of the application options are not exposed in the GUI. They can be ajusted directly in the configuration file.
 
@@ -96,7 +96,7 @@ Some of the application options are not exposed in the GUI. They can be ajusted 
 | **ThumbnailMinimumSize** | Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80",** |
 | **ThumbnailMaximumSize** | Maximum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"640, 400"**.<br />For example: **"ThumbnailMaximumSize": "640, 400",** |
 
-##Hotkey Setup
+## Hotkey Setup
 
 It is possible to set a key kombinations to immediately jump to cetrain EVE window. However currently EVE-O Preview doesn't provide any GUI to set the these hotkeys. It should be done via editind the configuration file directly. Don't forget to make a backup copy of the file before editing it.
 
@@ -127,14 +127,14 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 
 ---
 
-#Credits
+# Credits
 
-##Created by
+## Created by
 
 * StinkRay
 
 
-##Maintained by
+## Maintained by
 
 * Phrynohyas Tig-Rah
  
@@ -143,17 +143,23 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 * StinkRay
 
 
-##With contributions from
+## With contributions from
 
 * CCP FoxFour
 
 
-##Original threads
+## Forum thread
 
-https://forums.eveonline.com/default.aspx?g=posts&t=389086
-https://forums.eveonline.com/default.aspx?g=posts&t=246157
+https://forums.eveonline.com/default.aspx?g=posts&t=484927
 
 
-##Original repository
+## Original threads
+
+* https://forums.eveonline.com/default.aspx?g=posts&t=389086
+
+* https://forums.eveonline.com/default.aspx?g=posts&t=246157
+
+
+## Original repository
 
 https://bitbucket.org/ulph/eve-o-preview-git
