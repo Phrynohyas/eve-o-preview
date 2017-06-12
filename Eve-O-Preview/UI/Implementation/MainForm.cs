@@ -34,22 +34,13 @@ namespace EveOPreview.UI
 
 		public bool MinimizeToTray
 		{
-			get
-			{
-				return this.MinimizeToTrayCheckBox.Checked;
-			}
-			set
-			{
-				this.MinimizeToTrayCheckBox.Checked = value;
-			}
+			get => this.MinimizeToTrayCheckBox.Checked;
+			set => this.MinimizeToTrayCheckBox.Checked = value;
 		}
 
 		public double ThumbnailOpacity
 		{
-			get
-			{
-				return Math.Min(this.ThumbnailOpacityTrackBar.Value / 100.00, 1.00);
-			}
+			get => Math.Min(this.ThumbnailOpacityTrackBar.Value / 100.00, 1.00);
 			set
 			{
 				int barValue = (int)(100.0 * value);
@@ -68,70 +59,37 @@ namespace EveOPreview.UI
 
 		public bool EnableClientLayoutTracking
 		{
-			get
-			{
-				return this.EnableClientLayoutTrackingCheckBox.Checked;
-			}
-			set
-			{
-				this.EnableClientLayoutTrackingCheckBox.Checked = value;
-			}
+			get => this.EnableClientLayoutTrackingCheckBox.Checked;
+			set => this.EnableClientLayoutTrackingCheckBox.Checked = value;
 		}
 
 		public bool HideActiveClientThumbnail
 		{
-			get
-			{
-				return this.HideActiveClientThumbnailCheckBox.Checked;
-			}
-			set
-			{
-				this.HideActiveClientThumbnailCheckBox.Checked = value;
-			}
+			get => this.HideActiveClientThumbnailCheckBox.Checked;
+			set => this.HideActiveClientThumbnailCheckBox.Checked = value;
 		}
 
 		public bool ShowThumbnailsAlwaysOnTop
 		{
-			get
-			{
-				return this.ShowThumbnailsAlwaysOnTopCheckBox.Checked;
-			}
-			set
-			{
-				this.ShowThumbnailsAlwaysOnTopCheckBox.Checked = value;
-			}
+			get => this.ShowThumbnailsAlwaysOnTopCheckBox.Checked;
+			set => this.ShowThumbnailsAlwaysOnTopCheckBox.Checked = value;
 		}
 
 		public bool HideThumbnailsOnLostFocus
 		{
-			get
-			{
-				return this.HideThumbnailsOnLostFocusCheckBox.Checked;
-			}
-			set
-			{
-				this.HideThumbnailsOnLostFocusCheckBox.Checked = value;
-			}
+			get => this.HideThumbnailsOnLostFocusCheckBox.Checked;
+			set => this.HideThumbnailsOnLostFocusCheckBox.Checked = value;
 		}
 
 		public bool EnablePerClientThumbnailLayouts
 		{
-			get
-			{
-				return this.EnablePerClientThumbnailsLayoutsCheckBox.Checked;
-			}
-			set
-			{
-				this.EnablePerClientThumbnailsLayoutsCheckBox.Checked = value;
-			}
+			get => this.EnablePerClientThumbnailsLayoutsCheckBox.Checked;
+			set => this.EnablePerClientThumbnailsLayoutsCheckBox.Checked = value;
 		}
 
 		public Size ThumbnailSize
 		{
-			get
-			{
-				return new Size((int)this.ThumbnailsWidthNumericEdit.Value, (int)this.ThumbnailsHeightNumericEdit.Value);
-			}
+			get => new Size((int)this.ThumbnailsWidthNumericEdit.Value, (int)this.ThumbnailsHeightNumericEdit.Value);
 			set
 			{
 				this.ThumbnailsWidthNumericEdit.Value = value.Width;
@@ -141,10 +99,7 @@ namespace EveOPreview.UI
 
 		public bool EnableThumbnailZoom
 		{
-			get
-			{
-				return this.EnableThumbnailZoomCheckBox.Checked;
-			}
+			get => this.EnableThumbnailZoomCheckBox.Checked;
 			set
 			{
 				this.EnableThumbnailZoomCheckBox.Checked = value;
@@ -154,14 +109,8 @@ namespace EveOPreview.UI
 
 		public int ThumbnailZoomFactor
 		{
-			get
-			{
-				return (int)this.ThumbnailZoomFactorNumericEdit.Value;
-			}
-			set
-			{
-				this.ThumbnailZoomFactorNumericEdit.Value = value;
-			}
+			get => (int)this.ThumbnailZoomFactorNumericEdit.Value;
+			set => this.ThumbnailZoomFactorNumericEdit.Value = value;
 		}
 
 		public ViewZoomAnchor ThumbnailZoomAnchor
@@ -196,46 +145,25 @@ namespace EveOPreview.UI
 
 		public bool ShowThumbnailOverlays
 		{
-			get
-			{
-				return this.ShowThumbnailOverlaysCheckBox.Checked;
-			}
-			set
-			{
-				this.ShowThumbnailOverlaysCheckBox.Checked = value;
-			}
+			get => this.ShowThumbnailOverlaysCheckBox.Checked;
+			set => this.ShowThumbnailOverlaysCheckBox.Checked = value;
 		}
 
 		public bool ShowThumbnailFrames
 		{
-			get
-			{
-				return this.ShowThumbnailFramesCheckBox.Checked;
-			}
-			set
-			{
-				this.ShowThumbnailFramesCheckBox.Checked = value;
-			}
+			get => this.ShowThumbnailFramesCheckBox.Checked;
+			set => this.ShowThumbnailFramesCheckBox.Checked = value;
 		}
 
 		public bool EnableActiveClientHighlight
 		{
-			get
-			{
-				return this.EnableActiveClientHighlightCheckBox.Checked;
-			}
-			set
-			{
-				this.EnableActiveClientHighlightCheckBox.Checked = value;
-			}
+			get => this.EnableActiveClientHighlightCheckBox.Checked;
+			set => this.EnableActiveClientHighlightCheckBox.Checked = value;
 		}
 
 		public Color ActiveClientHighlightColor
 		{
-			get
-			{
-				return this._activeClientHighlightColor;
-			}
+			get => this._activeClientHighlightColor;
 			set
 			{
 				this._activeClientHighlightColor = value;
@@ -267,9 +195,14 @@ namespace EveOPreview.UI
 			this.WindowState = FormWindowState.Minimized;
 		}
 
-		public void SetForumUrl(string url)
+		public void SetVersionInfo(string version)
 		{
-			this.ForumLinkLabel.Text = url;
+			this.VersionLabel.Text = version;
+		}
+
+		public void SetDocumentationUrl(string url)
+		{
+			this.DocumentationLink.Text = url;
 		}
 
 		public void AddThumbnails(IList<IThumbnailDescriptionView> thumbnails)
@@ -336,9 +269,34 @@ namespace EveOPreview.UI
 
 		public Action<IntPtr> ThumbnailStateChanged { get; set; }
 
-		public Action ForumUrlLinkActivated { get; set; }
+		public Action DocumentationLinkActivated { get; set; }
 
 		#region UI events
+		private void ContentTabControl_DrawItem(object sender, DrawItemEventArgs e)
+		{
+			TabControl control = (TabControl)sender;
+			TabPage page = control.TabPages[e.Index];
+			Rectangle bounds = control.GetTabRect(e.Index);
+
+			Graphics graphics = e.Graphics;
+
+			Brush textBrush = new SolidBrush(SystemColors.ActiveCaptionText);
+			Brush backgroundBrush = (e.State == DrawItemState.Selected)
+										? new SolidBrush(SystemColors.Control)
+										: new SolidBrush(SystemColors.ControlDark);
+			graphics.FillRectangle(backgroundBrush, e.Bounds);
+
+			// Use our own font
+			Font font = new Font("Arial", this.Font.Size * 1.2f, FontStyle.Bold, GraphicsUnit.Pixel);
+
+			// Draw string and center the text
+			StringFormat stringFlags = new StringFormat();
+			stringFlags.Alignment = StringAlignment.Center;
+			stringFlags.LineAlignment = StringAlignment.Center;
+
+			graphics.DrawString(page.Text, font, textBrush, bounds, stringFlags);
+		}
+
 		private void OptionChanged_Handler(object sender, EventArgs e)
 		{
 			if (this._suppressEvents)
@@ -396,9 +354,9 @@ namespace EveOPreview.UI
 			this.ThumbnailStateChanged?.Invoke(selectedItem.Id);
 		}
 
-		private void ForumLinkLabelClicked_Handler(object sender, LinkLabelLinkClickedEventArgs e)
+		private void DocumentationLinkClicked_Handler(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			this.ForumUrlLinkActivated?.Invoke();
+			this.DocumentationLinkActivated?.Invoke();
 		}
 
 		private void MainFormResize_Handler(object sender, EventArgs e)

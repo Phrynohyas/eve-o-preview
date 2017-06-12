@@ -58,10 +58,7 @@ namespace EveOPreview.UI
 
 		public string Title
 		{
-			get
-			{
-				return this.Text;
-			}
+			get => this.Text;
 			set
 			{
 				this.Text = value;
@@ -77,10 +74,7 @@ namespace EveOPreview.UI
 
 		public Point ThumbnailLocation
 		{
-			get
-			{
-				return this.Location;
-			}
+			get => this.Location;
 			set
 			{
 				if ((value.X > 0) || (value.Y > 0))
@@ -93,14 +87,8 @@ namespace EveOPreview.UI
 
 		public Size ThumbnailSize
 		{
-			get
-			{
-				return this.ClientSize;
-			}
-			set
-			{
-				this.ClientSize = value;
-			}
+			get => this.ClientSize;
+			set => this.ClientSize = value;
 		}
 
 		public Action<IntPtr> ThumbnailResized { get; set; }
