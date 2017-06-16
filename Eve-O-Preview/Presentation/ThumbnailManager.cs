@@ -52,6 +52,8 @@ namespace EveOPreview.UI
 
 		public Action<IList<IThumbnailView>> ThumbnailsRemoved { get; set; }
 
+		public Action<String, String, Point> ThumbnailPositionChanged { get; set; }
+
 		public Action<Size> ThumbnailSizeChanged { get; set; }
 
 		public void Activate()
@@ -374,7 +376,7 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this._configuration.SetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+			this.ThumbnailPositionChanged?.Invoke(view.Title, this._activeClientTitle, view.ThumbnailLocation);
 
 			view.Refresh(false);
 		}

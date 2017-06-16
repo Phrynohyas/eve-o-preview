@@ -47,6 +47,8 @@ namespace EveOPreview.UI
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
 			this._thumbnailManager.ThumbnailsRemoved = this.ThumbnailsRemoved;
+
+			this._thumbnailManager.ThumbnailPositionChanged = this.ThumbnailPositionChanged;
 			this._thumbnailManager.ThumbnailSizeChanged = this.ThumbnailSizeChanged;
 		}
 
@@ -205,6 +207,12 @@ namespace EveOPreview.UI
 			}
 
 			return thumbnailViews;
+		}
+
+		private void ThumbnailPositionChanged(String thumbnailName, String activeClientName, Point location)
+		{
+			this._configuration.SetThumbnailLocation(thumbnailName, activeClientName, location);
+			this._configurationStorage.Save();
 		}
 
 		private void ThumbnailSizeChanged(Size size)
