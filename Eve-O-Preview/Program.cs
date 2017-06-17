@@ -27,15 +27,15 @@ namespace EveOPreview
 				return;
 			}
 
+			ExceptionHandler handler = new ExceptionHandler();
+			handler.SetupExceptionHandlers();
+
 			Program.InitializeWinFormsGui();
 
 			IApplicationController controller = Program.InitializeApplicationController();
-
 			Program.SetupApplicationConttroller(controller, Program.GetCustomConfigFile(args));
 
 			controller.Run<MainPresenter>();
-
-			token = null;
 		}
 
 		private static string GetCustomConfigFile(string[] args)

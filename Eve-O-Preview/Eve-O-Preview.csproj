@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationBase\ApplicationController.cs" />
+    <Compile Include="ApplicationBase\ExceptionHandler.cs" />
     <Compile Include="ApplicationBase\IApplicationController.cs" />
     <Compile Include="ApplicationBase\IIocContainer.cs" />
     <Compile Include="ApplicationBase\IPresenterGeneric.cs" />
