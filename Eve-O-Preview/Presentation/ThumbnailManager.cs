@@ -403,7 +403,10 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this.ThumbnailPositionChanged?.Invoke(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+			if (view.Title != ThumbnailManager.DefaultClientTitle)
+			{
+				this.ThumbnailPositionChanged?.Invoke(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+			}
 
 			view.Refresh(false);
 		}
