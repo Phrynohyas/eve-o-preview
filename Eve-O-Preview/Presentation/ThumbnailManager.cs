@@ -52,6 +52,8 @@ namespace EveOPreview.UI
 
 		public Action<IList<IThumbnailView>> ThumbnailsRemoved { get; set; }
 
+		public Action<String, String, Point> ThumbnailPositionChanged { get; set; }
+
 		public Action<Size> ThumbnailSizeChanged { get; set; }
 
 		public void Activate()
@@ -126,7 +128,7 @@ namespace EveOPreview.UI
 				if (!this._isHoverEffectActive)
 				{
 					// Do not even move thumbnails with default caption
-					if (view.Title != ThumbnailManager.DefaultClientTitle)
+					if (this.IsManageableThumbnail(view))
 					{
 						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
 					}
@@ -216,7 +218,10 @@ namespace EveOPreview.UI
 					// Otherwise thumbnail window will be unnecessary resized
 					view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
 					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
-					view.ThumbnailLocation = this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation);
+
+					view.ThumbnailLocation = this.IsManageableThumbnail(view)
+												? this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation)
+												: this._configuration.GetDefaultThumbnailLocation();
 
 					this._thumbnailViews.Add(processHandle, view);
 
@@ -225,6 +230,7 @@ namespace EveOPreview.UI
 					view.ThumbnailFocused = this.ThumbnailViewFocused;
 					view.ThumbnailLostFocus = this.ThumbnailViewLostFocus;
 					view.ThumbnailActivated = this.ThumbnailActivated;
+					view.ThumbnailDeactivated = this.ThumbnailDeactivated;
 
 					view.RegisterHotkey(this._configuration.GetClientHotkey(processTitle));
 
@@ -351,6 +357,29 @@ namespace EveOPreview.UI
 			view?.Refresh(true);
 		}
 
+		private void ThumbnailDeactivated(IntPtr id)
+		{
+			IThumbnailView view;
+			this._thumbnailViews.TryGetValue(id, out view);
+
+
+			if (view?.Id == this._activeClientHandle)
+			{
+				WindowManagerNativeMethods.SendMessage(view.Id, WindowManagerNativeMethods.WM_SYSCOMMAND, WindowManagerNativeMethods.SC_MINIMIZE, 0);
+			}
+			else
+			{
+				int style = WindowManagerNativeMethods.GetWindowLong(id, WindowManagerNativeMethods.GWL_STYLE);
+				// If the window is not already minimized then minimize it
+				if ((style & WindowManagerNativeMethods.WS_MINIMIZE) != WindowManagerNativeMethods.WS_MINIMIZE)
+				{
+					WindowManagerNativeMethods.ShowWindowAsync(id, WindowManagerNativeMethods.SW_SHOWMINIMIZED);
+				}
+			}
+
+			this.RefreshThumbnails();
+		}
+
 		private void ThumbnailViewResized(IntPtr id)
 		{
 			if (this._ignoreViewEvents)
@@ -374,7 +403,10 @@ namespace EveOPreview.UI
 
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this._configuration.SetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+			if (this.IsManageableThumbnail(view))
+			{
+				this.ThumbnailPositionChanged?.Invoke(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+			}
 
 			view.Refresh(false);
 		}
@@ -457,6 +489,12 @@ namespace EveOPreview.UI
 
 				this._configuration.SetClientLayout(process.MainWindowTitle, clientLayout);
 			}
+		}
+
+		// We should no manage some thumbnails (like thumbnail of the EVE client sitting on the login screen)
+		private bool IsManageableThumbnail(IThumbnailView view)
+		{
+			return view.Title != ThumbnailManager.DefaultClientTitle;
 		}
 	}
 }

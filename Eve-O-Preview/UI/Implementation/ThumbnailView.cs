@@ -58,10 +58,7 @@ namespace EveOPreview.UI
 
 		public string Title
 		{
-			get
-			{
-				return this.Text;
-			}
+			get => this.Text;
 			set
 			{
 				this.Text = value;
@@ -77,10 +74,7 @@ namespace EveOPreview.UI
 
 		public Point ThumbnailLocation
 		{
-			get
-			{
-				return this.Location;
-			}
+			get => this.Location;
 			set
 			{
 				if ((value.X > 0) || (value.Y > 0))
@@ -93,14 +87,8 @@ namespace EveOPreview.UI
 
 		public Size ThumbnailSize
 		{
-			get
-			{
-				return this.ClientSize;
-			}
-			set
-			{
-				this.ClientSize = value;
-			}
+			get => this.ClientSize;
+			set => this.ClientSize = value;
 		}
 
 		public Action<IntPtr> ThumbnailResized { get; set; }
@@ -112,6 +100,8 @@ namespace EveOPreview.UI
 		public Action<IntPtr> ThumbnailLostFocus { get; set; }
 
 		public Action<IntPtr> ThumbnailActivated { get; set; }
+
+		public Action<IntPtr> ThumbnailDeactivated { get; set; }
 
 		public new void Show()
 		{
@@ -447,7 +437,14 @@ namespace EveOPreview.UI
 		{
 			if (e.Button == MouseButtons.Left)
 			{
-				this.ThumbnailActivated?.Invoke(this.Id);
+				if (Control.ModifierKeys == Keys.Control)
+				{
+					this.ThumbnailDeactivated?.Invoke(this.Id);
+				}
+				else
+				{
+					this.ThumbnailActivated?.Invoke(this.Id);
+				}
 			}
 
 			if ((e.Button == MouseButtons.Right) || (e.Button == (MouseButtons.Left | MouseButtons.Right)))

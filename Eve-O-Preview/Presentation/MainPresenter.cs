@@ -41,19 +41,22 @@ namespace EveOPreview.UI
 			this.View.ApplicationSettingsChanged = this.SaveApplicationSettings;
 			this.View.ThumbnailsSizeChanged = this.UpdateThumbnailsSize;
 			this.View.ThumbnailStateChanged = this.UpdateThumbnailState;
-			this.View.ForumUrlLinkActivated = this.OpenForumUrlLink;
+			this.View.DocumentationLinkActivated = this.OpenDocumentationLink;
 			this.View.ApplicationExitRequested = this.ExitApplication;
 
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
 			this._thumbnailManager.ThumbnailsRemoved = this.ThumbnailsRemoved;
+
+			this._thumbnailManager.ThumbnailPositionChanged = this.ThumbnailPositionChanged;
 			this._thumbnailManager.ThumbnailSizeChanged = this.ThumbnailSizeChanged;
 		}
 
 		private void Activate()
 		{
 			this.LoadApplicationSettings();
-			this.View.SetForumUrl(MainPresenter.ForumUrl);
+			this.View.SetDocumentationUrl(MainPresenter.ForumUrl);
+			this.View.SetVersionInfo(this.GetApplicationVersion());
 			if (this._configuration.MinimizeToTray)
 			{
 				this.View.Minimize();
@@ -206,6 +209,12 @@ namespace EveOPreview.UI
 			return thumbnailViews;
 		}
 
+		private void ThumbnailPositionChanged(String thumbnailName, String activeClientName, Point location)
+		{
+			this._configuration.SetThumbnailLocation(thumbnailName, activeClientName, location);
+			this._configurationStorage.Save();
+		}
+
 		private void ThumbnailSizeChanged(Size size)
 		{
 			this.View.ThumbnailSize = size;
@@ -216,10 +225,16 @@ namespace EveOPreview.UI
 			this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
 		}
 
-		private void OpenForumUrlLink()
+		private void OpenDocumentationLink()
 		{
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
+		}
+
+		private string GetApplicationVersion()
+		{
+			Version version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+			return String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
 		}
 
 		private void ExitApplication()

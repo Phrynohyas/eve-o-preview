@@ -10,7 +10,7 @@ The program does NOT (and will NOT ever) do the following things:
 * broadcast any keyboard or mouse events
 * anyhow interact with EVE Online except of bringing its main window to foreground or resizing it
 
-Under any conditions you should NOT use EVE-O Preview for any actions that break EULA or ToS of EVE Online.
+**Under any conditions you should NOT use EVE-O Preview for any actions that break EULA or ToS of EVE Online.**
 
 If you have find out that some of the features or their combination of EVE-O Preview might cause actions that can be considered as breaking EULA or ToS of EVE Online you should consider them as a bug and immediately notify the Developer ( Phrynohyas Tig-Rah ) via in-game mail.
 
@@ -28,7 +28,7 @@ If you have find out that some of the features or their combination of EVE-O Pre
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described below
 
-#EVE Online EULA/ToS
+# EVE Online EULA/ToS
 
 This program is legal under the EULA/ToS:
 
@@ -54,25 +54,25 @@ CCP FoxFour wrote:
 
 ## Application Options Available Via GUI
 
-| Option | Description |
-| --- | --- |
-| Minimize to System Tray | Determines whether the main window form be minimized to windows tray when it is closed |
-| Opacity | Determines the inactive EVE thumbnails opacity (from almost invisible 20% to 100% solid) |
-| Track client locations | Determines whether the client's window position should be restored when it is activated or started |
-| Hide preview of active EVE client | Determines whether the thumbnail corresponding to the active EVE client is not displayed |
-| Previews always on top | Determines whether EVE client thumbnails should stay on top of all other windows |
-| Hide previews when EVE client is not active | Determines whether all thumbnails should be visible only when an EVE client is active |
-| Unique layout for each EVE client | Determines whether thumbnails positions are different depending on the EVE client being active (f.e. links char have thumbnails of the Falcon and DPS char in the right bottom corner while DPS and Falcon alts have them placed at the top of the main EVE window ) |
-| Thumbnail width | Thumbnails width. Can be set to any value from **100** to **640** points |
-| Thumbnail height | Thumbnails Height. Can be set to any value from **80** to **400** points |
-| Zoom on hover | Determines whether a thumbnail should be zoomed when the mouse pointer is over it  |
-| Zoom factor | Thumbnail zoom factor. Can be set to any value from **2** to **10** |
-| Zoom anchor | Sets the starting point of the thumbnail zoom |
-| Show overlay | Determines whether a name of the corresponding EVE cliet should be displayed on the thumbnail |
-| Show frames | Determines whether thumbnails should be displayd with window caption and borders |
-| Highlight active client | Determines whether the thumbnail of the active EVE client should be highlighted with a bright border |
-| Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
-| Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
+| Tab | Option | Description |
+| --- | --- | --- |
+| **General** | Minimize to System Tray | Determines whether the main window form be minimized to windows tray when it is closed |
+| General | Track client locations | Determines whether the client's window position should be restored when it is activated or started |
+| General | Hide preview of active EVE client | Determines whether the thumbnail corresponding to the active EVE client is not displayed |
+| General | Previews always on top | Determines whether EVE client thumbnails should stay on top of all other windows |
+| General | Hide previews when EVE client is not active | Determines whether all thumbnails should be visible only when an EVE client is active |
+| General | Unique layout for each EVE client | Determines whether thumbnails positions are different depending on the EVE client being active (f.e. links char have thumbnails of the Falcon and DPS char in the right bottom corner while DPS and Falcon alts have them placed at the top of the main EVE window ) |
+| **Thumbnail** | Opacity | Determines the inactive EVE thumbnails opacity (from almost invisible 20% to 100% solid) |
+| Thumbnail | Thumbnail Width | Thumbnails width. Can be set to any value from **100** to **640** points |
+| Thumbnail | Thumbnail Height | Thumbnails Height. Can be set to any value from **80** to **400** points |
+| **Zoom** | Zoom on hover | Determines whether a thumbnail should be zoomed when the mouse pointer is over it  |
+| Zoom | Zoom factor | Thumbnail zoom factor. Can be set to any value from **2** to **10** |
+| Zoom | Zoom anchor | Sets the starting point of the thumbnail zoom |
+| **Overlay** | Show overlay | Determines whether a name of the corresponding EVE cliet should be displayed on the thumbnail |
+| Overlay | Show frames | Determines whether thumbnails should be displayd with window caption and borders |
+| Overlay | Highlight active client | Determines whether the thumbnail of the active EVE client should be highlighted with a bright border |
+| Overlay | Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
+| **Active Clients** | Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
 
 ## Mouse Gestures
 
