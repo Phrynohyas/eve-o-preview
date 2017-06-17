@@ -101,6 +101,8 @@ namespace EveOPreview.UI
 
 		public Action<IntPtr> ThumbnailActivated { get; set; }
 
+		public Action<IntPtr> ThumbnailDeactivated { get; set; }
+
 		public new void Show()
 		{
 			base.Show();
@@ -435,7 +437,14 @@ namespace EveOPreview.UI
 		{
 			if (e.Button == MouseButtons.Left)
 			{
-				this.ThumbnailActivated?.Invoke(this.Id);
+				if (Control.ModifierKeys == Keys.Control)
+				{
+					this.ThumbnailDeactivated?.Invoke(this.Id);
+				}
+				else
+				{
+					this.ThumbnailActivated?.Invoke(this.Id);
+				}
 			}
 
 			if ((e.Button == MouseButtons.Right) || (e.Button == (MouseButtons.Left | MouseButtons.Right)))

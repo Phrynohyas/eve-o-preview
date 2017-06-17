@@ -227,6 +227,7 @@ namespace EveOPreview.UI
 					view.ThumbnailFocused = this.ThumbnailViewFocused;
 					view.ThumbnailLostFocus = this.ThumbnailViewLostFocus;
 					view.ThumbnailActivated = this.ThumbnailActivated;
+					view.ThumbnailDeactivated = this.ThumbnailDeactivated;
 
 					view.RegisterHotkey(this._configuration.GetClientHotkey(processTitle));
 
@@ -351,6 +352,29 @@ namespace EveOPreview.UI
 			this.RefreshThumbnails();
 
 			view?.Refresh(true);
+		}
+
+		private void ThumbnailDeactivated(IntPtr id)
+		{
+			IThumbnailView view;
+			this._thumbnailViews.TryGetValue(id, out view);
+
+
+			if (view?.Id == this._activeClientHandle)
+			{
+				WindowManagerNativeMethods.SendMessage(view.Id, WindowManagerNativeMethods.WM_SYSCOMMAND, WindowManagerNativeMethods.SC_MINIMIZE, 0);
+			}
+			else
+			{
+				int style = WindowManagerNativeMethods.GetWindowLong(id, WindowManagerNativeMethods.GWL_STYLE);
+				// If the window is not already minimized then minimize it
+				if ((style & WindowManagerNativeMethods.WS_MINIMIZE) != WindowManagerNativeMethods.WS_MINIMIZE)
+				{
+					WindowManagerNativeMethods.ShowWindowAsync(id, WindowManagerNativeMethods.SW_SHOWMINIMIZED);
+				}
+			}
+
+			this.RefreshThumbnails();
 		}
 
 		private void ThumbnailViewResized(IntPtr id)
