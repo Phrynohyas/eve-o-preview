@@ -151,7 +151,7 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 
 ## Forum thread
 
-https://forums.eveonline.com/default.aspx?g=posts&t=484927
+https://meta.eveonline.com/t/eve-o-preview-v3-0-0-multi-client-preview-switcher/4202
 
 
 ## Original threads
