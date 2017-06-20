@@ -5,6 +5,7 @@ The purpose of this application is to provide a simple way to keep an eye on sev
 It's essentially a task switcher, it does not relay any keyboard/mouse events and suchlike. The app works with EVE, EVE through Steam, or any combination thereof.
 
 The program does NOT (and will NOT ever) do the following things:
+
 * modify EVE Online interface
 * display modified EVE Online interface
 * broadcast any keyboard or mouse events
@@ -24,13 +25,13 @@ If you have find out that some of the features or their combination of EVE-O Pre
 # How To Install & Use
 
 1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc)
-..* **Note**: Please do not install the program into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
+..* **Note**: Please do not install the application into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described below
 
 # EVE Online EULA/ToS
 
-This program is legal under the EULA/ToS:
+This application is legal under the EULA/ToS:
 
 CCP FoxFour wrote:
 > Please keep the discussion on topic. The legitimacy of this software has already been discussed
@@ -158,6 +159,8 @@ https://forums.eveonline.com/default.aspx?g=posts&t=484927
 * https://forums.eveonline.com/default.aspx?g=posts&t=389086
 
 * https://forums.eveonline.com/default.aspx?g=posts&t=246157
+
+* https://forums.eveonline.com/default.aspx?g=posts&t=484927
 
 
 ## Original repository
