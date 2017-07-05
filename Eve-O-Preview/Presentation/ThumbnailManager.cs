@@ -10,6 +10,9 @@ namespace EveOPreview.UI
 	public class ThumbnailManager : IThumbnailManager
 	{
 		#region Private constants
+		private const int WindowPositionThreshold = -5000;
+		private const int WindowSizeThreshold = -5000;
+
 		private const string ClientProcessName = "ExeFile";
 		private const string DefaultClientTitle = "EVE";
 		#endregion
@@ -473,13 +476,13 @@ namespace EveOPreview.UI
 				RECT rect;
 				WindowManagerNativeMethods.GetWindowRect(process.MainWindowHandle, out rect);
 
-				int left = Math.Abs(rect.Left);
-				int right = Math.Abs(rect.Right);
-				int clientWidth = Math.Abs(left - right);
+				int clientWidth = Math.Abs(rect.Right - rect.Left);
+				int clientHeight = Math.Abs(rect.Bottom - rect.Top);
 
-				int top = Math.Abs(rect.Top);
-				int bottom = Math.Abs(rect.Bottom);
-				int clientHeight = Math.Abs(top - bottom);
+				if (!this.IsManageableWindow(rect.Left, rect.Top, clientWidth, clientHeight))
+				{
+					continue;
+				}
 
 				ClientLayout clientLayout = new ClientLayout();
 				clientLayout.X = rect.Left;
@@ -495,6 +498,17 @@ namespace EveOPreview.UI
 		private bool IsManageableThumbnail(IThumbnailView view)
 		{
 			return view.Title != ThumbnailManager.DefaultClientTitle;
+		}
+
+		// Quick sanity check
+		// EVE Online client can create a window on a really weird position outside of the screen for some reason
+		// In this case we need to just skip such clients
+		private bool IsManageableWindow(int letf, int top, int width, int height)
+		{
+			return (letf >= ThumbnailManager.WindowPositionThreshold)
+				   && (top >= ThumbnailManager.WindowPositionThreshold)
+				   && (width >= ThumbnailManager.WindowSizeThreshold)
+				   && (height >= ThumbnailManager.WindowSizeThreshold);
 		}
 	}
 }
