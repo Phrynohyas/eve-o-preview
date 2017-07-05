@@ -363,23 +363,12 @@ namespace EveOPreview.UI
 		private void ThumbnailDeactivated(IntPtr id)
 		{
 			IThumbnailView view;
-			this._thumbnailViews.TryGetValue(id, out view);
-
-
-			if (view?.Id == this._activeClientHandle)
+			if (!this._thumbnailViews.TryGetValue(id, out view))
 			{
-				WindowManagerNativeMethods.SendMessage(view.Id, WindowManagerNativeMethods.WM_SYSCOMMAND, WindowManagerNativeMethods.SC_MINIMIZE, 0);
-			}
-			else
-			{
-				int style = WindowManagerNativeMethods.GetWindowLong(id, WindowManagerNativeMethods.GWL_STYLE);
-				// If the window is not already minimized then minimize it
-				if ((style & WindowManagerNativeMethods.WS_MINIMIZE) != WindowManagerNativeMethods.WS_MINIMIZE)
-				{
-					WindowManagerNativeMethods.ShowWindowAsync(id, WindowManagerNativeMethods.SW_SHOWMINIMIZED);
-				}
+				return;
 			}
 
+			WindowManagerNativeMethods.SendMessage(view.Id, WindowManagerNativeMethods.WM_SYSCOMMAND, WindowManagerNativeMethods.SC_MINIMIZE, 0);
 			this.RefreshThumbnails();
 		}
 
