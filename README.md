@@ -138,6 +138,9 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 ## Maintained by
 
 * Phrynohyas Tig-Rah
+
+
+## Previous maintainers
  
 * Makari Aeron
 
@@ -151,7 +154,7 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 
 ## Forum thread
 
-https://meta.eveonline.com/t/eve-o-preview-v3-0-0-multi-client-preview-switcher/4202
+https://meta.eveonline.com/t/4202
 
 
 ## Original threads
