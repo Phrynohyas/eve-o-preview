@@ -9,7 +9,7 @@ The program does NOT (and will NOT ever) do the following things:
 * modify EVE Online interface
 * display modified EVE Online interface
 * broadcast any keyboard or mouse events
-* anyhow interact with EVE Online except of bringing its main window to foreground or resizing it
+* anyhow interact with EVE Online except of bringing its main window to foreground or resizing/minimizing it
 
 **Under any conditions you should NOT use EVE-O Preview for any actions that break EULA or ToS of EVE Online.**
 
@@ -75,12 +75,14 @@ CCP FoxFour wrote:
 | Overlay | Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
 | **Active Clients** | Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
 
-## Mouse Gestures
+## Mouse Gestures and Actions
 
 Mouse gestures are applied to the thumbnail window currently being hovered over.
 
 | Action | Gesture |
 | --- | --- |
+| Activate the EVE Online client and bring it to front  | Click the thumbnail |
+| Minimize the EVE Online client | Hold Control key and click the thumbnail |
 | Move thumbnail to a new position | Press right mouse button and move the mouse |
 | Adjust thumbnail height | Press both left and right mouse buttons and move the mouse up or down |
 | Adjust thumbnail width | Press both left and right mouse buttons and move the mouse left or right |
