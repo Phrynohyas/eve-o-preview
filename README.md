@@ -5,10 +5,11 @@ The purpose of this application is to provide a simple way to keep an eye on sev
 It's essentially a task switcher, it does not relay any keyboard/mouse events and suchlike. The app works with EVE, EVE through Steam, or any combination thereof.
 
 The program does NOT (and will NOT ever) do the following things:
+
 * modify EVE Online interface
 * display modified EVE Online interface
 * broadcast any keyboard or mouse events
-* anyhow interact with EVE Online except of bringing its main window to foreground or resizing it
+* anyhow interact with EVE Online except of bringing its main window to foreground or resizing/minimizing it
 
 **Under any conditions you should NOT use EVE-O Preview for any actions that break EULA or ToS of EVE Online.**
 
@@ -24,13 +25,13 @@ If you have find out that some of the features or their combination of EVE-O Pre
 # How To Install & Use
 
 1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc)
-..* **Note**: Please do not install the program into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
+..* **Note**: Please do not install the application into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described below
 
 # EVE Online EULA/ToS
 
-This program is legal under the EULA/ToS:
+This application is legal under the EULA/ToS:
 
 CCP FoxFour wrote:
 > Please keep the discussion on topic. The legitimacy of this software has already been discussed
@@ -74,12 +75,14 @@ CCP FoxFour wrote:
 | Overlay | Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
 | **Active Clients** | Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
 
-## Mouse Gestures
+## Mouse Gestures and Actions
 
 Mouse gestures are applied to the thumbnail window currently being hovered over.
 
 | Action | Gesture |
 | --- | --- |
+| Activate the EVE Online client and bring it to front  | Click the thumbnail |
+| Minimize the EVE Online client | Hold Control key and click the thumbnail |
 | Move thumbnail to a new position | Press right mouse button and move the mouse |
 | Adjust thumbnail height | Press both left and right mouse buttons and move the mouse up or down |
 | Adjust thumbnail width | Press both left and right mouse buttons and move the mouse left or right |
@@ -137,6 +140,9 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 ## Maintained by
 
 * Phrynohyas Tig-Rah
+
+
+## Previous maintainers
  
 * Makari Aeron
 
@@ -150,7 +156,7 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 
 ## Forum thread
 
-https://forums.eveonline.com/default.aspx?g=posts&t=484927
+https://meta.eveonline.com/t/4202
 
 
 ## Original threads
@@ -158,6 +164,8 @@ https://forums.eveonline.com/default.aspx?g=posts&t=484927
 * https://forums.eveonline.com/default.aspx?g=posts&t=389086
 
 * https://forums.eveonline.com/default.aspx?g=posts&t=246157
+
+* https://forums.eveonline.com/default.aspx?g=posts&t=484927
 
 
 ## Original repository

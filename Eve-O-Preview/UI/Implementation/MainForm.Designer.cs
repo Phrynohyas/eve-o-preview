@@ -755,7 +755,8 @@ namespace EveOPreview.UI
 			DocumentationLinkLabel.AutoSize = true;
 			DocumentationLinkLabel.Location = new System.Drawing.Point(0, 157);
 			DocumentationLinkLabel.Name = "DocumentationLinkLabel";
-			DocumentationLinkLabel.Size = new System.Drawing.Size(206, 13);
+			DocumentationLinkLabel.Padding = new System.Windows.Forms.Padding(8, 3, 8, 3);
+			DocumentationLinkLabel.Size = new System.Drawing.Size(222, 19);
 			DocumentationLinkLabel.TabIndex = 6;
 			DocumentationLinkLabel.Text = "For more information visit our forum thread:";
 			// 
@@ -763,7 +764,8 @@ namespace EveOPreview.UI
 			// 
 			DescriptionLabel.Location = new System.Drawing.Point(0, 41);
 			DescriptionLabel.Name = "DescriptionLabel";
-			DescriptionLabel.Size = new System.Drawing.Size(261, 108);
+			DescriptionLabel.Padding = new System.Windows.Forms.Padding(8, 3, 8, 3);
+			DescriptionLabel.Size = new System.Drawing.Size(261, 116);
 			DescriptionLabel.TabIndex = 5;
 			DescriptionLabel.Text = resources.GetString("DescriptionLabel.Text");
 			// 
@@ -790,7 +792,9 @@ namespace EveOPreview.UI
 			// DocumentationLink
 			// 
 			this.DocumentationLink.Location = new System.Drawing.Point(0, 173);
+			this.DocumentationLink.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
 			this.DocumentationLink.Name = "DocumentationLink";
+			this.DocumentationLink.Padding = new System.Windows.Forms.Padding(8, 3, 8, 3);
 			this.DocumentationLink.Size = new System.Drawing.Size(262, 33);
 			this.DocumentationLink.TabIndex = 2;
 			this.DocumentationLink.TabStop = true;
