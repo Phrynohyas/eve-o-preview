@@ -9,7 +9,7 @@ namespace EveOPreview.UI
 	public class MainPresenter : Presenter<IMainView>
 	{
 		#region Private constants
-		private const string ForumUrl = @"https://forums.eveonline.com/default.aspx?g=posts&t=484927";
+		private const string ForumUrl = @"https://meta.eveonline.com/t/4202";
 		#endregion
 
 		#region Private fields
