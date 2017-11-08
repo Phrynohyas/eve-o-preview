@@ -95,9 +95,9 @@ Some of the application options are not exposed in the GUI. They can be ajusted 
 
 | Option | Description |
 | --- | --- |
-| **ActiveClientHighlightThickness** | Thickness of the border used to highlight the active client's thumbnail.<br />Allowed values are **1**...**6**.<br />The default value is **3**<br />For example: **"ActiveClientHighlightThickness": 3,** |
-| **ThumbnailMinimumSize** | Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80",** |
-| **ThumbnailMaximumSize** | Maximum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"640, 400"**.<br />For example: **"ThumbnailMaximumSize": "640, 400",** |
+| **ActiveClientHighlightThickness** | Thickness of the border used to highlight the active client's thumbnail.<br />Allowed values are **1**...**6**.<br />The default value is **3**<br />For example: **"ActiveClientHighlightThickness": 3** |
+| **ThumbnailMinimumSize** | Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80"** |
+| **ThumbnailMaximumSize** | Maximum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"640, 400"**.<br />For example: **"ThumbnailMaximumSize": "640, 400"** |
 
 ## Hotkey Setup
 
