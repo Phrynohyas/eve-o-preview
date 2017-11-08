@@ -462,24 +462,23 @@ namespace EveOPreview.UI
 
 			foreach (Process process in clientProcesses)
 			{
-				RECT rect;
-				WindowManagerNativeMethods.GetWindowRect(process.MainWindowHandle, out rect);
+				WindowManagerNativeMethods.GetWindowRect(process.MainWindowHandle, out RECT rect);
 
-				int clientWidth = Math.Abs(rect.Right - rect.Left);
-				int clientHeight = Math.Abs(rect.Bottom - rect.Top);
+				int width = Math.Abs(rect.Right - rect.Left);
+				int height = Math.Abs(rect.Bottom - rect.Top);
 
-				if (!this.IsManageableWindow(rect.Left, rect.Top, clientWidth, clientHeight))
+				if (!this.IsValidWindowPosition(rect.Left, rect.Top, width, height))
 				{
 					continue;
 				}
 
-				ClientLayout clientLayout = new ClientLayout();
-				clientLayout.X = rect.Left;
-				clientLayout.Y = rect.Top;
-				clientLayout.Width = clientWidth;
-				clientLayout.Height = clientHeight;
+				ClientLayout layout = new ClientLayout();
+				layout.X = rect.Left;
+				layout.Y = rect.Top;
+				layout.Width = width;
+				layout.Height = height;
 
-				this._configuration.SetClientLayout(process.MainWindowTitle, clientLayout);
+				this._configuration.SetClientLayout(process.MainWindowTitle, layout);
 			}
 		}
 
@@ -492,12 +491,12 @@ namespace EveOPreview.UI
 		// Quick sanity check
 		// EVE Online client can create a window on a really weird position outside of the screen for some reason
 		// In this case we need to just skip such clients
-		private bool IsManageableWindow(int letf, int top, int width, int height)
+		private bool IsValidWindowPosition(int letf, int top, int width, int height)
 		{
 			return (letf >= ThumbnailManager.WindowPositionThreshold)
-				   && (top >= ThumbnailManager.WindowPositionThreshold)
-				   && (width >= ThumbnailManager.WindowSizeThreshold)
-				   && (height >= ThumbnailManager.WindowSizeThreshold);
+					&& (top >= ThumbnailManager.WindowPositionThreshold)
+					&& (width >= ThumbnailManager.WindowSizeThreshold)
+					&& (height >= ThumbnailManager.WindowSizeThreshold);
 		}
 	}
 }
