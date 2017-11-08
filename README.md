@@ -38,7 +38,7 @@ CCP FoxFour wrote:
 > and doesn't need to be again. Assuming the functionality of the software doesn't change, it is
 > allowed in its current state.
 
-[CCP Grimmi wrote](https://forums.eveonline.com/default.aspx?g=posts&m=6362936#post6362936):
+CCP Grimmi wrote:
 > Overlays which contain a full, unchanged, EVE Client instance in a view only mode, no matter
 > how large or small they are scaled, like it is done by EVE-O Preview as of today, are fine
 > with us. These overlays do not allow any direct interaction with the EVE Client and you have
@@ -156,16 +156,7 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 
 ## Forum thread
 
-https://meta.eveonline.com/t/4202
-
-
-## Original threads
-
-* https://forums.eveonline.com/default.aspx?g=posts&t=389086
-
-* https://forums.eveonline.com/default.aspx?g=posts&t=246157
-
-* https://forums.eveonline.com/default.aspx?g=posts&t=484927
+https://forums.eveonline.com/t/4202
 
 
 ## Original repository
