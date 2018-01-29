@@ -8,6 +8,7 @@ namespace EveOPreview.UI
 	public partial class ThumbnailView : Form, IThumbnailView
 	{
 		#region Private fields
+		private readonly bool _isDwmCompositionEnabled;
 		private readonly ThumbnailOverlay _overlay;
 
 		// Part of the logic (namely current size / position management)
@@ -52,6 +53,7 @@ namespace EveOPreview.UI
 			InitializeComponent();
 
 			this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
+			this._isDwmCompositionEnabled = WindowManagerNativeMethods.DwmIsCompositionEnabled();
 		}
 
 		public IntPtr Id { get; set; }
@@ -321,37 +323,10 @@ namespace EveOPreview.UI
 
 			if (sizeChanged)
 			{
-				// This approach would work only for square-shaped thumbnail window
-				// To get PROPER results we have to do some crazy math
-				//int delta = this._isHighlightEnabled ? this._highlightWidth : 0;
-				//this._thumbnail.rcDestination = new RECT(0 + delta, 0 + delta, this.ClientSize.Width - delta, this.ClientSize.Height - delta);
-				if (this._isHighlightEnabled)
-				{
-					int baseWidth = this.ClientSize.Width;
-					int baseHeight = this.ClientSize.Height;
-					double baseAspectRatio = ((double)baseWidth) / baseHeight;
+				this.RecalculateThumbnailSize();
 
-					int actualHeight = baseHeight - 2 * this._highlightWidth;
-					double desiredWidth = actualHeight * baseAspectRatio;
-					int actualWidth = (int)Math.Round(desiredWidth, MidpointRounding.AwayFromZero);
-					int highlightWidthLeft = (baseWidth - actualWidth) / 2;
-					int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
+				this.UpdateThumbnail();
 
-					this._thumbnail.rcDestination = new RECT(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
-				}
-				else
-				{
-					//No highlighting enables, so no odd math required
-					this._thumbnail.rcDestination = new RECT(0, 0, this.ClientSize.Width, this.ClientSize.Height);
-				}
-				try
-				{
-					WindowManagerNativeMethods.DwmUpdateThumbnailProperties(this._thumbnailHandle, this._thumbnail);
-				}
-				catch (ArgumentException)
-				{
-					//This exception will be thrown if the EVE client disappears while this method is running
-				}
 				this._isSizeChanged = false;
 			}
 
@@ -389,6 +364,32 @@ namespace EveOPreview.UI
 			this._overlay.Size = overlaySize;
 			this._overlay.Location = overlayLocation;
 			this._overlay.Refresh();
+		}
+
+		private void RecalculateThumbnailSize()
+		{
+			// This approach would work only for square-shaped thumbnail window
+			// To get PROPER results we have to do some crazy math
+			//int delta = this._isHighlightEnabled ? this._highlightWidth : 0;
+			//this._thumbnail.rcDestination = new RECT(0 + delta, 0 + delta, this.ClientSize.Width - delta, this.ClientSize.Height - delta);
+			if (!this._isHighlightEnabled)
+			{
+				//No highlighting enables, so no odd math required
+				this._thumbnail.rcDestination = new RECT(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+				return;
+			}
+
+			int baseWidth = this.ClientSize.Width;
+			int baseHeight = this.ClientSize.Height;
+			double baseAspectRatio = ((double)baseWidth) / baseHeight;
+
+			int actualHeight = baseHeight - 2 * this._highlightWidth;
+			double desiredWidth = actualHeight * baseAspectRatio;
+			int actualWidth = (int)Math.Round(desiredWidth, MidpointRounding.AwayFromZero);
+			int highlightWidthLeft = (baseWidth - actualWidth) / 2;
+			int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
+
+			this._thumbnail.rcDestination = new RECT(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
 		}
 
 		#region GUI events
@@ -480,22 +481,49 @@ namespace EveOPreview.UI
 		#region Thumbnail management
 		private void RegisterThumbnail()
 		{
-			this._thumbnailHandle = WindowManagerNativeMethods.DwmRegisterThumbnail(this.Handle, this.Id);
+			this._isThumbnailSetUp = true;
 
 			this._thumbnail = new DWM_THUMBNAIL_PROPERTIES();
 			this._thumbnail.dwFlags = DWM_TNP_CONSTANTS.DWM_TNP_VISIBLE
-									+ DWM_TNP_CONSTANTS.DWM_TNP_OPACITY
-									+ DWM_TNP_CONSTANTS.DWM_TNP_RECTDESTINATION
-									+ DWM_TNP_CONSTANTS.DWM_TNP_SOURCECLIENTAREAONLY;
+									  + DWM_TNP_CONSTANTS.DWM_TNP_OPACITY
+									  + DWM_TNP_CONSTANTS.DWM_TNP_RECTDESTINATION
+									  + DWM_TNP_CONSTANTS.DWM_TNP_SOURCECLIENTAREAONLY;
 			this._thumbnail.opacity = 255;
 			this._thumbnail.fVisible = true;
 			this._thumbnail.fSourceClientAreaOnly = true;
 
-			this._isThumbnailSetUp = true;
+			if (!this._isDwmCompositionEnabled)
+			{
+				return;
+			}
+
+			this._thumbnailHandle = WindowManagerNativeMethods.DwmRegisterThumbnail(this.Handle, this.Id);
+		}
+
+		private void UpdateThumbnail()
+		{
+			if (!this._isDwmCompositionEnabled)
+			{
+				return;
+			}
+
+			try
+			{
+				WindowManagerNativeMethods.DwmUpdateThumbnailProperties(this._thumbnailHandle, this._thumbnail);
+			}
+			catch (ArgumentException)
+			{
+				//This exception will be thrown if the EVE client disappears while this method is running
+			}
 		}
 
 		private void UnregisterThumbnail(IntPtr thumbnailHandle)
 		{
+			if (!this._isDwmCompositionEnabled)
+			{
+				return;
+			}
+
 			try
 			{
 				WindowManagerNativeMethods.DwmUnregisterThumbnail(thumbnailHandle);

@@ -100,7 +100,7 @@ namespace EveOPreview.UI
 		private void RefreshThumbnails()
 		{
 			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
-			Boolean hideAllThumbnails = (this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle)) || !WindowManagerNativeMethods.DwmIsCompositionEnabled();
+			Boolean hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle);
 
 			this.DisableViewEvents();
 

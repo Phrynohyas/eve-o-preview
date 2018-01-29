@@ -21,6 +21,7 @@ namespace EveOPreview.UI
 			this.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.Color.Black;
 			this.ClientSize = new System.Drawing.Size(153, 89);
 			this.ControlBox = false;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
