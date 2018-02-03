@@ -37,7 +37,7 @@ namespace EveOPreview.UI
 			get
 			{
 				var Params = base.CreateParams;
-				Params.ExStyle |= (int)WindowManagerNativeMethods.WS_EX_TOOLWINDOW;
+				Params.ExStyle |= (int)InteropConstants.WS_EX_TOOLWINDOW;
 				return Params;
 			}
 		}

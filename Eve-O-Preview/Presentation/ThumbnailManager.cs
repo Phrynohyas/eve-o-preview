@@ -18,6 +18,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		#region Private fields
+		private readonly IWindowManager _windowManager;
 		private readonly IThumbnailConfig _configuration;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
@@ -30,8 +31,9 @@ namespace EveOPreview.UI
 		private bool _isHoverEffectActive;
 		#endregion
 
-		public ThumbnailManager(IThumbnailConfig configuration, IThumbnailViewFactory factory)
+		public ThumbnailManager(IWindowManager windowManager, IThumbnailConfig configuration, IThumbnailViewFactory factory)
 		{
+			this._windowManager = windowManager;
 			this._configuration = configuration;
 			this._thumbnailViewFactory = factory;
 
@@ -99,7 +101,7 @@ namespace EveOPreview.UI
 
 		private void RefreshThumbnails()
 		{
-			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
+			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
 			Boolean hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle);
 
 			this.DisableViewEvents();
@@ -196,7 +198,7 @@ namespace EveOPreview.UI
 			Process[] clientProcesses = ThumbnailManager.GetClientProcesses();
 			List<IntPtr> processHandles = new List<IntPtr>(clientProcesses.Length);
 
-			IntPtr foregroundWindowHandle = WindowManagerNativeMethods.GetForegroundWindow();
+			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
 
 			List<IThumbnailView> viewsAdded = new List<IThumbnailView>();
 			List<IThumbnailView> viewsUpdated = new List<IThumbnailView>();
@@ -341,14 +343,7 @@ namespace EveOPreview.UI
 				this._activeClientTitle = view.Title;
 			}
 
-			WindowManagerNativeMethods.SetForegroundWindow(id);
-
-			int style = WindowManagerNativeMethods.GetWindowLong(id, WindowManagerNativeMethods.GWL_STYLE);
-			// If the window was minimized then its thumbnail should be reset
-			if ((style & WindowManagerNativeMethods.WS_MINIMIZE) == WindowManagerNativeMethods.WS_MINIMIZE)
-			{
-				WindowManagerNativeMethods.ShowWindowAsync(id, WindowManagerNativeMethods.SW_SHOWNORMAL);
-			}
+			this._windowManager.ActivateWindow(id);
 
 			if (this._configuration.EnableClientLayoutTracking)
 			{
@@ -362,13 +357,12 @@ namespace EveOPreview.UI
 
 		private void ThumbnailDeactivated(IntPtr id)
 		{
-			IThumbnailView view;
-			if (!this._thumbnailViews.TryGetValue(id, out view))
+			if (!this._thumbnailViews.TryGetValue(id, out IThumbnailView view))
 			{
 				return;
 			}
 
-			WindowManagerNativeMethods.SendMessage(view.Id, WindowManagerNativeMethods.WM_SYSCOMMAND, WindowManagerNativeMethods.SC_MINIMIZE, 0);
+			this._windowManager.DeactivateWindow(view.Id);
 			this.RefreshThumbnails();
 		}
 
@@ -453,7 +447,7 @@ namespace EveOPreview.UI
 				return;
 			}
 
-			WindowManagerNativeMethods.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height, true);
+			this._windowManager.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height);
 		}
 
 		private void UpdateClientLayouts()
@@ -462,23 +456,17 @@ namespace EveOPreview.UI
 
 			foreach (Process process in clientProcesses)
 			{
-				WindowManagerNativeMethods.GetWindowRect(process.MainWindowHandle, out RECT rect);
+				this._windowManager.GetWindowCoordinates(process.MainWindowHandle, out int left, out int top, out int right, out int bottom);
 
-				int width = Math.Abs(rect.Right - rect.Left);
-				int height = Math.Abs(rect.Bottom - rect.Top);
+				int width = Math.Abs(right - left);
+				int height = Math.Abs(bottom - top);
 
-				if (!this.IsValidWindowPosition(rect.Left, rect.Top, width, height))
+				if (!this.IsValidWindowPosition(left, top, width, height))
 				{
 					continue;
 				}
 
-				ClientLayout layout = new ClientLayout();
-				layout.X = rect.Left;
-				layout.Y = rect.Top;
-				layout.Width = width;
-				layout.Height = height;
-
-				this._configuration.SetClientLayout(process.MainWindowTitle, layout);
+				this._configuration.SetClientLayout(process.MainWindowTitle, new ClientLayout(left, top, width, height));
 			}
 		}
 

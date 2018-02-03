@@ -1,4 +1,4 @@
-﻿namespace EveOPreview
+﻿namespace EveOPreview.DwmInterop
 {
 	static class DWM_TNP_CONSTANTS
 	{

@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace EveOPreview
+namespace EveOPreview.DwmInterop
 {
 	[StructLayout(LayoutKind.Sequential)]
 	struct RECT

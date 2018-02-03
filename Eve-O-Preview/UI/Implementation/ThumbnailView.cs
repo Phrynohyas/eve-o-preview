@@ -2,18 +2,19 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using EveOPreview.DwmAPI;
 
 namespace EveOPreview.UI
 {
 	public partial class ThumbnailView : Form, IThumbnailView
 	{
 		#region Private fields
-		private readonly bool _isDwmCompositionEnabled;
+		private readonly IWindowManager _windowManager;
 		private readonly ThumbnailOverlay _overlay;
+		private IDwmThumbnail _thumbnail;
 
 		// Part of the logic (namely current size / position management)
 		// was moved to the view due to the performance reasons
-		private bool _isThumbnailSetUp;
 		private bool _isOverlayVisible;
 		private bool _isTopMost;
 		private bool _isPositionChanged;
@@ -22,8 +23,6 @@ namespace EveOPreview.UI
 		private bool _isHighlightEnabled;
 		private int _highlightWidth;
 		private DateTime _suppressResizeEventsTimestamp;
-		private DWM_THUMBNAIL_PROPERTIES _thumbnail;
-		private IntPtr _thumbnailHandle;
 		private Size _baseZoomSize;
 		private Point _baseZoomLocation;
 		private Point _baseMousePosition;
@@ -32,13 +31,14 @@ namespace EveOPreview.UI
 		private HotkeyHandler _hotkeyHandler;
 		#endregion
 
-		public ThumbnailView()
+		public ThumbnailView(IWindowManager windowManager)
 		{
+			this._windowManager = windowManager;
+
 			this.IsEnabled = true;
 			this.IsActive = false;
 
 			this.IsOverlayEnabled = false;
-			this._isThumbnailSetUp = false;
 			this._isOverlayVisible = false;
 			this._isTopMost = false;
 
@@ -53,7 +53,6 @@ namespace EveOPreview.UI
 			InitializeComponent();
 
 			this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
-			this._isDwmCompositionEnabled = WindowManagerNativeMethods.DwmIsCompositionEnabled();
 		}
 
 		public IntPtr Id { get; set; }
@@ -130,9 +129,7 @@ namespace EveOPreview.UI
 		public new void Close()
 		{
 			this.IsActive = false;
-
-			this.UnregisterThumbnail(this._thumbnailHandle);
-
+			this._thumbnail.Unregister();
 			this._overlay.Close();
 			base.Close();
 		}
@@ -311,9 +308,9 @@ namespace EveOPreview.UI
 		public void Refresh(bool forceRefresh)
 		{
 			// To prevent flickering the old broken thumbnail is removed AFTER the new shiny one is created
-			IntPtr obsoleteThumbnailHanlde = forceRefresh ? this._thumbnailHandle : IntPtr.Zero;
+			IDwmThumbnail obsoleteThumbnail = forceRefresh ? this._thumbnail : null;
 
-			if ((this._isThumbnailSetUp == false) || forceRefresh)
+			if ((this._thumbnail == null) || forceRefresh)
 			{
 				this.RegisterThumbnail();
 			}
@@ -330,10 +327,7 @@ namespace EveOPreview.UI
 				this._isSizeChanged = false;
 			}
 
-			if (obsoleteThumbnailHanlde != IntPtr.Zero)
-			{
-				this.UnregisterThumbnail(obsoleteThumbnailHanlde);
-			}
+			obsoleteThumbnail?.Unregister();
 
 			this._overlay.EnableOverlayLabel(this.IsOverlayEnabled);
 
@@ -374,8 +368,8 @@ namespace EveOPreview.UI
 			//this._thumbnail.rcDestination = new RECT(0 + delta, 0 + delta, this.ClientSize.Width - delta, this.ClientSize.Height - delta);
 			if (!this._isHighlightEnabled)
 			{
-				//No highlighting enables, so no odd math required
-				this._thumbnail.rcDestination = new RECT(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+				//No highlighting enabled, so no odd math required
+				this._thumbnail.Move(0, 0, this.ClientSize.Width, this.ClientSize.Height);
 				return;
 			}
 
@@ -389,7 +383,7 @@ namespace EveOPreview.UI
 			int highlightWidthLeft = (baseWidth - actualWidth) / 2;
 			int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
 
-			this._thumbnail.rcDestination = new RECT(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
+			this._thumbnail.Move(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
 		}
 
 		#region GUI events
@@ -398,7 +392,7 @@ namespace EveOPreview.UI
 			get
 			{
 				var Params = base.CreateParams;
-				Params.ExStyle |= (int)WindowManagerNativeMethods.WS_EX_TOOLWINDOW;
+				Params.ExStyle |= (int)InteropConstants.WS_EX_TOOLWINDOW;
 				return Params;
 			}
 		}
@@ -481,56 +475,13 @@ namespace EveOPreview.UI
 		#region Thumbnail management
 		private void RegisterThumbnail()
 		{
-			this._isThumbnailSetUp = true;
-
-			this._thumbnail = new DWM_THUMBNAIL_PROPERTIES();
-			this._thumbnail.dwFlags = DWM_TNP_CONSTANTS.DWM_TNP_VISIBLE
-									  + DWM_TNP_CONSTANTS.DWM_TNP_OPACITY
-									  + DWM_TNP_CONSTANTS.DWM_TNP_RECTDESTINATION
-									  + DWM_TNP_CONSTANTS.DWM_TNP_SOURCECLIENTAREAONLY;
-			this._thumbnail.opacity = 255;
-			this._thumbnail.fVisible = true;
-			this._thumbnail.fSourceClientAreaOnly = true;
-
-			if (!this._isDwmCompositionEnabled)
-			{
-				return;
-			}
-
-			this._thumbnailHandle = WindowManagerNativeMethods.DwmRegisterThumbnail(this.Handle, this.Id);
+			this._thumbnail = new DwmThumbnail(this._windowManager);
+			this._thumbnail.Register(this.Handle, this.Id);
 		}
 
 		private void UpdateThumbnail()
 		{
-			if (!this._isDwmCompositionEnabled)
-			{
-				return;
-			}
-
-			try
-			{
-				WindowManagerNativeMethods.DwmUpdateThumbnailProperties(this._thumbnailHandle, this._thumbnail);
-			}
-			catch (ArgumentException)
-			{
-				//This exception will be thrown if the EVE client disappears while this method is running
-			}
-		}
-
-		private void UnregisterThumbnail(IntPtr thumbnailHandle)
-		{
-			if (!this._isDwmCompositionEnabled)
-			{
-				return;
-			}
-
-			try
-			{
-				WindowManagerNativeMethods.DwmUnregisterThumbnail(thumbnailHandle);
-			}
-			catch (ArgumentException)
-			{
-			}
+			this._thumbnail.Update();
 		}
 		#endregion
 

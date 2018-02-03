@@ -1,66 +1,9 @@
-using System;
-using System.Runtime.InteropServices;
-using System.Drawing;
+﻿using System;
 
 namespace EveOPreview
 {
-	// Desktop Windows Manager APIs
-	static class WindowManagerNativeMethods
+	public static class InteropConstants
 	{
-		[DllImport("user32.dll")]
-		public static extern IntPtr GetForegroundWindow();
-
-		[DllImport("user32.dll")]
-		public static extern bool SetForegroundWindow(IntPtr window);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern void DwmEnableBlurBehindWindow(IntPtr hWnd, DWM_BLURBEHIND pBlurBehind);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern void DwmExtendFrameIntoClientArea(IntPtr hWnd, MARGINS pMargins);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern bool DwmIsCompositionEnabled();
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern void DwmGetColorizationColor(
-			out int pcrColorization,
-			[MarshalAs(UnmanagedType.Bool)]out bool pfOpaqueBlend);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern void DwmEnableComposition(bool bEnable);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern IntPtr DwmRegisterThumbnail(IntPtr dest, IntPtr source);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern void DwmUnregisterThumbnail(IntPtr hThumbnail);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern void DwmUpdateThumbnailProperties(IntPtr hThumbnail, DWM_THUMBNAIL_PROPERTIES props);
-
-		[DllImport("dwmapi.dll", PreserveSig = false)]
-		public static extern void DwmQueryThumbnailSourceSize(IntPtr hThumbnail, out Size size);
-
-		public const int SW_SHOWNORMAL = 1;
-		public const int SW_SHOWMINIMIZED = 2;
-		public const int SW_SHOWMAXIMIZED = 3;
-
-		[DllImport("user32.dll")]
-		public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-
-		public const int WM_NCLBUTTONDOWN = 0xA1;
-		public const int HTCAPTION = 0x2;
-
-		[DllImport("User32.dll")]
-		public static extern bool ReleaseCapture();
-
-		[DllImport("User32.dll")]
-		public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-
-		[DllImport("user32.dll", SetLastError = true)]
-		public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-
 		public const int GWL_ID = (-12);
 		public const int GWL_STYLE = (-16);
 		public const int GWL_EXSTYLE = (-20);
@@ -129,10 +72,11 @@ namespace EveOPreview
 		public const int SIZE_MAXSHOW = 3;
 		public const int SIZE_MAXHIDE = 4;
 
-		[DllImport("user32.dll")]
-		public static extern int GetWindowRect(IntPtr hwnd, out RECT rect);
+		public const int WM_NCLBUTTONDOWN = 0xA1;
+		public const int HTCAPTION = 0x2;
 
-		[DllImport("user32.dll")]
-		public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+		public const int SW_SHOWNORMAL = 1;
+		public const int SW_SHOWMINIMIZED = 2;
+		public const int SW_SHOWMAXIMIZED = 3;
 	}
 }

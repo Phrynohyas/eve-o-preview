@@ -20,7 +20,7 @@ namespace EveOPreview
 			// during the app lifetime
 			object token = Program.GetInstanceToken();
 
-			// If it was not possible to aquite the app token then another app instance is already running
+			// If it was not possible to aquire the app token then another app instance is already running
 			// Nothing to do here
 			if (token == null)
 			{
@@ -87,8 +87,7 @@ namespace EveOPreview
 			}
 			catch (Exception)
 			{
-				bool result;
-				Mutex token = new Mutex(true, Program.MutexName, out result);
+				Mutex token = new Mutex(true, Program.MutexName, out var result);
 				return result ? token : null;
 			}
 		}
@@ -115,6 +114,7 @@ namespace EveOPreview
 				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
 				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
 				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
+				.RegisterService<IWindowManager, EveOPreview.DwmAPI.WindowManager>()
 				.RegisterInstance<IAppConfig>(new AppConfig())
 				.RegisterInstance<IThumbnailConfig>(new ThumbnailConfig());
 
