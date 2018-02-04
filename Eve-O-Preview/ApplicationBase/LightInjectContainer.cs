@@ -21,13 +21,35 @@ namespace EveOPreview
 
 		public void Register<TService>()
 		{
-			this._container.Register<TService>();
+			if (!typeof(TService).IsInterface)
+			{
+				this._container.Register<TService>(new PerContainerLifetime());
+				return;
+			}
+
+			foreach (Type implementationType in typeof(TService).Assembly.DefinedTypes)
+			{
+				if (!implementationType.IsClass || implementationType.IsAbstract)
+				{
+					continue;
+				}
+
+				if (!typeof(TService).IsAssignableFrom(implementationType))
+				{
+					continue;
+				}
+
+				this._container.Register(typeof(TService), implementationType, new PerContainerLifetime());
+				break;
+			}
+
+
 		}
 
 		public void Register<TService, TImplementation>()
 					where TImplementation : TService
 		{
-			this._container.Register<TService, TImplementation>();
+			this._container.Register<TService, TImplementation>(new PerContainerLifetime());
 		}
 
 		public void Register<TService, TArgument>(Expression<Func<TArgument, TService>> factory)

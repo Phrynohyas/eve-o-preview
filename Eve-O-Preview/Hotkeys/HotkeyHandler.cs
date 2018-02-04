@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.ComponentModel;
 
-namespace EveOPreview.UI
+namespace EveOPreview.UI.Hotkeys
 {
 	class HotkeyHandler : IMessageFilter, IDisposable
 	{

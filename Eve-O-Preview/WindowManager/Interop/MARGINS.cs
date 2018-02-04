@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace EveOPreview.DwmInterop
+namespace EveOPreview.WindowManager.Implementation
 {
 	[StructLayout(LayoutKind.Sequential)]
 	class MARGINS

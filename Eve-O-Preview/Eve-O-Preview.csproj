@@ -108,21 +108,24 @@
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\ConfigurationStorage.cs" />
     <Compile Include="Configuration\IAppConfig.cs" />
-    <Compile Include="Configuration\IThumbnailConfig.cs" />
+    <Compile Include="Configuration\IThumbnailConfiguration.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
-    <Compile Include="DwmAPI\Implementation\DwmThumbnail.cs" />
-    <Compile Include="DwmAPI\Interface\IDwmThumbnail.cs" />
-    <Compile Include="DwmAPI\Interface\InteropConstants.cs" />
-    <Compile Include="DwmAPI\Interop\DWM_BLURBEHIND.cs" />
-    <Compile Include="DwmAPI\Interop\DWM_THUMBNAIL_PROPERTIES.cs" />
-    <Compile Include="DwmAPI\Interop\DWM_TNP_CONSTANTS.cs" />
-    <Compile Include="DwmAPI\Interface\IWindowManager.cs" />
-    <Compile Include="DwmAPI\Interop\MARGINS.cs" />
-    <Compile Include="DwmAPI\Interop\RECT.cs" />
+    <Compile Include="WindowManager\Implementation\DwmThumbnail.cs" />
+    <Compile Include="WindowManager\Interface\IDwmThumbnail.cs" />
+    <Compile Include="WindowManager\Interface\InteropConstants.cs" />
+    <Compile Include="WindowManager\Interop\DWM_BLURBEHIND.cs" />
+    <Compile Include="WindowManager\Interop\DWM_THUMBNAIL_PROPERTIES.cs" />
+    <Compile Include="WindowManager\Interop\DWM_TNP_CONSTANTS.cs" />
+    <Compile Include="WindowManager\Interface\IWindowManager.cs" />
+    <Compile Include="WindowManager\Interop\MARGINS.cs" />
+    <Compile Include="WindowManager\Interop\RECT.cs" />
     <Compile Include="Configuration\ClientLayout.cs" />
     <Compile Include="ApplicationBase\IPresenter.cs" />
-    <Compile Include="DwmAPI\Implementation\WindowManager.cs" />
-    <Compile Include="DwmAPI\Interop\User32NativeMethods.cs" />
+    <Compile Include="WindowManager\Implementation\WindowManager.cs" />
+    <Compile Include="WindowManager\Interop\User32NativeMethods.cs" />
+    <Compile Include="Mediator\Implementation\Mediator.cs" />
+    <Compile Include="Mediator\Interface\IMediator.cs" />
+    <Compile Include="Mediator\Interface\INotification.cs" />
     <Compile Include="Presentation\MainPresenter.cs" />
     <Compile Include="Presentation\ViewCloseRequest.cs" />
     <Compile Include="Presentation\ViewZoomAnchorConverter.cs" />
@@ -135,7 +138,7 @@
     <Compile Include="UI\Interface\IThumbnailDescriptionView.cs" />
     <Compile Include="UI\Interface\IThumbnailDescriptionViewFactory.cs" />
     <Compile Include="UI\Interface\ViewZoomAnchor.cs" />
-    <Compile Include="Configuration\ThumbnailConfig.cs" />
+    <Compile Include="Configuration\ThumbnailConfiguration.cs" />
     <Compile Include="Hotkeys\HotkeyHandler.cs" />
     <Compile Include="Hotkeys\HotkeyHandlerNativeMethods.cs" />
     <Compile Include="UI\Implementation\MainForm.cs">
@@ -183,7 +186,7 @@
     <Compile Include="UI\Implementation\ThumbnailView.Designer.cs">
       <DependentUpon>ThumbnailView.cs</DependentUpon>
     </Compile>
-    <Compile Include="DwmAPI\Interop\DwmApiNativeMethods.cs" />
+    <Compile Include="WindowManager\Interop\DwmApiNativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

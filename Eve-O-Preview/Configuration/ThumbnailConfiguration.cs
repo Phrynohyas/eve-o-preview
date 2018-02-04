@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 
 namespace EveOPreview.Configuration
 {
-	class ThumbnailConfig : IThumbnailConfig
+	class ThumbnailConfiguration : IThumbnailConfiguration
 	{
-		public ThumbnailConfig()
+		public ThumbnailConfiguration()
 		{
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
@@ -173,12 +173,12 @@ namespace EveOPreview.Configuration
 		/// </summary>
 		public void ApplyRestrictions()
 		{
-			this.ThumbnailRefreshPeriod = ThumbnailConfig.ApplyRestrictions(this.ThumbnailRefreshPeriod, 300, 1000);
-			this.ThumbnailSize = new Size(ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
-				ThumbnailConfig.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
-			this.ThumbnailOpacity = ThumbnailConfig.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
-			this.ThumbnailZoomFactor = ThumbnailConfig.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
-			this.ActiveClientHighlightThickness = ThumbnailConfig.ApplyRestrictions(this.ActiveClientHighlightThickness, 1, 6);
+			this.ThumbnailRefreshPeriod = ThumbnailConfiguration.ApplyRestrictions(this.ThumbnailRefreshPeriod, 300, 1000);
+			this.ThumbnailSize = new Size(ThumbnailConfiguration.ApplyRestrictions(this.ThumbnailSize.Width, this.ThumbnailMinimumSize.Width, this.ThumbnailMaximumSize.Width),
+				ThumbnailConfiguration.ApplyRestrictions(this.ThumbnailSize.Height, this.ThumbnailMinimumSize.Height, this.ThumbnailMaximumSize.Height));
+			this.ThumbnailOpacity = ThumbnailConfiguration.ApplyRestrictions((int)(this.ThumbnailOpacity * 100.00), 20, 100) / 100.00;
+			this.ThumbnailZoomFactor = ThumbnailConfiguration.ApplyRestrictions(this.ThumbnailZoomFactor, 2, 10);
+			this.ActiveClientHighlightThickness = ThumbnailConfiguration.ApplyRestrictions(this.ActiveClientHighlightThickness, 1, 6);
 		}
 
 		private static int ApplyRestrictions(int value, int minimum, int maximum)

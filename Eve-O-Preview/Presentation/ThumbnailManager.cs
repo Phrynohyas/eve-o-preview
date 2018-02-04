@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
+using EveOPreview.WindowManager;
 
 namespace EveOPreview.UI
 {
@@ -19,7 +20,7 @@ namespace EveOPreview.UI
 
 		#region Private fields
 		private readonly IWindowManager _windowManager;
-		private readonly IThumbnailConfig _configuration;
+		private readonly IThumbnailConfiguration _configuration;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
@@ -31,7 +32,7 @@ namespace EveOPreview.UI
 		private bool _isHoverEffectActive;
 		#endregion
 
-		public ThumbnailManager(IWindowManager windowManager, IThumbnailConfig configuration, IThumbnailViewFactory factory)
+		public ThumbnailManager(IWindowManager windowManager, IThumbnailConfiguration configuration, IThumbnailViewFactory factory)
 		{
 			this._windowManager = windowManager;
 			this._configuration = configuration;

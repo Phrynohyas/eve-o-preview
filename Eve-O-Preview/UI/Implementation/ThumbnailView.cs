@@ -2,7 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using EveOPreview.DwmAPI;
+using EveOPreview.UI.Hotkeys;
+using EveOPreview.WindowManager;
 
 namespace EveOPreview.UI
 {
@@ -475,8 +476,7 @@ namespace EveOPreview.UI
 		#region Thumbnail management
 		private void RegisterThumbnail()
 		{
-			this._thumbnail = new DwmThumbnail(this._windowManager);
-			this._thumbnail.Register(this.Handle, this.Id);
+			this._thumbnail = this._windowManager.RegisterThumbnail(this.Handle, this.Id);
 		}
 
 		private void UpdateThumbnail()

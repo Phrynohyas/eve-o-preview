@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace EveOPreview.UI
+namespace EveOPreview.UI.Hotkeys
 {
 	static class HotkeyHandlerNativeMethods
 	{

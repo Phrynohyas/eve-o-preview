@@ -1,7 +1,6 @@
 ﻿using System;
-using EveOPreview.DwmInterop;
 
-namespace EveOPreview.DwmAPI
+namespace EveOPreview.WindowManager.Implementation
 {
 	class WindowManager : IWindowManager
 	{
@@ -47,6 +46,19 @@ namespace EveOPreview.DwmAPI
 			top = windowRectangle.Top;
 			right = windowRectangle.Right;
 			bottom = windowRectangle.Bottom;
+		}
+
+		public bool IsWindowMinimized(IntPtr handle)
+		{
+			return User32NativeMethods.IsIconic(handle);
+		}
+
+		public IDwmThumbnail RegisterThumbnail(IntPtr destination, IntPtr source)
+		{
+			IDwmThumbnail thumbnail = new DwmThumbnail(this);
+			thumbnail.Register(destination, source);
+
+			return thumbnail;
 		}
 	}
 }

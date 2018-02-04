@@ -2,18 +2,19 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 using EveOPreview.Configuration;
+using EveOPreview.Mediator;
 using EveOPreview.UI;
+using EveOPreview.WindowManager;
 
 namespace EveOPreview
 {
 	static class Program
 	{
 		private static string MutexName = "EVE-O Preview Single Instance Mutex";
-		private static string ConfigParameterName = "--config:";
 
 		/// <summary>The main entry point for the application.</summary>
 		[STAThread]
-		static void Main(string[] args)
+		static void Main()
 		{
 			// The very usual Mutex-based single-instance screening
 			// 'token' variable is used to store reference to the instance Mutex
@@ -30,42 +31,10 @@ namespace EveOPreview
 			ExceptionHandler handler = new ExceptionHandler();
 			handler.SetupExceptionHandlers();
 
-			Program.InitializeWinFormsGui();
-
 			IApplicationController controller = Program.InitializeApplicationController();
-			Program.SetupApplicationConttroller(controller, Program.GetCustomConfigFile(args));
 
+			Program.InitializeWinForms();
 			controller.Run<MainPresenter>();
-		}
-
-		private static string GetCustomConfigFile(string[] args)
-		{
-			// Parse startup parameters
-			// Simple approach is used because something like NParams would be an overkill here
-			string configFile = null;
-			foreach (string arg in args)
-			{
-				if ((arg.Length <= Program.ConfigParameterName.Length) || !arg.StartsWith(Program.ConfigParameterName, StringComparison.Ordinal))
-				{
-					continue;
-				}
-
-				configFile = arg.Substring(Program.ConfigParameterName.Length);
-				break;
-			}
-
-			if (string.IsNullOrEmpty(configFile))
-			{
-				return "";
-			}
-
-			// One more check to drop trailing "
-			if ((configFile.Length > 3) && (configFile[0] == '"') && (configFile[configFile.Length - 1] == '"'))
-			{
-				configFile = configFile.Substring(1, configFile.Length - 2);
-			}
-
-			return configFile;
 		}
 
 		private static object GetInstanceToken()
@@ -92,7 +61,7 @@ namespace EveOPreview
 			}
 		}
 
-		private static void InitializeWinFormsGui()
+		private static void InitializeWinForms()
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -102,28 +71,30 @@ namespace EveOPreview
 		{
 			IIocContainer container = new LightInjectContainer();
 
+			// Singleton registration is used for services
+			// Low-level services
+			container.Register<IMediator>();
+			container.Register<IWindowManager>();
+
+			// Configuration services
+			container.Register<IConfigurationStorage>();
+			container.Register<IAppConfig>();
+			container.Register<IThumbnailConfiguration>();
+
+			// Application services
+			container.Register<IThumbnailManager>();
+			container.Register<IThumbnailViewFactory>();
+			container.Register<IThumbnailDescriptionViewFactory>();
+
+			IApplicationController controller = new ApplicationController(container);
+
 			// UI classes
-			IApplicationController controller = new ApplicationController(container)
-				.RegisterView<IMainView, MainForm>()
+			controller.RegisterView<IMainView, MainForm>()
 				.RegisterView<IThumbnailView, ThumbnailView>()
 				.RegisterView<IThumbnailDescriptionView, ThumbnailDescriptionView>()
 				.RegisterInstance(new ApplicationContext());
 
-			// Application services
-			controller.RegisterService<IThumbnailManager, ThumbnailManager>()
-				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
-				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
-				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
-				.RegisterService<IWindowManager, EveOPreview.DwmAPI.WindowManager>()
-				.RegisterInstance<IAppConfig>(new AppConfig())
-				.RegisterInstance<IThumbnailConfig>(new ThumbnailConfig());
-
 			return controller;
-		}
-
-		private static void SetupApplicationConttroller(IApplicationController controller, string configFile)
-		{
-			controller.Create<IAppConfig>().ConfigFileName = configFile;
 		}
 	}
 }

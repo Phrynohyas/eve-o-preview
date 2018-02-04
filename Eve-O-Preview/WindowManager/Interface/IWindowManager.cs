@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EveOPreview
+namespace EveOPreview.WindowManager
 {
 	public interface IWindowManager
 	{
@@ -13,5 +13,8 @@ namespace EveOPreview
 
 		void MoveWindow(IntPtr handle, int left, int top, int width, int height);
 		void GetWindowCoordinates(IntPtr handle, out int left, out int top, out int right, out int bottom);
+		bool IsWindowMinimized(IntPtr handle);
+
+		IDwmThumbnail RegisterThumbnail(IntPtr destination, IntPtr source);
 	}
 }

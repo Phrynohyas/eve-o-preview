@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace EveOPreview.DwmInterop
+namespace EveOPreview.WindowManager.Implementation
 {
 	static class User32NativeMethods
 	{
@@ -28,5 +28,12 @@ namespace EveOPreview.DwmInterop
 
 		[DllImport("user32.dll")]
 		public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool IsIconic(IntPtr hWnd);
+
+		[DllImport("user32.dll")]
+		public static extern bool IsZoomed(IntPtr hWnd);
 	}
 }

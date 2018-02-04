@@ -13,7 +13,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		#region Private fields
-		private readonly IThumbnailConfig _configuration;
+		private readonly IThumbnailConfiguration _configuration;
 		private readonly IConfigurationStorage _configurationStorage;
 		private readonly IThumbnailDescriptionViewFactory _thumbnailDescriptionViewFactory;
 		private readonly IDictionary<IntPtr, IThumbnailDescriptionView> _thumbnailDescriptionViews;
@@ -22,7 +22,7 @@ namespace EveOPreview.UI
 		private bool _exitApplication;
 		#endregion
 
-		public MainPresenter(IApplicationController controller, IMainView view, IThumbnailConfig configuration, IConfigurationStorage configurationStorage,
+		public MainPresenter(IApplicationController controller, IMainView view, IThumbnailConfiguration configuration, IConfigurationStorage configurationStorage,
 								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
 			: base(controller, view)
 		{
