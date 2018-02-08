@@ -110,6 +110,10 @@
     <Compile Include="Configuration\IAppConfig.cs" />
     <Compile Include="Configuration\IThumbnailConfiguration.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
+    <Compile Include="Services\Implementation\ProcessInfo.cs" />
+    <Compile Include="Services\Implementation\ProcessMonitor.cs" />
+    <Compile Include="Services\Interface\IProcessInfo.cs" />
+    <Compile Include="Services\Interface\IProcessMonitor.cs" />
     <Compile Include="WindowManager\Implementation\DwmThumbnail.cs" />
     <Compile Include="WindowManager\Interface\IDwmThumbnail.cs" />
     <Compile Include="WindowManager\Interface\InteropConstants.cs" />

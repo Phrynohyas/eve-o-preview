@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
+using EveOPreview.Mediator;
+using EveOPreview.Services;
 using EveOPreview.WindowManager;
 
 namespace EveOPreview.UI
 {
-	public class ThumbnailManager : IThumbnailManager
+	class ThumbnailManager : IThumbnailManager
 	{
 		#region Private constants
 		private const int WindowPositionThreshold = -5000;
 		private const int WindowSizeThreshold = -5000;
 
-		private const string ClientProcessName = "ExeFile";
 		private const string DefaultClientTitle = "EVE";
 		#endregion
 
 		#region Private fields
+		private readonly IProcessMonitor _processMonitor;
 		private readonly IWindowManager _windowManager;
 		private readonly IThumbnailConfiguration _configuration;
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
@@ -32,8 +33,9 @@ namespace EveOPreview.UI
 		private bool _isHoverEffectActive;
 		#endregion
 
-		public ThumbnailManager(IWindowManager windowManager, IThumbnailConfiguration configuration, IThumbnailViewFactory factory)
+		public ThumbnailManager(IMediator mediator, IThumbnailConfiguration configuration, IProcessMonitor processMonitor, IWindowManager windowManager, IThumbnailViewFactory factory)
 		{
+			this._processMonitor = processMonitor;
 			this._windowManager = windowManager;
 			this._configuration = configuration;
 			this._thumbnailViewFactory = factory;
@@ -189,15 +191,9 @@ namespace EveOPreview.UI
 			this._ignoreViewEvents = true;
 		}
 
-		private static Process[] GetClientProcesses()
-		{
-			return Process.GetProcessesByName(ThumbnailManager.ClientProcessName);
-		}
-
 		private void UpdateThumbnailsList()
 		{
-			Process[] clientProcesses = ThumbnailManager.GetClientProcesses();
-			List<IntPtr> processHandles = new List<IntPtr>(clientProcesses.Length);
+			this._processMonitor.GetUpdatedProcesses(out ICollection<IProcessInfo> addedProcesses, out ICollection<IProcessInfo> updatedProcesses, out ICollection<IProcessInfo> removedProcesses);
 
 			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
 
@@ -205,78 +201,74 @@ namespace EveOPreview.UI
 			List<IThumbnailView> viewsUpdated = new List<IThumbnailView>();
 			List<IThumbnailView> viewsRemoved = new List<IThumbnailView>();
 
-			foreach (Process process in clientProcesses)
+			foreach (IProcessInfo process in addedProcesses)
 			{
-				IntPtr processHandle = process.MainWindowHandle;
-				string processTitle = process.MainWindowTitle;
-				processHandles.Add(processHandle);
+				IThumbnailView view = this._thumbnailViewFactory.Create(process.Handle, process.Title, this._configuration.ThumbnailSize);
+				view.IsEnabled = true;
+				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
+				view.SetFrames(this._configuration.ShowThumbnailFrames);
+				// Max/Min size limitations should be set AFTER the frames are disabled
+				// Otherwise thumbnail window will be unnecessary resized
+				view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
+				view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 
-				IThumbnailView view;
-				this._thumbnailViews.TryGetValue(processHandle, out view);
+				view.ThumbnailLocation = this.IsManageableThumbnail(view)
+											? this._configuration.GetThumbnailLocation(process.Title, this._activeClientTitle, view.ThumbnailLocation)
+											: this._configuration.GetDefaultThumbnailLocation();
 
-				if ((view == null) && (processTitle != ""))
+				this._thumbnailViews.Add(process.Handle, view);
+
+				view.ThumbnailResized = this.ThumbnailViewResized;
+				view.ThumbnailMoved = this.ThumbnailViewMoved;
+				view.ThumbnailFocused = this.ThumbnailViewFocused;
+				view.ThumbnailLostFocus = this.ThumbnailViewLostFocus;
+				view.ThumbnailActivated = this.ThumbnailActivated;
+				view.ThumbnailDeactivated = this.ThumbnailDeactivated;
+
+				view.RegisterHotkey(this._configuration.GetClientHotkey(process.Title));
+
+				this.ApplyClientLayout(process.Handle, process.Title);
+
+				viewsAdded.Add(view);
+
+				if (process.Handle == foregroundWindowHandle)
 				{
-					view = this._thumbnailViewFactory.Create(processHandle, processTitle, this._configuration.ThumbnailSize);
-					view.IsEnabled = true;
-					view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
-					view.SetFrames(this._configuration.ShowThumbnailFrames);
-					// Max/Min size limitations should be set AFTER the frames are disabled
-					// Otherwise thumbnail window will be unnecessary resized
-					view.SetSizeLimitations(this._configuration.ThumbnailMinimumSize, this._configuration.ThumbnailMaximumSize);
-					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
-
-					view.ThumbnailLocation = this.IsManageableThumbnail(view)
-												? this._configuration.GetThumbnailLocation(processTitle, this._activeClientTitle, view.ThumbnailLocation)
-												: this._configuration.GetDefaultThumbnailLocation();
-
-					this._thumbnailViews.Add(processHandle, view);
-
-					view.ThumbnailResized = this.ThumbnailViewResized;
-					view.ThumbnailMoved = this.ThumbnailViewMoved;
-					view.ThumbnailFocused = this.ThumbnailViewFocused;
-					view.ThumbnailLostFocus = this.ThumbnailViewLostFocus;
-					view.ThumbnailActivated = this.ThumbnailActivated;
-					view.ThumbnailDeactivated = this.ThumbnailDeactivated;
-
-					view.RegisterHotkey(this._configuration.GetClientHotkey(processTitle));
-
-					this.ApplyClientLayout(processHandle, processTitle);
-
-					viewsAdded.Add(view);
+					this._activeClientHandle = process.Handle;
+					this._activeClientTitle = process.Title;
 				}
-				else if ((view != null) && (processTitle != view.Title)) // update thumbnail title
+			}
+
+			foreach (IProcessInfo process in updatedProcesses)
+			{
+				this._thumbnailViews.TryGetValue(process.Handle, out IThumbnailView view);
+
+				if (view == null)
 				{
-					view.Title = processTitle;
-					view.RegisterHotkey(this._configuration.GetClientHotkey(processTitle));
+					// Something went terribly wrong
+					continue;
+				}
 
-					this.ApplyClientLayout(processHandle, processTitle);
+				if (process.Title != view.Title) // update thumbnail title
+				{
+					view.Title = process.Title;
+					view.RegisterHotkey(this._configuration.GetClientHotkey(process.Title));
 
+					this.ApplyClientLayout(process.Handle, process.Title);
 					viewsUpdated.Add(view);
 				}
 
-				if (process.MainWindowHandle == foregroundWindowHandle)
+				if (process.Handle == foregroundWindowHandle)
 				{
-					this._activeClientHandle = process.MainWindowHandle;
-					this._activeClientTitle = process.MainWindowTitle;
+					this._activeClientHandle = process.Handle;
+					this._activeClientTitle = process.Title;
 				}
 			}
 
-			// Cleanup
-			IList<IntPtr> obsoleteThumbnails = new List<IntPtr>();
-
-			foreach (IntPtr processHandle in this._thumbnailViews.Keys)
+			foreach (IProcessInfo process in removedProcesses)
 			{
-				if (!processHandles.Contains(processHandle))
-				{
-					obsoleteThumbnails.Add(processHandle);
-				}
-			}
+				IThumbnailView view = this._thumbnailViews[process.Handle];
 
-			foreach (IntPtr processHandle in obsoleteThumbnails)
-			{
-				IThumbnailView view = this._thumbnailViews[processHandle];
-
-				this._thumbnailViews.Remove(processHandle);
+				this._thumbnailViews.Remove(process.Handle);
 
 				view.UnregisterHotkey();
 
@@ -453,11 +445,11 @@ namespace EveOPreview.UI
 
 		private void UpdateClientLayouts()
 		{
-			Process[] clientProcesses = ThumbnailManager.GetClientProcesses();
+			ICollection<IProcessInfo> processes = this._processMonitor.GetAllProcesses();
 
-			foreach (Process process in clientProcesses)
+			foreach (IProcessInfo process in processes)
 			{
-				this._windowManager.GetWindowCoordinates(process.MainWindowHandle, out int left, out int top, out int right, out int bottom);
+				this._windowManager.GetWindowCoordinates(process.Handle, out int left, out int top, out int right, out int bottom);
 
 				int width = Math.Abs(right - left);
 				int height = Math.Abs(bottom - top);
@@ -467,7 +459,7 @@ namespace EveOPreview.UI
 					continue;
 				}
 
-				this._configuration.SetClientLayout(process.MainWindowTitle, new ClientLayout(left, top, width, height));
+				this._configuration.SetClientLayout(process.Title, new ClientLayout(left, top, width, height));
 			}
 		}
 

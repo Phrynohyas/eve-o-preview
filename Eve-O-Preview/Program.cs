@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows.Forms;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator;
+using EveOPreview.Services;
 using EveOPreview.UI;
 using EveOPreview.WindowManager;
 
@@ -41,13 +42,13 @@ namespace EveOPreview
 		{
 			// The code might look overcomplicated here for a single Mutex operation
 			// Yet we had already experienced a Windows-level issue
-			// where .NET finalizer theread was literally paralyzed by
+			// where .NET finalizer thread was literally paralyzed by
 			// a failed Mutex operation. That did lead to weird OutOfMemory
 			// exceptions later
 			try
 			{
-				Mutex mutex = Mutex.OpenExisting(Program.MutexName);
-				// if that didn't fail then anotherinstance is already running
+				Mutex.OpenExisting(Program.MutexName);
+				// if that didn't fail then another instance is already running
 				return null;
 			}
 			catch (UnauthorizedAccessException)
@@ -75,6 +76,7 @@ namespace EveOPreview
 			// Low-level services
 			container.Register<IMediator>();
 			container.Register<IWindowManager>();
+			container.Register<IProcessMonitor>();
 
 			// Configuration services
 			container.Register<IConfigurationStorage>();
