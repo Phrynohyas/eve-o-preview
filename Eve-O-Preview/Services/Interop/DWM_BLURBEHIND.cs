@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace EveOPreview.WindowManager.Implementation
+namespace EveOPreview.Services.Interop
 {
 	[StructLayout(LayoutKind.Sequential)]
 	class DWM_BLURBEHIND

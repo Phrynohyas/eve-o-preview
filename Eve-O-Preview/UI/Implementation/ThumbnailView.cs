@@ -2,8 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using EveOPreview.Services;
 using EveOPreview.UI.Hotkeys;
-using EveOPreview.WindowManager;
 
 namespace EveOPreview.UI
 {

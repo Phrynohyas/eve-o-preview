@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
-using EveOPreview.Mediator;
 using EveOPreview.Services;
-using EveOPreview.WindowManager;
+using MediatR;
 
 namespace EveOPreview.UI
 {

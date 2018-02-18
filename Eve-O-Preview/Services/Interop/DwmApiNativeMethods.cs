@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Drawing;
 
-namespace EveOPreview.WindowManager.Implementation
+namespace EveOPreview.Services.Interop
 {
 	static class DwmApiNativeMethods
 	{

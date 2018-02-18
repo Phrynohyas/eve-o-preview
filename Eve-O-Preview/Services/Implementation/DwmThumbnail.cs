@@ -1,6 +1,7 @@
 ﻿using System;
+using EveOPreview.Services.Interop;
 
-namespace EveOPreview.WindowManager.Implementation
+namespace EveOPreview.Services.Implementation
 {
 	class DwmThumbnail : IDwmThumbnail
 	{

@@ -1,4 +1,4 @@
-﻿namespace EveOPreview.WindowManager.Implementation
+﻿namespace EveOPreview.Services.Interop
 {
 	static class DWM_TNP_CONSTANTS
 	{

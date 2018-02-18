@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using EveOPreview.Configuration;
+using EveOPreview.Mediator.Messages;
+using MediatR;
 
 namespace EveOPreview.UI
 {
@@ -13,6 +15,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		#region Private fields
+		private readonly IMediator _mediator;
 		private readonly IThumbnailConfiguration _configuration;
 		private readonly IConfigurationStorage _configurationStorage;
 		private readonly IThumbnailDescriptionViewFactory _thumbnailDescriptionViewFactory;
@@ -22,10 +25,11 @@ namespace EveOPreview.UI
 		private bool _exitApplication;
 		#endregion
 
-		public MainPresenter(IApplicationController controller, IMainView view, IThumbnailConfiguration configuration, IConfigurationStorage configurationStorage,
+		public MainPresenter(IApplicationController controller, IMainView view, IMediator mediator, IThumbnailConfiguration configuration, IConfigurationStorage configurationStorage,
 								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
 			: base(controller, view)
 		{
+			this._mediator = mediator;
 			this._configuration = configuration;
 			this._configurationStorage = configurationStorage;
 
@@ -62,7 +66,7 @@ namespace EveOPreview.UI
 				this.View.Minimize();
 			}
 
-			this._thumbnailManager.Activate();
+			this._mediator.Publish(new StartServices());
 		}
 
 		private void Minimize()
@@ -79,6 +83,8 @@ namespace EveOPreview.UI
 		{
 			if (this._exitApplication || !this.View.MinimizeToTray)
 			{
+				this._mediator.Publish(new StopServices()).Wait();
+
 				this._thumbnailManager.Deactivate();
 				this._configurationStorage.Save();
 				request.Allow = true;

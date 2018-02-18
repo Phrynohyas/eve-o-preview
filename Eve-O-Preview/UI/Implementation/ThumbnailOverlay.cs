@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using EveOPreview.WindowManager;
+using EveOPreview.Services;
 
 namespace EveOPreview.UI
 {

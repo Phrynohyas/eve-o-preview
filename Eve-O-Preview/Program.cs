@@ -2,10 +2,9 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 using EveOPreview.Configuration;
-using EveOPreview.Mediator;
 using EveOPreview.Services;
 using EveOPreview.UI;
-using EveOPreview.WindowManager;
+using MediatR;
 
 namespace EveOPreview
 {
@@ -74,9 +73,16 @@ namespace EveOPreview
 
 			// Singleton registration is used for services
 			// Low-level services
-			container.Register<IMediator>();
 			container.Register<IWindowManager>();
 			container.Register<IProcessMonitor>();
+
+			// MediatR
+			container.Register<IMediator, MediatR.Mediator>();
+			container.RegisterInstance<SingleInstanceFactory>(t => container.Resolve(t));
+			container.RegisterInstance<MultiInstanceFactory>(t => container.ResolveAll(t));
+			container.Register(typeof(INotificationHandler<>), typeof(Program).Assembly);
+			container.Register(typeof(IRequestHandler<>), typeof(Program).Assembly);
+			container.Register(typeof(IRequestHandler<,>), typeof(Program).Assembly);
 
 			// Configuration services
 			container.Register<IConfigurationStorage>();

@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EveOPreview</RootNamespace>
     <AssemblyName>Eve-O Preview</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -83,6 +83,10 @@
       <HintPath>..\packages\LightInject.5.1.2\lib\net452\LightInject.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MediatR, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediatR.4.0.1\lib\net45\MediatR.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>R:\eve-o-preview\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -110,26 +114,27 @@
     <Compile Include="Configuration\IAppConfig.cs" />
     <Compile Include="Configuration\IThumbnailConfiguration.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
+    <Compile Include="Mediatr\Handlers\Services\StartServicesHandler.cs" />
+    <Compile Include="Mediatr\Handlers\Services\StopServicesHandler.cs" />
+    <Compile Include="Mediatr\Messages\Services\StartServices.cs" />
+    <Compile Include="Mediatr\Messages\Services\StopServices.cs" />
     <Compile Include="Services\Implementation\ProcessInfo.cs" />
     <Compile Include="Services\Implementation\ProcessMonitor.cs" />
     <Compile Include="Services\Interface\IProcessInfo.cs" />
     <Compile Include="Services\Interface\IProcessMonitor.cs" />
-    <Compile Include="WindowManager\Implementation\DwmThumbnail.cs" />
-    <Compile Include="WindowManager\Interface\IDwmThumbnail.cs" />
-    <Compile Include="WindowManager\Interface\InteropConstants.cs" />
-    <Compile Include="WindowManager\Interop\DWM_BLURBEHIND.cs" />
-    <Compile Include="WindowManager\Interop\DWM_THUMBNAIL_PROPERTIES.cs" />
-    <Compile Include="WindowManager\Interop\DWM_TNP_CONSTANTS.cs" />
-    <Compile Include="WindowManager\Interface\IWindowManager.cs" />
-    <Compile Include="WindowManager\Interop\MARGINS.cs" />
-    <Compile Include="WindowManager\Interop\RECT.cs" />
+    <Compile Include="Services\Implementation\DwmThumbnail.cs" />
+    <Compile Include="Services\Interface\IDwmThumbnail.cs" />
+    <Compile Include="Services\Interface\InteropConstants.cs" />
+    <Compile Include="Services\Interop\DWM_BLURBEHIND.cs" />
+    <Compile Include="Services\Interop\DWM_THUMBNAIL_PROPERTIES.cs" />
+    <Compile Include="Services\Interop\DWM_TNP_CONSTANTS.cs" />
+    <Compile Include="Services\Interface\IWindowManager.cs" />
+    <Compile Include="Services\Interop\MARGINS.cs" />
+    <Compile Include="Services\Interop\RECT.cs" />
     <Compile Include="Configuration\ClientLayout.cs" />
     <Compile Include="ApplicationBase\IPresenter.cs" />
-    <Compile Include="WindowManager\Implementation\WindowManager.cs" />
-    <Compile Include="WindowManager\Interop\User32NativeMethods.cs" />
-    <Compile Include="Mediator\Implementation\Mediator.cs" />
-    <Compile Include="Mediator\Interface\IMediator.cs" />
-    <Compile Include="Mediator\Interface\INotification.cs" />
+    <Compile Include="Services\Implementation\WindowManager.cs" />
+    <Compile Include="Services\Interop\User32NativeMethods.cs" />
     <Compile Include="Presentation\MainPresenter.cs" />
     <Compile Include="Presentation\ViewCloseRequest.cs" />
     <Compile Include="Presentation\ViewZoomAnchorConverter.cs" />
@@ -190,7 +195,7 @@
     <Compile Include="UI\Implementation\ThumbnailView.Designer.cs">
       <DependentUpon>ThumbnailView.cs</DependentUpon>
     </Compile>
-    <Compile Include="WindowManager\Interop\DwmApiNativeMethods.cs" />
+    <Compile Include="Services\Interop\DwmApiNativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

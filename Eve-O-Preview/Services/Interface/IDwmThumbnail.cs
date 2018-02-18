@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EveOPreview.WindowManager
+namespace EveOPreview.Services
 {
 	public interface IDwmThumbnail
 	{
