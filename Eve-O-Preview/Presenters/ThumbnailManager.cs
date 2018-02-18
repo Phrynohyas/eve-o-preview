@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
+using EveOPreview.Mediator.Messages;
 using EveOPreview.Services;
 using MediatR;
 
@@ -18,6 +19,7 @@ namespace EveOPreview.UI
 		#endregion
 
 		#region Private fields
+		private readonly IMediator _mediator;
 		private readonly IProcessMonitor _processMonitor;
 		private readonly IWindowManager _windowManager;
 		private readonly IThumbnailConfiguration _configuration;
@@ -34,6 +36,7 @@ namespace EveOPreview.UI
 
 		public ThumbnailManager(IMediator mediator, IThumbnailConfiguration configuration, IProcessMonitor processMonitor, IWindowManager windowManager, IThumbnailViewFactory factory)
 		{
+			this._mediator = mediator;
 			this._processMonitor = processMonitor;
 			this._windowManager = windowManager;
 			this._configuration = configuration;
@@ -58,10 +61,6 @@ namespace EveOPreview.UI
 		public Action<IList<IThumbnailView>> ThumbnailsUpdated { get; set; }
 
 		public Action<IList<IThumbnailView>> ThumbnailsRemoved { get; set; }
-
-		public Action<String, String, Point> ThumbnailPositionChanged { get; set; }
-
-		public Action<Size> ThumbnailSizeChanged { get; set; }
 
 		public void Activate()
 		{
@@ -96,7 +95,7 @@ namespace EveOPreview.UI
 				entry.Value.Refresh(false);
 			}
 
-			this.ThumbnailSizeChanged?.Invoke(size);
+			this._mediator.Publish(new ThumbnailSizeUpdated(size)); // This one runs asynchronously
 
 			this.EnableViewEvents();
 		}
@@ -372,7 +371,7 @@ namespace EveOPreview.UI
 			view.Refresh(false);
 		}
 
-		private void ThumbnailViewMoved(IntPtr id)
+		private async void ThumbnailViewMoved(IntPtr id)
 		{
 			if (this._ignoreViewEvents)
 			{
@@ -383,7 +382,7 @@ namespace EveOPreview.UI
 
 			if (this.IsManageableThumbnail(view))
 			{
-				this.ThumbnailPositionChanged?.Invoke(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+				await this._mediator.Publish(new ThumbnailLocationUpdated(view.Title, this._activeClientTitle, view.ThumbnailLocation));
 			}
 
 			view.Refresh(false);

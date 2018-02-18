@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Drawing;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
+using EveOPreview.UI;
 using MediatR;
 
-namespace EveOPreview.UI
+namespace EveOPreview.Presenters
 {
-	public class MainPresenter : Presenter<IMainView>
+	public class MainFormPresenter : Presenter<IMainFormView>, IMainFormPresenter
 	{
 		#region Private constants
 		private const string ForumUrl = @"https://meta.eveonline.com/t/4202";
@@ -25,7 +26,7 @@ namespace EveOPreview.UI
 		private bool _exitApplication;
 		#endregion
 
-		public MainPresenter(IApplicationController controller, IMainView view, IMediator mediator, IThumbnailConfiguration configuration, IConfigurationStorage configurationStorage,
+		public MainFormPresenter(IApplicationController controller, IMainFormView view, IMediator mediator, IThumbnailConfiguration configuration, IConfigurationStorage configurationStorage,
 								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
 			: base(controller, view)
 		{
@@ -51,22 +52,19 @@ namespace EveOPreview.UI
 			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
 			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
 			this._thumbnailManager.ThumbnailsRemoved = this.ThumbnailsRemoved;
-
-			this._thumbnailManager.ThumbnailPositionChanged = this.ThumbnailPositionChanged;
-			this._thumbnailManager.ThumbnailSizeChanged = this.ThumbnailSizeChanged;
 		}
 
 		private void Activate()
 		{
 			this.LoadApplicationSettings();
-			this.View.SetDocumentationUrl(MainPresenter.ForumUrl);
+			this.View.SetDocumentationUrl(MainFormPresenter.ForumUrl);
 			this.View.SetVersionInfo(this.GetApplicationVersion());
 			if (this._configuration.MinimizeToTray)
 			{
 				this.View.Minimize();
 			}
 
-			this._mediator.Publish(new StartServices());
+			this._mediator.Send(new StartService());
 		}
 
 		private void Minimize()
@@ -83,7 +81,7 @@ namespace EveOPreview.UI
 		{
 			if (this._exitApplication || !this.View.MinimizeToTray)
 			{
-				this._mediator.Publish(new StopServices()).Wait();
+				this._mediator.Send(new StopService()).Wait();
 
 				this._thumbnailManager.Deactivate();
 				this._configurationStorage.Save();
@@ -215,17 +213,6 @@ namespace EveOPreview.UI
 			return thumbnailViews;
 		}
 
-		private void ThumbnailPositionChanged(String thumbnailName, String activeClientName, Point location)
-		{
-			this._configuration.SetThumbnailLocation(thumbnailName, activeClientName, location);
-			this._configurationStorage.Save();
-		}
-
-		private void ThumbnailSizeChanged(Size size)
-		{
-			this.View.ThumbnailSize = size;
-		}
-
 		private void UpdateThumbnailState(IntPtr thumbnailId)
 		{
 			this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
@@ -233,7 +220,7 @@ namespace EveOPreview.UI
 
 		private void OpenDocumentationLink()
 		{
-			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainPresenter.ForumUrl).AbsoluteUri);
+			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainFormPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
 		}
 
@@ -247,6 +234,11 @@ namespace EveOPreview.UI
 		{
 			this._exitApplication = true;
 			this.View.Close();
+		}
+
+		public void UpdateThumbnailSize(Size size)
+		{
+			this.View.ThumbnailSize = size;
 		}
 	}
 }

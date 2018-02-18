@@ -8,7 +8,7 @@ namespace EveOPreview.UI
 	/// Main view interface
 	/// Presenter uses it to access GUI properties
 	/// </summary>
-	public interface IMainView : IView
+	public interface IMainFormView : IView
 	{
 		bool MinimizeToTray { get; set; }
 

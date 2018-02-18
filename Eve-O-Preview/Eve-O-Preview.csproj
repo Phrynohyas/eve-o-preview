@@ -113,10 +113,18 @@
     <Compile Include="Configuration\IAppConfig.cs" />
     <Compile Include="Configuration\IThumbnailConfiguration.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
-    <Compile Include="Mediatr\Handlers\Services\StartServicesHandler.cs" />
-    <Compile Include="Mediatr\Handlers\Services\StopServicesHandler.cs" />
-    <Compile Include="Mediatr\Messages\Services\StartServices.cs" />
-    <Compile Include="Mediatr\Messages\Services\StopServices.cs" />
+    <Compile Include="Mediator\Handlers\Configuration\SaveConfigurationHandler.cs" />
+    <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailLocationUpdatedHandler.cs" />
+    <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailSizeUpdatedHandler.cs" />
+    <Compile Include="Mediator\Handlers\Services\StartServiceHandler.cs" />
+    <Compile Include="Mediator\Handlers\Services\StopServiceHandler.cs" />
+    <Compile Include="Mediator\Messages\Base\NotificationBase.cs" />
+    <Compile Include="Mediator\Messages\Configuration\SaveConfiguration.cs" />
+    <Compile Include="Mediator\Messages\Services\StartService.cs" />
+    <Compile Include="Mediator\Messages\Services\StopService.cs" />
+    <Compile Include="Mediator\Messages\Thumbnails\ThumbnailLocationUpdated.cs" />
+    <Compile Include="Mediator\Messages\Thumbnails\ThumbnailSizeUpdated.cs" />
+    <Compile Include="Presenters\Interface\IMainFormPresenter.cs" />
     <Compile Include="Services\Implementation\ProcessInfo.cs" />
     <Compile Include="Services\Implementation\ProcessMonitor.cs" />
     <Compile Include="Services\Interface\IProcessInfo.cs" />
@@ -134,14 +142,14 @@
     <Compile Include="ApplicationBase\IPresenter.cs" />
     <Compile Include="Services\Implementation\WindowManager.cs" />
     <Compile Include="Services\Interop\User32NativeMethods.cs" />
-    <Compile Include="Presentation\MainPresenter.cs" />
-    <Compile Include="Presentation\ViewCloseRequest.cs" />
-    <Compile Include="Presentation\ViewZoomAnchorConverter.cs" />
+    <Compile Include="Presenters\Implementation\MainFormPresenter.cs" />
+    <Compile Include="Presenters\ViewCloseRequest.cs" />
+    <Compile Include="Presenters\ViewZoomAnchorConverter.cs" />
     <Compile Include="UI\Interface\IThumbnailViewFactory.cs" />
-    <Compile Include="Presentation\IThumbnailManager.cs" />
+    <Compile Include="Presenters\IThumbnailManager.cs" />
     <Compile Include="UI\Implementation\ThumbnailDescriptionView.cs" />
     <Compile Include="UI\Factory\ThumbnailDescriptionViewFactory.cs" />
-    <Compile Include="UI\Interface\IMainView.cs" />
+    <Compile Include="UI\Interface\IMainFormView.cs" />
     <Compile Include="ApplicationBase\IView.cs" />
     <Compile Include="UI\Interface\IThumbnailDescriptionView.cs" />
     <Compile Include="UI\Interface\IThumbnailDescriptionViewFactory.cs" />
@@ -158,7 +166,7 @@
     <Compile Include="Configuration\IConfigurationStorage.cs" />
     <Compile Include="UI\Interface\IThumbnailView.cs" />
     <Compile Include="UI\Factory\ThumbnailViewFactory.cs" />
-    <Compile Include="Presentation\ThumbnailManager.cs" />
+    <Compile Include="Presenters\ThumbnailManager.cs" />
     <Compile Include="UI\Implementation\ThumbnailOverlay.cs">
       <SubType>Form</SubType>
     </Compile>

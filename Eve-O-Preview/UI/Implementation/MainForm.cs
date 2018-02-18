@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace EveOPreview.UI
 {
-	public partial class MainForm : Form, IMainView
+	public partial class MainForm : Form, IMainFormView
 	{
 		#region Private fields
 		private readonly ApplicationContext _context;

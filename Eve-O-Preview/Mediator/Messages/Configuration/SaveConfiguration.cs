@@ -2,7 +2,7 @@
 
 namespace EveOPreview.Mediator.Messages
 {
-	sealed class StopServices : INotification
+	sealed class SaveConfiguration : IRequest
 	{
 	}
 }

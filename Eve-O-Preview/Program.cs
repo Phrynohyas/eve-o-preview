@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 using EveOPreview.Configuration;
+using EveOPreview.Presenters;
 using EveOPreview.Services;
 using EveOPreview.UI;
 using MediatR;
@@ -34,7 +35,7 @@ namespace EveOPreview
 			IApplicationController controller = Program.InitializeApplicationController();
 
 			Program.InitializeWinForms();
-			controller.Run<MainPresenter>();
+			controller.Run<MainFormPresenter>();
 		}
 
 		private static object GetInstanceToken()
@@ -97,7 +98,7 @@ namespace EveOPreview
 			IApplicationController controller = new ApplicationController(container);
 
 			// UI classes
-			controller.RegisterView<IMainView, MainForm>()
+			controller.RegisterView<IMainFormView, MainForm>()
 				.RegisterView<IThumbnailView, ThumbnailView>()
 				.RegisterView<IThumbnailDescriptionView, ThumbnailDescriptionView>()
 				.RegisterInstance(new ApplicationContext());

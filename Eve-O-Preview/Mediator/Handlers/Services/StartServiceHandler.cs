@@ -4,18 +4,18 @@ using EveOPreview.Mediator.Messages;
 using EveOPreview.UI;
 using MediatR;
 
-namespace EveOPreview.Mediator.Handlers
+namespace EveOPreview.Mediator.Handlers.Services
 {
-	sealed class StartServicesHandler : INotificationHandler<StartServices>
+	sealed class StartServiceHandler : IRequestHandler<StartService>
 	{
 		private readonly IThumbnailManager _manager;
 
-		public StartServicesHandler(IThumbnailManager manager)
+		public StartServiceHandler(IThumbnailManager manager)
 		{
 			this._manager = manager;
 		}
 
-		public Task Handle(StartServices message, CancellationToken cancellationToken)
+		public Task Handle(StartService message, CancellationToken cancellationToken)
 		{
 			this._manager.Activate();
 
