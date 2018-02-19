@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using EveOPreview.Mediator.Messages;
 using EveOPreview.Presenters;
@@ -20,7 +19,17 @@ namespace EveOPreview.Mediator.Handlers.Thumbnails
 
 		public Task Handle(ThumbnailListUpdated notification, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			if (notification.Added.Count > 0)
+			{
+				this._presenter.AddThumbnails(notification.Added);
+			}
+
+			if (notification.Removed.Count > 0)
+			{
+				this._presenter.RemoveThumbnails(notification.Removed);
+			}
+			
+			return Task.CompletedTask;
 		}
 	}
 }

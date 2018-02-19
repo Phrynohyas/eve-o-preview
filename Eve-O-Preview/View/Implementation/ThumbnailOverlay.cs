@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using EveOPreview.Services;
 
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
 	public partial class ThumbnailOverlay : Form
 	{

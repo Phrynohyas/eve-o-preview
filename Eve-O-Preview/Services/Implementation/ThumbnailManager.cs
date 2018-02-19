@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
-using EveOPreview.Services;
 using EveOPreview.View;
 using MediatR;
 
@@ -71,8 +70,7 @@ namespace EveOPreview.Services
 
 		public void SetThumbnailState(IntPtr thumbnailId, bool hideAlways)
 		{
-			IThumbnailView thumbnail;
-			if (!this._thumbnailViews.TryGetValue(thumbnailId, out thumbnail))
+			if (!this._thumbnailViews.TryGetValue(thumbnailId, out IThumbnailView thumbnail))
 			{
 				return;
 			}
@@ -106,7 +104,7 @@ namespace EveOPreview.Services
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				IThumbnailView view = entry.Value;
-
+				
 				if (hideAllThumbnails || !view.IsEnabled)
 				{
 					if (view.IsActive)
@@ -191,7 +189,6 @@ namespace EveOPreview.Services
 			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
 
 			List<string> viewsAdded = new List<string>();
-			List<string> viewsUpdated = new List<string>();
 			List<string> viewsRemoved = new List<string>();
 
 			foreach (IProcessInfo process in addedProcesses)
@@ -247,15 +244,13 @@ namespace EveOPreview.Services
 
 				if (process.Title != view.Title) // update thumbnail title
 				{
+					viewsRemoved.Add(view.Title);
 					view.Title = process.Title;
+					viewsAdded.Add(view.Title);
+
 					view.RegisterHotkey(this._configuration.GetClientHotkey(process.Title));
 
 					this.ApplyClientLayout(view.Id, view.Title);
-
-					if (view.Title != ThumbnailManager.DefaultClientTitle)
-					{
-						viewsUpdated.Add(view.Title);
-					}
 				}
 
 				if (process.Handle == foregroundWindowHandle)
@@ -270,6 +265,10 @@ namespace EveOPreview.Services
 				IThumbnailView view = this._thumbnailViews[process.Handle];
 
 				this._thumbnailViews.Remove(view.Id);
+				if (view.Title != ThumbnailManager.DefaultClientTitle)
+				{
+					viewsRemoved.Add(view.Title);
+				}
 
 				view.UnregisterHotkey();
 
@@ -280,26 +279,11 @@ namespace EveOPreview.Services
 				view.ThumbnailActivated = null;
 
 				view.Close();
-
-				if (view.Title != ThumbnailManager.DefaultClientTitle)
-				{
-					viewsRemoved.Add(view.Title);
-				}
 			}
 
-			if (viewsAdded.Count > 0)
+			if ((viewsAdded.Count > 0) || (viewsRemoved.Count > 0))
 			{
-				await this._mediator.Publish(new ThumbnailListUpdated(ThumbnailListUpdated.UpdateKind.Add, viewsAdded));
-			}
-
-			if (viewsUpdated.Count > 0)
-			{
-				await this._mediator.Publish(new ThumbnailListUpdated(ThumbnailListUpdated.UpdateKind.Update, viewsUpdated));
-			}
-
-			if (viewsRemoved.Count > 0)
-			{
-				await this._mediator.Publish(new ThumbnailListUpdated(ThumbnailListUpdated.UpdateKind.Remove, viewsRemoved));
+				await this._mediator.Publish(new ThumbnailListUpdated(viewsAdded, viewsRemoved));
 			}
 		}
 

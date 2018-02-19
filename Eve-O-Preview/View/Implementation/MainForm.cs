@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using EveOPreview.UI;
 
 namespace EveOPreview.View
 {
@@ -208,11 +207,6 @@ namespace EveOPreview.View
 
 		public void AddThumbnails(IList<IThumbnailDescription> thumbnails)
 		{
-			if (thumbnails.Count == 0)
-			{
-				return;
-			}
-
 			this.ThumbnailsList.BeginUpdate();
 
 			foreach (IThumbnailDescription view in thumbnails)
@@ -223,22 +217,8 @@ namespace EveOPreview.View
 			this.ThumbnailsList.EndUpdate();
 		}
 
-		public void UpdateThumbnails(IList<IThumbnailDescription> thumbnails)
-		{
-			// Just trigger redraw
-			if (thumbnails.Count > 0)
-			{
-				this.ThumbnailsList.Invalidate();
-			}
-		}
-
 		public void RemoveThumbnails(IList<IThumbnailDescription> thumbnails)
 		{
-			if (thumbnails.Count == 0)
-			{
-				return;
-			}
-
 			this.ThumbnailsList.BeginUpdate();
 
 			foreach (IThumbnailDescription view in thumbnails)

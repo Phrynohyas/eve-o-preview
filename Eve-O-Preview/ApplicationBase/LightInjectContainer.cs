@@ -58,7 +58,7 @@ namespace EveOPreview
 		public void Register<TService, TImplementation>()
 					where TImplementation : TService
 		{
-			this._container.Register<TService, TImplementation>(new PerContainerLifetime());
+			this._container.Register<TService, TImplementation>();
 		}
 
 		public void Register<TService>(Expression<Func<TService>> factory)

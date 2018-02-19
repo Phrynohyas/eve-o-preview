@@ -1,22 +1,17 @@
 ﻿using System.Collections.Generic;
+using MediatR;
 
 namespace EveOPreview.Mediator.Messages
 {
-	sealed class ThumbnailListUpdated : NotificationBase<IList<string>>
+	sealed class ThumbnailListUpdated : INotification
 	{
-		public ThumbnailListUpdated(UpdateKind updateKind, IList<string> list)
-				: base(list)
+		public ThumbnailListUpdated(IList<string> addedThumbnails, IList<string> removedThumbnails)
 		{
-			this.Kind = updateKind;
+			this.Added = addedThumbnails;
+			this.Removed = removedThumbnails;
 		}
 
-		public UpdateKind Kind { get; }
-
-		public enum UpdateKind
-		{
-			Add,
-			Update,
-			Remove
-		}
+		public IList<string> Added { get; }
+		public IList<string> Removed { get; }
 	}
 }

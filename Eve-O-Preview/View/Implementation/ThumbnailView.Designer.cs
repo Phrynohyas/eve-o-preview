@@ -1,4 +1,4 @@
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
     partial class ThumbnailView
     {

@@ -5,7 +5,6 @@ using System.Drawing;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
 using EveOPreview.Services;
-using EveOPreview.UI;
 using EveOPreview.View;
 using MediatR;
 
@@ -23,6 +22,8 @@ namespace EveOPreview.Presenters
 		private readonly IConfigurationStorage _configurationStorage;
 		private readonly IThumbnailManager _thumbnailManager;
 
+		private readonly IDictionary<string, IThumbnailDescription> _descriptionsCache;
+
 		private bool _exitApplication;
 		#endregion
 
@@ -33,8 +34,9 @@ namespace EveOPreview.Presenters
 			this._mediator = mediator;
 			this._configuration = configuration;
 			this._configurationStorage = configurationStorage;
-
 			this._thumbnailManager = thumbnailManager;
+
+			this._descriptionsCache = new Dictionary<string, IThumbnailDescription>();
 
 			this._exitApplication = false;
 
@@ -150,70 +152,65 @@ namespace EveOPreview.Presenters
 			this._thumbnailManager.SetupThumbnailFrames();
 		}
 
-		private void ThumbnailsAdded(IList<IThumbnailView> thumbnails)
+
+		public void AddThumbnails(IList<string> thumbnailTitles)
 		{
-			//this.View.AddThumbnails(this.GetThumbnailViews(thumbnails, false));
+			IList<IThumbnailDescription> descriptions = new List<IThumbnailDescription>(thumbnailTitles.Count);
+
+			lock (this._descriptionsCache)
+			{
+				foreach (string title in thumbnailTitles)
+				{
+					IThumbnailDescription description = this.CreateThumbnailDescription(title);
+					this._descriptionsCache[title] = description;
+
+					descriptions.Add(description);
+				}
+			}
+
+			this.View.AddThumbnails(descriptions);
 		}
 
-		private void ThumbnailsUpdated(IList<IThumbnailView> thumbnails)
+		public void RemoveThumbnails(IList<string> thumbnailTitles)
 		{
-			//this.View.UpdateThumbnails(this.GetThumbnailViews(thumbnails, false));
+			IList<IThumbnailDescription> descriptions = new List<IThumbnailDescription>(thumbnailTitles.Count);
+
+			lock (this._descriptionsCache)
+			{
+				foreach (string title in thumbnailTitles)
+				{
+					if (!this._descriptionsCache.TryGetValue(title, out IThumbnailDescription description))
+					{
+						continue;
+					}
+
+					this._descriptionsCache.Remove(title);
+					descriptions.Add(description);
+				}
+			}
+
+			this.View.RemoveThumbnails(descriptions);
 		}
 
-		private void ThumbnailsRemoved(IList<IThumbnailView> thumbnails)
+		private IThumbnailDescription CreateThumbnailDescription(string title)
 		{
-			//this.View.RemoveThumbnails(this.GetThumbnailViews(thumbnails, true));
+			// TODO Read here persisted value for the IsDisabled parameter
+			return new ThumbnailDescription(title, false);
 		}
-
-		//private IList<IThumbnailDescriptionView> GetThumbnailViews(IList<IThumbnailView> thumbnails, bool removeFromCache)
-		//{
-		//	IList<IThumbnailDescriptionView> thumbnailViews = new List<IThumbnailDescriptionView>(thumbnails.Count);
-
-		//	// Time for some thread safety
-		//	lock (this._thumbnailDescriptionViews)
-		//	{
-		//		foreach (IThumbnailView thumbnail in thumbnails)
-		//		{
-		//			IThumbnailDescriptionView thumbnailView;
-		//			bool foundInCache = this._thumbnailDescriptionViews.TryGetValue(thumbnail.Id, out thumbnailView);
-
-		//			if (!foundInCache)
-		//			{
-		//				if (removeFromCache)
-		//				{
-		//					// This item was not even cached
-		//					continue;
-		//				}
-
-		//				thumbnailView = this._thumbnailDescriptionViewFactory.Create(thumbnail.Id, thumbnail.Title, !thumbnail.IsEnabled);
-		//				this._thumbnailDescriptionViews.Add(thumbnail.Id, thumbnailView);
-		//			}
-		//			else
-		//			{
-		//				if (removeFromCache)
-		//				{
-		//					this._thumbnailDescriptionViews.Remove(thumbnail.Id);
-		//				}
-		//				else
-		//				{
-		//					thumbnailView.Title = thumbnail.Title;
-		//				}
-		//			}
-
-		//			thumbnailViews.Add(thumbnailView);
-		//		}
-		//	}
-
-		//	return thumbnailViews;
-		//}
 
 		private void UpdateThumbnailState(String title)
 		{
 			//this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
 		}
 
+		public void UpdateThumbnailSize(Size size)
+		{
+			this.View.ThumbnailSize = size;
+		}
+
 		private void OpenDocumentationLink()
 		{
+			// TODO Move out
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainFormPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
 		}
@@ -228,11 +225,6 @@ namespace EveOPreview.Presenters
 		{
 			this._exitApplication = true;
 			this.View.Close();
-		}
-
-		public void UpdateThumbnailSize(Size size)
-		{
-			this.View.ThumbnailSize = size;
 		}
 	}
 }

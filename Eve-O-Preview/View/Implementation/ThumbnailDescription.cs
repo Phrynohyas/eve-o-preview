@@ -1,6 +1,6 @@
 ﻿namespace EveOPreview.View
 {
-	sealed class ThumbnailDescription
+	sealed class ThumbnailDescription : IThumbnailDescription
 	{
 		public ThumbnailDescription(string title, bool isDisabled)
 		{

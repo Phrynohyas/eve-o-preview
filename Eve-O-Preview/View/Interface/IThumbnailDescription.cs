@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EveOPreview.View
+﻿namespace EveOPreview.View
 {
 	public interface IThumbnailDescription
 	{

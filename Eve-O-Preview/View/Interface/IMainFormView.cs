@@ -40,7 +40,6 @@ namespace EveOPreview.View
 		void Minimize();
 
 		void AddThumbnails(IList<IThumbnailDescription> thumbnails);
-		void UpdateThumbnails(IList<IThumbnailDescription> thumbnails);
 		void RemoveThumbnails(IList<IThumbnailDescription> thumbnails);
 		void RefreshZoomSettings();
 
