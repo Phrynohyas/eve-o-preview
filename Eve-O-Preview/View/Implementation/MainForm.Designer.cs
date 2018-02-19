@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
 	partial class MainForm
 	{

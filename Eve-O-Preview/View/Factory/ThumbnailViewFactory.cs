@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using EveOPreview.View;
 
 namespace EveOPreview.UI
 {

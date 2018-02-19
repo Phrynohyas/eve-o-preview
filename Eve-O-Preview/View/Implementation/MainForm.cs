@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using EveOPreview.UI;
 
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
 	public partial class MainForm : Form, IMainFormView
 	{

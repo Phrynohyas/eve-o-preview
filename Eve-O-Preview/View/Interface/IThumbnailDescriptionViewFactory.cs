@@ -1,4 +1,5 @@
 ﻿using System;
+using EveOPreview.View;
 
 namespace EveOPreview.UI
 {

@@ -1,6 +1,7 @@
 ﻿using System;
+using EveOPreview.UI;
 
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
 	public class ThumbnailDescriptionView : IThumbnailDescriptionView
 	{

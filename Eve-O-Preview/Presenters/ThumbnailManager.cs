@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
 using EveOPreview.Services;
+using EveOPreview.View;
 using MediatR;
 
 namespace EveOPreview.UI
@@ -56,12 +57,6 @@ namespace EveOPreview.UI
 			this._thumbnailUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, configuration.ThumbnailRefreshPeriod);
 		}
 
-		public Action<IList<IThumbnailView>> ThumbnailsAdded { get; set; }
-
-		public Action<IList<IThumbnailView>> ThumbnailsUpdated { get; set; }
-
-		public Action<IList<IThumbnailView>> ThumbnailsRemoved { get; set; }
-
 		public void Activate()
 		{
 			this._thumbnailUpdateTimer.Start();
@@ -85,7 +80,7 @@ namespace EveOPreview.UI
 			thumbnail.IsEnabled = !hideAlways;
 		}
 
-		public void SetThumbnailsSize(Size size)
+		public async void SetThumbnailsSize(Size size)
 		{
 			this.DisableViewEvents();
 
@@ -95,7 +90,7 @@ namespace EveOPreview.UI
 				entry.Value.Refresh(false);
 			}
 
-			this._mediator.Publish(new ThumbnailSizeUpdated(size)); // This one runs asynchronously
+			await this._mediator.Publish(new ThumbnailSizeUpdated(size));
 
 			this.EnableViewEvents();
 		}
@@ -189,15 +184,15 @@ namespace EveOPreview.UI
 			this._ignoreViewEvents = true;
 		}
 
-		private void UpdateThumbnailsList()
+		private async void UpdateThumbnailsList()
 		{
 			this._processMonitor.GetUpdatedProcesses(out ICollection<IProcessInfo> addedProcesses, out ICollection<IProcessInfo> updatedProcesses, out ICollection<IProcessInfo> removedProcesses);
 
 			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
 
-			List<IThumbnailView> viewsAdded = new List<IThumbnailView>();
-			List<IThumbnailView> viewsUpdated = new List<IThumbnailView>();
-			List<IThumbnailView> viewsRemoved = new List<IThumbnailView>();
+			List<string> viewsAdded = new List<string>();
+			List<string> viewsUpdated = new List<string>();
+			List<string> viewsRemoved = new List<string>();
 
 			foreach (IProcessInfo process in addedProcesses)
 			{
@@ -211,10 +206,10 @@ namespace EveOPreview.UI
 				view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 
 				view.ThumbnailLocation = this.IsManageableThumbnail(view)
-											? this._configuration.GetThumbnailLocation(process.Title, this._activeClientTitle, view.ThumbnailLocation)
+											? this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation)
 											: this._configuration.GetDefaultThumbnailLocation();
 
-				this._thumbnailViews.Add(process.Handle, view);
+				this._thumbnailViews.Add(view.Id, view);
 
 				view.ThumbnailResized = this.ThumbnailViewResized;
 				view.ThumbnailMoved = this.ThumbnailViewMoved;
@@ -223,16 +218,20 @@ namespace EveOPreview.UI
 				view.ThumbnailActivated = this.ThumbnailActivated;
 				view.ThumbnailDeactivated = this.ThumbnailDeactivated;
 
-				view.RegisterHotkey(this._configuration.GetClientHotkey(process.Title));
+				view.RegisterHotkey(this._configuration.GetClientHotkey(view.Title));
 
-				this.ApplyClientLayout(process.Handle, process.Title);
+				this.ApplyClientLayout(view.Id, view.Title);
 
-				viewsAdded.Add(view);
+				// TODO Add extension filter here later
+				if (view.Title != ThumbnailManager.DefaultClientTitle)
+				{
+					viewsAdded.Add(view.Title);
+				}
 
 				if (process.Handle == foregroundWindowHandle)
 				{
-					this._activeClientHandle = process.Handle;
-					this._activeClientTitle = process.Title;
+					this._activeClientHandle = view.Id;
+					this._activeClientTitle = view.Title;
 				}
 			}
 
@@ -251,8 +250,12 @@ namespace EveOPreview.UI
 					view.Title = process.Title;
 					view.RegisterHotkey(this._configuration.GetClientHotkey(process.Title));
 
-					this.ApplyClientLayout(process.Handle, process.Title);
-					viewsUpdated.Add(view);
+					this.ApplyClientLayout(view.Id, view.Title);
+
+					if (view.Title != ThumbnailManager.DefaultClientTitle)
+					{
+						viewsUpdated.Add(view.Title);
+					}
 				}
 
 				if (process.Handle == foregroundWindowHandle)
@@ -266,7 +269,7 @@ namespace EveOPreview.UI
 			{
 				IThumbnailView view = this._thumbnailViews[process.Handle];
 
-				this._thumbnailViews.Remove(process.Handle);
+				this._thumbnailViews.Remove(view.Id);
 
 				view.UnregisterHotkey();
 
@@ -278,12 +281,26 @@ namespace EveOPreview.UI
 
 				view.Close();
 
-				viewsRemoved.Add(view);
+				if (view.Title != ThumbnailManager.DefaultClientTitle)
+				{
+					viewsRemoved.Add(view.Title);
+				}
 			}
 
-			this.ThumbnailsAdded?.Invoke(viewsAdded);
-			this.ThumbnailsUpdated?.Invoke(viewsUpdated);
-			this.ThumbnailsRemoved?.Invoke(viewsRemoved);
+			if (viewsAdded.Count > 0)
+			{
+				await this._mediator.Publish(new ThumbnailListUpdated(ThumbnailListUpdated.UpdateKind.Add, viewsAdded));
+			}
+
+			if (viewsUpdated.Count > 0)
+			{
+				await this._mediator.Publish(new ThumbnailListUpdated(ThumbnailListUpdated.UpdateKind.Update, viewsUpdated));
+			}
+
+			if (viewsRemoved.Count > 0)
+			{
+				await this._mediator.Publish(new ThumbnailListUpdated(ThumbnailListUpdated.UpdateKind.Remove, viewsRemoved));
+			}
 		}
 
 		private void ThumbnailViewFocused(IntPtr id)

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using EveOPreview.Services;
 using EveOPreview.UI.Hotkeys;
+using EveOPreview.View;
 
 namespace EveOPreview.UI
 {

@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
 	public interface IThumbnailView : IView
 	{

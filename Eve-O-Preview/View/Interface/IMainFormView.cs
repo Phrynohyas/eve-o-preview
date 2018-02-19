@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using EveOPreview.UI;
 
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
 	/// <summary>
 	/// Main view interface

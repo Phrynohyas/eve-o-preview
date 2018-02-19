@@ -5,6 +5,7 @@ using EveOPreview.Configuration;
 using EveOPreview.Presenters;
 using EveOPreview.Services;
 using EveOPreview.UI;
+using EveOPreview.View;
 using MediatR;
 
 namespace EveOPreview

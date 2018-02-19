@@ -114,6 +114,8 @@
     <Compile Include="Configuration\IThumbnailConfiguration.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
     <Compile Include="Mediator\Handlers\Configuration\SaveConfigurationHandler.cs" />
+    <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailListUpdatedHandler.cs" />
+    <Compile Include="Mediator\Messages\Thumbnails\ThumbnailListUpdated.cs" />
     <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailLocationUpdatedHandler.cs" />
     <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailSizeUpdatedHandler.cs" />
     <Compile Include="Mediator\Handlers\Services\StartServiceHandler.cs" />
@@ -145,41 +147,41 @@
     <Compile Include="Presenters\Implementation\MainFormPresenter.cs" />
     <Compile Include="Presenters\ViewCloseRequest.cs" />
     <Compile Include="Presenters\ViewZoomAnchorConverter.cs" />
-    <Compile Include="UI\Interface\IThumbnailViewFactory.cs" />
+    <Compile Include="View\Interface\IThumbnailViewFactory.cs" />
     <Compile Include="Presenters\IThumbnailManager.cs" />
-    <Compile Include="UI\Implementation\ThumbnailDescriptionView.cs" />
-    <Compile Include="UI\Factory\ThumbnailDescriptionViewFactory.cs" />
-    <Compile Include="UI\Interface\IMainFormView.cs" />
+    <Compile Include="View\Implementation\ThumbnailDescriptionView.cs" />
+    <Compile Include="View\Factory\ThumbnailDescriptionViewFactory.cs" />
+    <Compile Include="View\Interface\IMainFormView.cs" />
     <Compile Include="ApplicationBase\IView.cs" />
-    <Compile Include="UI\Interface\IThumbnailDescriptionView.cs" />
-    <Compile Include="UI\Interface\IThumbnailDescriptionViewFactory.cs" />
-    <Compile Include="UI\Interface\ViewZoomAnchor.cs" />
+    <Compile Include="View\Interface\IThumbnailDescriptionView.cs" />
+    <Compile Include="View\Interface\IThumbnailDescriptionViewFactory.cs" />
+    <Compile Include="View\Interface\ViewZoomAnchor.cs" />
     <Compile Include="Configuration\ThumbnailConfiguration.cs" />
     <Compile Include="Hotkeys\HotkeyHandler.cs" />
     <Compile Include="Hotkeys\HotkeyHandlerNativeMethods.cs" />
-    <Compile Include="UI\Implementation\MainForm.cs">
+    <Compile Include="View\Implementation\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Implementation\MainForm.Designer.cs">
+    <Compile Include="View\Implementation\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\IConfigurationStorage.cs" />
-    <Compile Include="UI\Interface\IThumbnailView.cs" />
-    <Compile Include="UI\Factory\ThumbnailViewFactory.cs" />
+    <Compile Include="View\Interface\IThumbnailView.cs" />
+    <Compile Include="View\Factory\ThumbnailViewFactory.cs" />
     <Compile Include="Presenters\ThumbnailManager.cs" />
-    <Compile Include="UI\Implementation\ThumbnailOverlay.cs">
+    <Compile Include="View\Implementation\ThumbnailOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Implementation\ThumbnailOverlay.Designer.cs">
+    <Compile Include="View\Implementation\ThumbnailOverlay.Designer.cs">
       <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="UI\Implementation\MainForm.resx">
+    <EmbeddedResource Include="View\Implementation\MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Implementation\ThumbnailOverlay.resx">
+    <EmbeddedResource Include="View\Implementation\ThumbnailOverlay.resx">
       <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -187,7 +189,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Implementation\ThumbnailView.resx">
+    <EmbeddedResource Include="View\Implementation\ThumbnailView.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ThumbnailView.cs</DependentUpon>
     </EmbeddedResource>
@@ -196,10 +198,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="UI\Implementation\ThumbnailView.cs">
+    <Compile Include="View\Implementation\ThumbnailView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Implementation\ThumbnailView.Designer.cs">
+    <Compile Include="View\Implementation\ThumbnailView.Designer.cs">
       <DependentUpon>ThumbnailView.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\Interop\DwmApiNativeMethods.cs" />

@@ -5,6 +5,7 @@ using System.Drawing;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
 using EveOPreview.UI;
+using EveOPreview.View;
 using MediatR;
 
 namespace EveOPreview.Presenters
@@ -48,10 +49,6 @@ namespace EveOPreview.Presenters
 			this.View.ThumbnailStateChanged = this.UpdateThumbnailState;
 			this.View.DocumentationLinkActivated = this.OpenDocumentationLink;
 			this.View.ApplicationExitRequested = this.ExitApplication;
-
-			this._thumbnailManager.ThumbnailsAdded = this.ThumbnailsAdded;
-			this._thumbnailManager.ThumbnailsUpdated = this.ThumbnailsUpdated;
-			this._thumbnailManager.ThumbnailsRemoved = this.ThumbnailsRemoved;
 		}
 
 		private void Activate()
