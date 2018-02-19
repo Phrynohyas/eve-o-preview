@@ -77,7 +77,7 @@ namespace EveOPreview.Presenters
 			{
 				this._mediator.Send(new StopService()).Wait();
 
-				this._thumbnailManager.Deactivate();
+				this._thumbnailManager.Stop();
 				this._configurationStorage.Save();
 				request.Allow = true;
 				return;

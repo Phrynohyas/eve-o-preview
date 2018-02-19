@@ -145,7 +145,7 @@
     <Compile Include="Services\Implementation\WindowManager.cs" />
     <Compile Include="Services\Interop\User32NativeMethods.cs" />
     <Compile Include="Presenters\Implementation\MainFormPresenter.cs" />
-    <Compile Include="Presenters\ViewCloseRequest.cs" />
+    <Compile Include="Presenters\Interface\ViewCloseRequest.cs" />
     <Compile Include="Presenters\Implementation\ViewZoomAnchorConverter.cs" />
     <Compile Include="View\Interface\IThumbnailViewFactory.cs" />
     <Compile Include="Services\Interface\IThumbnailManager.cs" />

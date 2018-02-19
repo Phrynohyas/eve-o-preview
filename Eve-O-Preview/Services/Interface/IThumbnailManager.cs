@@ -5,8 +5,8 @@ namespace EveOPreview.Services
 {
 	public interface IThumbnailManager
 	{
-		void Activate();
-		void Deactivate();
+		void Start();
+		void Stop();
 
 		void SetThumbnailState(IntPtr thumbnailId, bool hideAlways);
 		void SetThumbnailsSize(Size size);

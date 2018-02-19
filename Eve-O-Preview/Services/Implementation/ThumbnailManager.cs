@@ -57,14 +57,14 @@ namespace EveOPreview.Services
 			this._thumbnailUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, configuration.ThumbnailRefreshPeriod);
 		}
 
-		public void Activate()
+		public void Start()
 		{
 			this._thumbnailUpdateTimer.Start();
 
 			this.RefreshThumbnails();
 		}
 
-		public void Deactivate()
+		public void Stop()
 		{
 			this._thumbnailUpdateTimer.Stop();
 		}
