@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 
-namespace EveOPreview.UI
+namespace EveOPreview.Services
 {
 	public interface IThumbnailManager
 	{

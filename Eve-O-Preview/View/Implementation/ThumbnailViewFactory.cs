@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using EveOPreview.View;
 
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
-	public class ThumbnailViewFactory : IThumbnailViewFactory
+	sealed class ThumbnailViewFactory : IThumbnailViewFactory
 	{
 		private readonly IApplicationController _controller;
 

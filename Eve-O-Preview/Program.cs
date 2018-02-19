@@ -94,14 +94,13 @@ namespace EveOPreview
 			// Application services
 			container.Register<IThumbnailManager>();
 			container.Register<IThumbnailViewFactory>();
-			container.Register<IThumbnailDescriptionViewFactory>();
+			container.Register<IThumbnailDescription>();
 
 			IApplicationController controller = new ApplicationController(container);
 
 			// UI classes
 			controller.RegisterView<IMainFormView, MainForm>()
 				.RegisterView<IThumbnailView, ThumbnailView>()
-				.RegisterView<IThumbnailDescriptionView, ThumbnailDescriptionView>()
 				.RegisterInstance(new ApplicationContext());
 
 			return controller;

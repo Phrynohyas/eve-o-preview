@@ -2,9 +2,8 @@
 
 namespace EveOPreview.View
 {
-	public interface IThumbnailDescriptionView : IView
+	public interface IThumbnailDescription
 	{
-		IntPtr Id { get; set; }
 		string Title { get; set; }
 		bool IsDisabled { get; set; }
 	}

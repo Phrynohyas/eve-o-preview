@@ -8,7 +8,7 @@ using EveOPreview.Services;
 using EveOPreview.View;
 using MediatR;
 
-namespace EveOPreview.UI
+namespace EveOPreview.Services
 {
 	class ThumbnailManager : IThumbnailManager
 	{

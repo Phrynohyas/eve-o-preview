@@ -1,7 +1,6 @@
 ﻿using EveOPreview.Configuration;
-using EveOPreview.View;
 
-namespace EveOPreview.UI
+namespace EveOPreview.View
 {
 	static class ViewZoomAnchorConverter
 	{

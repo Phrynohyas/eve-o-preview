@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
+using EveOPreview.Services;
 using EveOPreview.UI;
 using EveOPreview.View;
 using MediatR;
@@ -20,25 +21,21 @@ namespace EveOPreview.Presenters
 		private readonly IMediator _mediator;
 		private readonly IThumbnailConfiguration _configuration;
 		private readonly IConfigurationStorage _configurationStorage;
-		private readonly IThumbnailDescriptionViewFactory _thumbnailDescriptionViewFactory;
-		private readonly IDictionary<IntPtr, IThumbnailDescriptionView> _thumbnailDescriptionViews;
 		private readonly IThumbnailManager _thumbnailManager;
 
 		private bool _exitApplication;
 		#endregion
 
 		public MainFormPresenter(IApplicationController controller, IMainFormView view, IMediator mediator, IThumbnailConfiguration configuration, IConfigurationStorage configurationStorage,
-								IThumbnailManager thumbnailManager, IThumbnailDescriptionViewFactory thumbnailDescriptionViewFactory)
+								IThumbnailManager thumbnailManager)
 			: base(controller, view)
 		{
 			this._mediator = mediator;
 			this._configuration = configuration;
 			this._configurationStorage = configurationStorage;
 
-			this._thumbnailDescriptionViewFactory = thumbnailDescriptionViewFactory;
 			this._thumbnailManager = thumbnailManager;
 
-			this._thumbnailDescriptionViews = new Dictionary<IntPtr, IThumbnailDescriptionView>();
 			this._exitApplication = false;
 
 			this.View.FormActivated = this.Activate;
@@ -155,64 +152,64 @@ namespace EveOPreview.Presenters
 
 		private void ThumbnailsAdded(IList<IThumbnailView> thumbnails)
 		{
-			this.View.AddThumbnails(this.GetThumbnailViews(thumbnails, false));
+			//this.View.AddThumbnails(this.GetThumbnailViews(thumbnails, false));
 		}
 
 		private void ThumbnailsUpdated(IList<IThumbnailView> thumbnails)
 		{
-			this.View.UpdateThumbnails(this.GetThumbnailViews(thumbnails, false));
+			//this.View.UpdateThumbnails(this.GetThumbnailViews(thumbnails, false));
 		}
 
 		private void ThumbnailsRemoved(IList<IThumbnailView> thumbnails)
 		{
-			this.View.RemoveThumbnails(this.GetThumbnailViews(thumbnails, true));
+			//this.View.RemoveThumbnails(this.GetThumbnailViews(thumbnails, true));
 		}
 
-		private IList<IThumbnailDescriptionView> GetThumbnailViews(IList<IThumbnailView> thumbnails, bool removeFromCache)
+		//private IList<IThumbnailDescriptionView> GetThumbnailViews(IList<IThumbnailView> thumbnails, bool removeFromCache)
+		//{
+		//	IList<IThumbnailDescriptionView> thumbnailViews = new List<IThumbnailDescriptionView>(thumbnails.Count);
+
+		//	// Time for some thread safety
+		//	lock (this._thumbnailDescriptionViews)
+		//	{
+		//		foreach (IThumbnailView thumbnail in thumbnails)
+		//		{
+		//			IThumbnailDescriptionView thumbnailView;
+		//			bool foundInCache = this._thumbnailDescriptionViews.TryGetValue(thumbnail.Id, out thumbnailView);
+
+		//			if (!foundInCache)
+		//			{
+		//				if (removeFromCache)
+		//				{
+		//					// This item was not even cached
+		//					continue;
+		//				}
+
+		//				thumbnailView = this._thumbnailDescriptionViewFactory.Create(thumbnail.Id, thumbnail.Title, !thumbnail.IsEnabled);
+		//				this._thumbnailDescriptionViews.Add(thumbnail.Id, thumbnailView);
+		//			}
+		//			else
+		//			{
+		//				if (removeFromCache)
+		//				{
+		//					this._thumbnailDescriptionViews.Remove(thumbnail.Id);
+		//				}
+		//				else
+		//				{
+		//					thumbnailView.Title = thumbnail.Title;
+		//				}
+		//			}
+
+		//			thumbnailViews.Add(thumbnailView);
+		//		}
+		//	}
+
+		//	return thumbnailViews;
+		//}
+
+		private void UpdateThumbnailState(String title)
 		{
-			IList<IThumbnailDescriptionView> thumbnailViews = new List<IThumbnailDescriptionView>(thumbnails.Count);
-
-			// Time for some thread safety
-			lock (this._thumbnailDescriptionViews)
-			{
-				foreach (IThumbnailView thumbnail in thumbnails)
-				{
-					IThumbnailDescriptionView thumbnailView;
-					bool foundInCache = this._thumbnailDescriptionViews.TryGetValue(thumbnail.Id, out thumbnailView);
-
-					if (!foundInCache)
-					{
-						if (removeFromCache)
-						{
-							// This item was not even cached
-							continue;
-						}
-
-						thumbnailView = this._thumbnailDescriptionViewFactory.Create(thumbnail.Id, thumbnail.Title, !thumbnail.IsEnabled);
-						this._thumbnailDescriptionViews.Add(thumbnail.Id, thumbnailView);
-					}
-					else
-					{
-						if (removeFromCache)
-						{
-							this._thumbnailDescriptionViews.Remove(thumbnail.Id);
-						}
-						else
-						{
-							thumbnailView.Title = thumbnail.Title;
-						}
-					}
-
-					thumbnailViews.Add(thumbnailView);
-				}
-			}
-
-			return thumbnailViews;
-		}
-
-		private void UpdateThumbnailState(IntPtr thumbnailId)
-		{
-			this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
+			//this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
 		}
 
 		private void OpenDocumentationLink()
@@ -224,7 +221,7 @@ namespace EveOPreview.Presenters
 		private string GetApplicationVersion()
 		{
 			Version version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-			return String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
+			return $"{version.Major}.{version.Minor}.{version.Revision}";
 		}
 
 		private void ExitApplication()

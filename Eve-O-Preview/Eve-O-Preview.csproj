@@ -146,15 +146,13 @@
     <Compile Include="Services\Interop\User32NativeMethods.cs" />
     <Compile Include="Presenters\Implementation\MainFormPresenter.cs" />
     <Compile Include="Presenters\ViewCloseRequest.cs" />
-    <Compile Include="Presenters\ViewZoomAnchorConverter.cs" />
+    <Compile Include="Presenters\Implementation\ViewZoomAnchorConverter.cs" />
     <Compile Include="View\Interface\IThumbnailViewFactory.cs" />
-    <Compile Include="Presenters\IThumbnailManager.cs" />
-    <Compile Include="View\Implementation\ThumbnailDescriptionView.cs" />
-    <Compile Include="View\Factory\ThumbnailDescriptionViewFactory.cs" />
+    <Compile Include="Services\Interface\IThumbnailManager.cs" />
+    <Compile Include="View\Implementation\ThumbnailDescription.cs" />
     <Compile Include="View\Interface\IMainFormView.cs" />
     <Compile Include="ApplicationBase\IView.cs" />
-    <Compile Include="View\Interface\IThumbnailDescriptionView.cs" />
-    <Compile Include="View\Interface\IThumbnailDescriptionViewFactory.cs" />
+    <Compile Include="View\Interface\IThumbnailDescription.cs" />
     <Compile Include="View\Interface\ViewZoomAnchor.cs" />
     <Compile Include="Configuration\ThumbnailConfiguration.cs" />
     <Compile Include="Hotkeys\HotkeyHandler.cs" />
@@ -167,8 +165,8 @@
     </Compile>
     <Compile Include="Configuration\IConfigurationStorage.cs" />
     <Compile Include="View\Interface\IThumbnailView.cs" />
-    <Compile Include="View\Factory\ThumbnailViewFactory.cs" />
-    <Compile Include="Presenters\ThumbnailManager.cs" />
+    <Compile Include="View\Implementation\ThumbnailViewFactory.cs" />
+    <Compile Include="Services\Implementation\ThumbnailManager.cs" />
     <Compile Include="View\Implementation\ThumbnailOverlay.cs">
       <SubType>Form</SubType>
     </Compile>

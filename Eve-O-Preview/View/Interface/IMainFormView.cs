@@ -39,9 +39,9 @@ namespace EveOPreview.View
 
 		void Minimize();
 
-		void AddThumbnails(IList<IThumbnailDescriptionView> thumbnails);
-		void UpdateThumbnails(IList<IThumbnailDescriptionView> thumbnails);
-		void RemoveThumbnails(IList<IThumbnailDescriptionView> thumbnails);
+		void AddThumbnails(IList<IThumbnailDescription> thumbnails);
+		void UpdateThumbnails(IList<IThumbnailDescription> thumbnails);
+		void RemoveThumbnails(IList<IThumbnailDescription> thumbnails);
 		void RefreshZoomSettings();
 
 		Action ApplicationExitRequested { get; set; }
@@ -50,7 +50,7 @@ namespace EveOPreview.View
 		Action<ViewCloseRequest> FormCloseRequested { get; set; }
 		Action ApplicationSettingsChanged { get; set; }
 		Action ThumbnailsSizeChanged { get; set; }
-		Action<IntPtr> ThumbnailStateChanged { get; set; }
+		Action<string> ThumbnailStateChanged { get; set; }
 		Action DocumentationLinkActivated { get; set; }
 	}
 }

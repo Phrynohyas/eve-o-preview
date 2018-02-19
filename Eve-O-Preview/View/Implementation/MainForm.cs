@@ -206,7 +206,7 @@ namespace EveOPreview.View
 			this.DocumentationLink.Text = url;
 		}
 
-		public void AddThumbnails(IList<IThumbnailDescriptionView> thumbnails)
+		public void AddThumbnails(IList<IThumbnailDescription> thumbnails)
 		{
 			if (thumbnails.Count == 0)
 			{
@@ -215,7 +215,7 @@ namespace EveOPreview.View
 
 			this.ThumbnailsList.BeginUpdate();
 
-			foreach (IThumbnailDescriptionView view in thumbnails)
+			foreach (IThumbnailDescription view in thumbnails)
 			{
 				this.ThumbnailsList.Items.Add(view);
 			}
@@ -223,7 +223,7 @@ namespace EveOPreview.View
 			this.ThumbnailsList.EndUpdate();
 		}
 
-		public void UpdateThumbnails(IList<IThumbnailDescriptionView> thumbnails)
+		public void UpdateThumbnails(IList<IThumbnailDescription> thumbnails)
 		{
 			// Just trigger redraw
 			if (thumbnails.Count > 0)
@@ -232,7 +232,7 @@ namespace EveOPreview.View
 			}
 		}
 
-		public void RemoveThumbnails(IList<IThumbnailDescriptionView> thumbnails)
+		public void RemoveThumbnails(IList<IThumbnailDescription> thumbnails)
 		{
 			if (thumbnails.Count == 0)
 			{
@@ -241,7 +241,7 @@ namespace EveOPreview.View
 
 			this.ThumbnailsList.BeginUpdate();
 
-			foreach (IThumbnailDescriptionView view in thumbnails)
+			foreach (IThumbnailDescription view in thumbnails)
 			{
 				this.ThumbnailsList.Items.Remove(view);
 			}
@@ -268,7 +268,7 @@ namespace EveOPreview.View
 
 		public Action ThumbnailsSizeChanged { get; set; }
 
-		public Action<IntPtr> ThumbnailStateChanged { get; set; }
+		public Action<string> ThumbnailStateChanged { get; set; }
 
 		public Action DocumentationLinkActivated { get; set; }
 
@@ -345,14 +345,14 @@ namespace EveOPreview.View
 
 		private void ThumbnailsList_ItemCheck_Handler(object sender, ItemCheckEventArgs e)
 		{
-			IThumbnailDescriptionView selectedItem = this.ThumbnailsList.Items[e.Index] as IThumbnailDescriptionView;
-			if (selectedItem == null)
+			if (!(this.ThumbnailsList.Items[e.Index] is IThumbnailDescription selectedItem))
 			{
 				return;
 			}
+
 			selectedItem.IsDisabled = (e.NewValue == CheckState.Checked);
 
-			this.ThumbnailStateChanged?.Invoke(selectedItem.Id);
+			this.ThumbnailStateChanged?.Invoke(selectedItem.Title);
 		}
 
 		private void DocumentationLinkClicked_Handler(object sender, LinkLabelLinkClickedEventArgs e)
