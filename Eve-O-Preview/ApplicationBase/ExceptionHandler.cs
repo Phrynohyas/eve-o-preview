@@ -17,6 +17,11 @@ namespace EveOPreview
 
 		public void SetupExceptionHandlers()
 		{
+			if (System.Diagnostics.Debugger.IsAttached)
+			{
+				return;
+			}
+
 			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 			Application.ThreadException += delegate (Object sender, ThreadExceptionEventArgs e)
 			{

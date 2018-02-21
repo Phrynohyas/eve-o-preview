@@ -2,18 +2,21 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 using EveOPreview.Configuration;
+using EveOPreview.Presenters;
+using EveOPreview.Services;
 using EveOPreview.UI;
+using EveOPreview.View;
+using MediatR;
 
 namespace EveOPreview
 {
 	static class Program
 	{
 		private static string MutexName = "EVE-O Preview Single Instance Mutex";
-		private static string ConfigParameterName = "--config:";
 
 		/// <summary>The main entry point for the application.</summary>
 		[STAThread]
-		static void Main(string[] args)
+		static void Main()
 		{
 			// The very usual Mutex-based single-instance screening
 			// 'token' variable is used to store reference to the instance Mutex
@@ -30,55 +33,23 @@ namespace EveOPreview
 			ExceptionHandler handler = new ExceptionHandler();
 			handler.SetupExceptionHandlers();
 
-			Program.InitializeWinFormsGui();
-
 			IApplicationController controller = Program.InitializeApplicationController();
-			Program.SetupApplicationConttroller(controller, Program.GetCustomConfigFile(args));
 
-			controller.Run<MainPresenter>();
-		}
-
-		private static string GetCustomConfigFile(string[] args)
-		{
-			// Parse startup parameters
-			// Simple approach is used because something like NParams would be an overkill here
-			string configFile = null;
-			foreach (string arg in args)
-			{
-				if ((arg.Length <= Program.ConfigParameterName.Length) || !arg.StartsWith(Program.ConfigParameterName, StringComparison.Ordinal))
-				{
-					continue;
-				}
-
-				configFile = arg.Substring(Program.ConfigParameterName.Length);
-				break;
-			}
-
-			if (string.IsNullOrEmpty(configFile))
-			{
-				return "";
-			}
-
-			// One more check to drop trailing "
-			if ((configFile.Length > 3) && (configFile[0] == '"') && (configFile[configFile.Length - 1] == '"'))
-			{
-				configFile = configFile.Substring(1, configFile.Length - 2);
-			}
-
-			return configFile;
+			Program.InitializeWinForms();
+			controller.Run<MainFormPresenter>();
 		}
 
 		private static object GetInstanceToken()
 		{
 			// The code might look overcomplicated here for a single Mutex operation
 			// Yet we had already experienced a Windows-level issue
-			// where .NET finalizer theread was literally paralyzed by
+			// where .NET finalizer thread was literally paralyzed by
 			// a failed Mutex operation. That did lead to weird OutOfMemory
 			// exceptions later
 			try
 			{
-				Mutex mutex = Mutex.OpenExisting(Program.MutexName);
-				// if that didn't fail then anotherinstance is already running
+				Mutex.OpenExisting(Program.MutexName);
+				// if that didn't fail then another instance is already running
 				return null;
 			}
 			catch (UnauthorizedAccessException)
@@ -92,7 +63,7 @@ namespace EveOPreview
 			}
 		}
 
-		private static void InitializeWinFormsGui()
+		private static void InitializeWinForms()
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -102,28 +73,37 @@ namespace EveOPreview
 		{
 			IIocContainer container = new LightInjectContainer();
 
-			// UI classes
-			IApplicationController controller = new ApplicationController(container)
-				.RegisterView<IMainView, MainForm>()
-				.RegisterView<IThumbnailView, ThumbnailView>()
-				.RegisterView<IThumbnailDescriptionView, ThumbnailDescriptionView>()
-				.RegisterInstance(new ApplicationContext());
+			// Singleton registration is used for services
+			// Low-level services
+			container.Register<IWindowManager>();
+			container.Register<IProcessMonitor>();
+
+			// MediatR
+			container.Register<IMediator, MediatR.Mediator>();
+			container.RegisterInstance<SingleInstanceFactory>(t => container.Resolve(t));
+			container.RegisterInstance<MultiInstanceFactory>(t => container.ResolveAll(t));
+			container.Register(typeof(INotificationHandler<>), typeof(Program).Assembly);
+			container.Register(typeof(IRequestHandler<>), typeof(Program).Assembly);
+			container.Register(typeof(IRequestHandler<,>), typeof(Program).Assembly);
+
+			// Configuration services
+			container.Register<IConfigurationStorage>();
+			container.Register<IAppConfig>();
+			container.Register<IThumbnailConfiguration>();
 
 			// Application services
-			controller.RegisterService<IThumbnailManager, ThumbnailManager>()
-				.RegisterService<IThumbnailViewFactory, ThumbnailViewFactory>()
-				.RegisterService<IThumbnailDescriptionViewFactory, ThumbnailDescriptionViewFactory>()
-				.RegisterService<IConfigurationStorage, ConfigurationStorage>()
-				.RegisterService<IWindowManager, EveOPreview.DwmAPI.WindowManager>()
-				.RegisterInstance<IAppConfig>(new AppConfig())
-				.RegisterInstance<IThumbnailConfig>(new ThumbnailConfig());
+			container.Register<IThumbnailManager>();
+			container.Register<IThumbnailViewFactory>();
+			container.Register<IThumbnailDescription>();
+
+			IApplicationController controller = new ApplicationController(container);
+
+			// UI classes
+			controller.RegisterView<IMainFormView, MainForm>()
+				.RegisterView<IThumbnailView, ThumbnailView>()
+				.RegisterInstance(new ApplicationContext());
 
 			return controller;
-		}
-
-		private static void SetupApplicationConttroller(IApplicationController controller, string configFile)
-		{
-			controller.Create<IAppConfig>().ConfigFileName = configFile;
 		}
 	}
 }
