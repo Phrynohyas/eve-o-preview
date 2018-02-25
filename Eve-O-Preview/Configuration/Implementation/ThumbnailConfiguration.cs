@@ -20,16 +20,16 @@ namespace EveOPreview.Configuration.Omplementation
 			this.HideThumbnailsOnLostFocus = false;
 			this.EnablePerClientThumbnailLayouts = false;
 
-			this.ThumbnailSize = new Size(250, 150);
-			this.ThumbnailMinimumSize = new Size(100, 80);
-			this.ThumbnailMaximumSize = new Size(640, 400);
+			this.ThumbnailSize = new Size(384, 216);
+			this.ThumbnailMinimumSize = new Size(192, 108);
+			this.ThumbnailMaximumSize = new Size(960, 540);
 
 			this.ThumbnailZoomEnabled = false;
 			this.ThumbnailZoomFactor = 2;
 			this.ThumbnailZoomAnchor = ZoomAnchor.NW;
 
 			this.ShowThumbnailOverlays = true;
-			this.ShowThumbnailFrames = true;
+			this.ShowThumbnailFrames = false;
 
 			this.EnableActiveClientHighlight = false;
 			this.ActiveClientHighlightColor = Color.GreenYellow;
