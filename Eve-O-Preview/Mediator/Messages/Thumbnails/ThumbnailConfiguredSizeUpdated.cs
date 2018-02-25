@@ -2,7 +2,7 @@
 
 namespace EveOPreview.Mediator.Messages
 {
-	sealed class SaveConfiguration : IRequest
+	sealed class ThumbnailConfiguredSizeUpdated : INotification
 	{
 	}
 }

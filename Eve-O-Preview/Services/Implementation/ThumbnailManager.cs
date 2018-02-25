@@ -78,7 +78,19 @@ namespace EveOPreview.Services
 			thumbnail.IsEnabled = !hideAlways;
 		}
 
+		public void UpdateThumbnailsSize()
+		{
+			this.InternalSetThumbnailsSize(this._configuration.ThumbnailSize);
+		}
+
 		public async void SetThumbnailsSize(Size size)
+		{
+			this.InternalSetThumbnailsSize(size);
+
+			await this._mediator.Publish(new ThumbnailActiveSizeUpdated(size));
+		}
+
+		private void InternalSetThumbnailsSize(Size size)
 		{
 			this.DisableViewEvents();
 
@@ -87,8 +99,6 @@ namespace EveOPreview.Services
 				entry.Value.ThumbnailSize = size;
 				entry.Value.Refresh(false);
 			}
-
-			await this._mediator.Publish(new ThumbnailSizeUpdated(size));
 
 			this.EnableViewEvents();
 		}
@@ -104,7 +114,7 @@ namespace EveOPreview.Services
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				IThumbnailView view = entry.Value;
-				
+
 				if (hideAllThumbnails || !view.IsEnabled)
 				{
 					if (view.IsActive)
@@ -154,7 +164,7 @@ namespace EveOPreview.Services
 			this.EnableViewEvents();
 		}
 
-		public void SetupThumbnailFrames()
+		public void UpdateThumbnailFrames()
 		{
 			this.DisableViewEvents();
 

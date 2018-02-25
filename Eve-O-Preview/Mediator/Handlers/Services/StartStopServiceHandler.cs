@@ -6,11 +6,11 @@ using MediatR;
 
 namespace EveOPreview.Mediator.Handlers.Services
 {
-	sealed class StartServiceHandler : IRequestHandler<StartService>
+	sealed class StartStopServiceHandler : IRequestHandler<StartService>, IRequestHandler<StopService>
 	{
 		private readonly IThumbnailManager _manager;
 
-		public StartServiceHandler(IThumbnailManager manager)
+		public StartStopServiceHandler(IThumbnailManager manager)
 		{
 			this._manager = manager;
 		}
@@ -18,6 +18,13 @@ namespace EveOPreview.Mediator.Handlers.Services
 		public Task Handle(StartService message, CancellationToken cancellationToken)
 		{
 			this._manager.Start();
+
+			return Task.CompletedTask;
+		}
+
+		public Task Handle(StopService message, CancellationToken cancellationToken)
+		{
+			this._manager.Stop();
 
 			return Task.CompletedTask;
 		}

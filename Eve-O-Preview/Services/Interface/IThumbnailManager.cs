@@ -10,6 +10,7 @@ namespace EveOPreview.Services
 
 		void SetThumbnailState(IntPtr thumbnailId, bool hideAlways);
 		void SetThumbnailsSize(Size size);
-		void SetupThumbnailFrames();
+		void UpdateThumbnailsSize();
+		void UpdateThumbnailFrames();
 	}
 }

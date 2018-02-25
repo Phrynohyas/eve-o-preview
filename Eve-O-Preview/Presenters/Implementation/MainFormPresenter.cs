@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
-using EveOPreview.Services;
 using EveOPreview.View;
 using MediatR;
 
@@ -20,24 +19,22 @@ namespace EveOPreview.Presenters
 		private readonly IMediator _mediator;
 		private readonly IThumbnailConfiguration _configuration;
 		private readonly IConfigurationStorage _configurationStorage;
-		private readonly IThumbnailManager _thumbnailManager;
-
 		private readonly IDictionary<string, IThumbnailDescription> _descriptionsCache;
+		private bool _suppressSizeNotifications;
 
 		private bool _exitApplication;
 		#endregion
 
-		public MainFormPresenter(IApplicationController controller, IMainFormView view, IMediator mediator, IThumbnailConfiguration configuration, IConfigurationStorage configurationStorage,
-								IThumbnailManager thumbnailManager)
+		public MainFormPresenter(IApplicationController controller, IMainFormView view, IMediator mediator, IThumbnailConfiguration configuration, IConfigurationStorage configurationStorage)
 			: base(controller, view)
 		{
 			this._mediator = mediator;
 			this._configuration = configuration;
 			this._configurationStorage = configurationStorage;
-			this._thumbnailManager = thumbnailManager;
 
 			this._descriptionsCache = new Dictionary<string, IThumbnailDescription>();
 
+			this._suppressSizeNotifications = false;
 			this._exitApplication = false;
 
 			this.View.FormActivated = this.Activate;
@@ -79,7 +76,6 @@ namespace EveOPreview.Presenters
 			{
 				this._mediator.Send(new StopService()).Wait();
 
-				this._thumbnailManager.Stop();
 				this._configurationStorage.Save();
 				request.Allow = true;
 				return;
@@ -89,10 +85,14 @@ namespace EveOPreview.Presenters
 			this.View.Minimize();
 		}
 
-		private void UpdateThumbnailsSize()
+		private async void UpdateThumbnailsSize()
 		{
-			this._thumbnailManager.SetThumbnailsSize(this.View.ThumbnailSize);
 			this.SaveApplicationSettings();
+
+			if (!this._suppressSizeNotifications)
+			{
+				await this._mediator.Publish(new ThumbnailConfiguredSizeUpdated());
+			}
 		}
 
 		private void LoadApplicationSettings()
@@ -122,7 +122,7 @@ namespace EveOPreview.Presenters
 			this.View.ActiveClientHighlightColor = this._configuration.ActiveClientHighlightColor;
 		}
 
-		private void SaveApplicationSettings()
+		private async void SaveApplicationSettings()
 		{
 			this._configuration.MinimizeToTray = this.View.MinimizeToTray;
 
@@ -141,7 +141,12 @@ namespace EveOPreview.Presenters
 			this._configuration.ThumbnailZoomAnchor = ViewZoomAnchorConverter.Convert(this.View.ThumbnailZoomAnchor);
 
 			this._configuration.ShowThumbnailOverlays = this.View.ShowThumbnailOverlays;
-			this._configuration.ShowThumbnailFrames = this.View.ShowThumbnailFrames;
+			if (this._configuration.ShowThumbnailFrames != this.View.ShowThumbnailFrames)
+			{
+				await this._mediator.Publish(new ThumbnailFrameSettingsUpdated());
+				this._configuration.ShowThumbnailFrames = this.View.ShowThumbnailFrames;
+			}
+
 			this._configuration.EnableActiveClientHighlight = this.View.EnableActiveClientHighlight;
 			this._configuration.ActiveClientHighlightColor = this.View.ActiveClientHighlightColor;
 
@@ -149,7 +154,7 @@ namespace EveOPreview.Presenters
 
 			this.View.RefreshZoomSettings();
 
-			this._thumbnailManager.SetupThumbnailFrames();
+			await this._mediator.Send(new SaveConfiguration());
 		}
 
 
@@ -200,17 +205,20 @@ namespace EveOPreview.Presenters
 
 		private void UpdateThumbnailState(String title)
 		{
+			// TODO This setting doesn't work atm
 			//this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
 		}
 
 		public void UpdateThumbnailSize(Size size)
 		{
+			this._suppressSizeNotifications = true;
 			this.View.ThumbnailSize = size;
+			this._suppressSizeNotifications = false;
 		}
 
 		private void OpenDocumentationLink()
 		{
-			// TODO Move out
+			// TODO Move out to a separate service / presenter / message handler
 			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainFormPresenter.ForumUrl).AbsoluteUri);
 			Process.Start(processStartInfo);
 		}

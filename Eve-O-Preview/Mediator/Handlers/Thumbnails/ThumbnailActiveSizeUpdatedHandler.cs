@@ -6,16 +6,16 @@ using MediatR;
 
 namespace EveOPreview.Mediator.Handlers.Thumbnails
 {
-	sealed class ThumbnailSizeUpdatedHandler : INotificationHandler<ThumbnailSizeUpdated>
+	sealed class ThumbnailActiveSizeUpdatedHandler : INotificationHandler<ThumbnailActiveSizeUpdated>
 	{
 		private readonly IMainFormPresenter _presenter;
 
-		public ThumbnailSizeUpdatedHandler(MainFormPresenter presenter)
+		public ThumbnailActiveSizeUpdatedHandler(MainFormPresenter presenter)
 		{
 			this._presenter = presenter;
 		}
 
-		public Task Handle(ThumbnailSizeUpdated notification, CancellationToken cancellationToken)
+		public Task Handle(ThumbnailActiveSizeUpdated notification, CancellationToken cancellationToken)
 		{
 			this._presenter.UpdateThumbnailSize(notification.Value);
 
