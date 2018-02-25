@@ -36,7 +36,6 @@ namespace EveOPreview.View
 		{
 			this._windowManager = windowManager;
 
-			this.IsEnabled = true;
 			this.IsActive = false;
 
 			this.IsOverlayEnabled = false;
@@ -67,8 +66,6 @@ namespace EveOPreview.View
 				this._overlay.SetOverlayLabel(value);
 			}
 		}
-
-		public bool IsEnabled { get; set; }
 
 		public bool IsActive { get; set; }
 

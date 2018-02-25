@@ -708,6 +708,7 @@ namespace EveOPreview.View
 			// 
 			this.ThumbnailsList.BackColor = System.Drawing.SystemColors.Window;
 			this.ThumbnailsList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.ThumbnailsList.CheckOnClick = true;
 			this.ThumbnailsList.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.ThumbnailsList.FormattingEnabled = true;
 			this.ThumbnailsList.IntegralHeight = false;

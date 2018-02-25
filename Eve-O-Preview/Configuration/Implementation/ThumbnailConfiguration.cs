@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
-namespace EveOPreview.Configuration
+namespace EveOPreview.Configuration.Omplementation
 {
-	class ThumbnailConfiguration : IThumbnailConfiguration
+	sealed class ThumbnailConfiguration : IThumbnailConfiguration
 	{
 		public ThumbnailConfiguration()
 		{
@@ -39,6 +39,7 @@ namespace EveOPreview.Configuration
 			this.FlatLayout = new Dictionary<string, Point>();
 			this.ClientLayout = new Dictionary<string, ClientLayout>();
 			this.ClientHotkey = new Dictionary<string, string>();
+			this.DisableThumbnail = new Dictionary<string, bool>();
 		}
 
 		public bool MinimizeToTray { get; set; }
@@ -79,6 +80,8 @@ namespace EveOPreview.Configuration
 		private Dictionary<string, ClientLayout> ClientLayout { get; set; }
 		[JsonProperty]
 		private Dictionary<string, string> ClientHotkey { get; set; }
+		[JsonProperty]
+		private Dictionary<string, bool> DisableThumbnail { get; set; }
 
 		public Point GetDefaultThumbnailLocation()
 		{
@@ -166,6 +169,16 @@ namespace EveOPreview.Configuration
 		public void SetClientHotkey(string currentClient, Keys hotkey)
 		{
 			this.ClientHotkey[currentClient] = (new KeysConverter()).ConvertToInvariantString(hotkey);
+		}
+
+		public bool IsThumbnailDisabled(string currentClient)
+		{
+			return this.DisableThumbnail.TryGetValue(currentClient, out bool isDisabled) && isDisabled;
+		}
+
+		public void ToggleThumbnail(string currentClient, bool isDisabled)
+		{
+			this.DisableThumbnail[currentClient] = isDisabled;
 		}
 
 		/// <summary>

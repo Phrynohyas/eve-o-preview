@@ -111,7 +111,7 @@
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\ConfigurationStorage.cs" />
     <Compile Include="Configuration\IAppConfig.cs" />
-    <Compile Include="Configuration\IThumbnailConfiguration.cs" />
+    <Compile Include="Configuration\Interface\IThumbnailConfiguration.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
     <Compile Include="Mediator\Handlers\Configuration\SaveConfigurationHandler.cs" />
     <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailFrameSettingsUpdatedHandler.cs" />
@@ -157,7 +157,7 @@
     <Compile Include="ApplicationBase\IView.cs" />
     <Compile Include="View\Interface\IThumbnailDescription.cs" />
     <Compile Include="View\Interface\ViewZoomAnchor.cs" />
-    <Compile Include="Configuration\ThumbnailConfiguration.cs" />
+    <Compile Include="Configuration\Implementation\ThumbnailConfiguration.cs" />
     <Compile Include="Hotkeys\HotkeyHandler.cs" />
     <Compile Include="Hotkeys\HotkeyHandlerNativeMethods.cs" />
     <Compile Include="View\Implementation\MainForm.cs">

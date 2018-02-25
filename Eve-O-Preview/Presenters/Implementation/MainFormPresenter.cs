@@ -199,14 +199,16 @@ namespace EveOPreview.Presenters
 
 		private IThumbnailDescription CreateThumbnailDescription(string title)
 		{
-			// TODO Read here persisted value for the IsDisabled parameter
-			return new ThumbnailDescription(title, false);
+			bool isDisabled = this._configuration.IsThumbnailDisabled(title);
+			return new ThumbnailDescription(title, isDisabled);
 		}
 
 		private void UpdateThumbnailState(String title)
 		{
-			// TODO This setting doesn't work atm
-			//this._thumbnailManager.SetThumbnailState(thumbnailId, this._thumbnailDescriptionViews[thumbnailId].IsDisabled);
+			if (this._descriptionsCache.TryGetValue(title, out IThumbnailDescription description))
+			{
+				this._configuration.ToggleThumbnail(title, description.IsDisabled);
+			}
 		}
 
 		public void UpdateThumbnailSize(Size size)

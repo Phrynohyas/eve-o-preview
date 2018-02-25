@@ -211,7 +211,7 @@ namespace EveOPreview.View
 
 			foreach (IThumbnailDescription view in thumbnails)
 			{
-				this.ThumbnailsList.Items.Add(view);
+				this.ThumbnailsList.SetItemChecked(this.ThumbnailsList.Items.Add(view), view.IsDisabled);
 			}
 
 			this.ThumbnailsList.EndUpdate();

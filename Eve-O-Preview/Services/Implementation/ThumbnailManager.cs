@@ -68,29 +68,12 @@ namespace EveOPreview.Services
 			this._thumbnailUpdateTimer.Stop();
 		}
 
-		public void SetThumbnailState(IntPtr thumbnailId, bool hideAlways)
-		{
-			if (!this._thumbnailViews.TryGetValue(thumbnailId, out IThumbnailView thumbnail))
-			{
-				return;
-			}
-
-			thumbnail.IsEnabled = !hideAlways;
-		}
-
 		public void UpdateThumbnailsSize()
 		{
-			this.InternalSetThumbnailsSize(this._configuration.ThumbnailSize);
+			this.SetThumbnailsSize(this._configuration.ThumbnailSize);
 		}
 
-		public async void SetThumbnailsSize(Size size)
-		{
-			this.InternalSetThumbnailsSize(size);
-
-			await this._mediator.Publish(new ThumbnailActiveSizeUpdated(size));
-		}
-
-		private void InternalSetThumbnailsSize(Size size)
+		private void SetThumbnailsSize(Size size)
 		{
 			this.DisableViewEvents();
 
@@ -115,7 +98,7 @@ namespace EveOPreview.Services
 			{
 				IThumbnailView view = entry.Value;
 
-				if (hideAllThumbnails || !view.IsEnabled)
+				if (hideAllThumbnails || this._configuration.IsThumbnailDisabled(view.Title))
 				{
 					if (view.IsActive)
 					{
@@ -204,7 +187,6 @@ namespace EveOPreview.Services
 			foreach (IProcessInfo process in addedProcesses)
 			{
 				IThumbnailView view = this._thumbnailViewFactory.Create(process.Handle, process.Title, this._configuration.ThumbnailSize);
-				view.IsEnabled = true;
 				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 				view.SetFrames(this._configuration.ShowThumbnailFrames);
 				// Max/Min size limitations should be set AFTER the frames are disabled
@@ -368,7 +350,7 @@ namespace EveOPreview.Services
 			this.RefreshThumbnails();
 		}
 
-		private void ThumbnailViewResized(IntPtr id)
+		private async void ThumbnailViewResized(IntPtr id)
 		{
 			if (this._ignoreViewEvents)
 			{
@@ -380,6 +362,8 @@ namespace EveOPreview.Services
 			this.SetThumbnailsSize(view.ThumbnailSize);
 
 			view.Refresh(false);
+
+			await this._mediator.Publish(new ThumbnailActiveSizeUpdated(view.ThumbnailSize));
 		}
 
 		private async void ThumbnailViewMoved(IntPtr id)

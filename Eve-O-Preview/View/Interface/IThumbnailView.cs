@@ -9,7 +9,6 @@ namespace EveOPreview.View
 		IntPtr Id { get; set; }
 		string Title { get; set; }
 
-		bool IsEnabled { get; set; }
 		bool IsActive { get; set; }
 		Point ThumbnailLocation { get; set; }
 		Size ThumbnailSize { get; set; }
