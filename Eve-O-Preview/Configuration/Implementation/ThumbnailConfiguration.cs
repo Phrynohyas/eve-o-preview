@@ -16,6 +16,7 @@ namespace EveOPreview.Configuration.Omplementation
 
 			this.EnableClientLayoutTracking = false;
 			this.HideActiveClientThumbnail = false;
+			this.MinimizeInactiveClients = false;
 			this.ShowThumbnailsAlwaysOnTop = true;
 			this.HideThumbnailsOnLostFocus = false;
 			this.EnablePerClientThumbnailLayouts = false;
@@ -50,6 +51,7 @@ namespace EveOPreview.Configuration.Omplementation
 
 		public bool EnableClientLayoutTracking { get; set; }
 		public bool HideActiveClientThumbnail { get; set; }
+		public bool MinimizeInactiveClients { get; set; }
 		public bool ShowThumbnailsAlwaysOnTop { get; set; }
 		public bool HideThumbnailsOnLostFocus { get; set; }
 		public bool EnablePerClientThumbnailLayouts { get; set; }

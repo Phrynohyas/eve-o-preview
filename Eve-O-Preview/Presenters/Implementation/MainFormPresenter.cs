@@ -105,6 +105,7 @@ namespace EveOPreview.Presenters
 
 			this.View.EnableClientLayoutTracking = this._configuration.EnableClientLayoutTracking;
 			this.View.HideActiveClientThumbnail = this._configuration.HideActiveClientThumbnail;
+			this.View.MinimizeInactiveClients = this._configuration.MinimizeInactiveClients;
 			this.View.ShowThumbnailsAlwaysOnTop = this._configuration.ShowThumbnailsAlwaysOnTop;
 			this.View.HideThumbnailsOnLostFocus = this._configuration.HideThumbnailsOnLostFocus;
 			this.View.EnablePerClientThumbnailLayouts = this._configuration.EnablePerClientThumbnailLayouts;
@@ -130,6 +131,7 @@ namespace EveOPreview.Presenters
 
 			this._configuration.EnableClientLayoutTracking = this.View.EnableClientLayoutTracking;
 			this._configuration.HideActiveClientThumbnail = this.View.HideActiveClientThumbnail;
+			this._configuration.MinimizeInactiveClients = this.View.MinimizeInactiveClients;
 			this._configuration.ShowThumbnailsAlwaysOnTop = this.View.ShowThumbnailsAlwaysOnTop;
 			this._configuration.HideThumbnailsOnLostFocus = this.View.HideThumbnailsOnLostFocus;
 			this._configuration.EnablePerClientThumbnailLayouts = this.View.EnablePerClientThumbnailLayouts;
@@ -143,8 +145,8 @@ namespace EveOPreview.Presenters
 			this._configuration.ShowThumbnailOverlays = this.View.ShowThumbnailOverlays;
 			if (this._configuration.ShowThumbnailFrames != this.View.ShowThumbnailFrames)
 			{
-				await this._mediator.Publish(new ThumbnailFrameSettingsUpdated());
 				this._configuration.ShowThumbnailFrames = this.View.ShowThumbnailFrames;
+				await this._mediator.Publish(new ThumbnailFrameSettingsUpdated());
 			}
 
 			this._configuration.EnableActiveClientHighlight = this.View.EnableActiveClientHighlight;

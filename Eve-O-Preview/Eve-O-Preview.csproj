@@ -150,6 +150,7 @@
     <Compile Include="Presenters\Implementation\MainFormPresenter.cs" />
     <Compile Include="Presenters\Interface\ViewCloseRequest.cs" />
     <Compile Include="Presenters\Implementation\ViewZoomAnchorConverter.cs" />
+    <Compile Include="Services\Interop\WINDOWPLACEMENT.cs" />
     <Compile Include="View\Interface\IThumbnailViewFactory.cs" />
     <Compile Include="Services\Interface\IThumbnailManager.cs" />
     <Compile Include="View\Implementation\ThumbnailDescription.cs" />

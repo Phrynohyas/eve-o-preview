@@ -26,6 +26,13 @@ namespace EveOPreview.Services.Interop
 		[DllImport("user32.dll")]
 		public static extern int GetWindowRect(IntPtr hwnd, out RECT rect);
 
+		[DllImport("user32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+		[DllImport("user32.dll")]
+		public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+
 		[DllImport("user32.dll")]
 		public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 

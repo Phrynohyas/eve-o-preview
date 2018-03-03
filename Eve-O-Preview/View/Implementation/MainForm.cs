@@ -69,6 +69,12 @@ namespace EveOPreview.View
 			set => this.HideActiveClientThumbnailCheckBox.Checked = value;
 		}
 
+		public bool MinimizeInactiveClients
+		{
+			get => this.MinimizeInactiveClientsCheckBox.Checked;
+			set => this.MinimizeInactiveClientsCheckBox.Checked = value;
+		}
+
 		public bool ShowThumbnailsAlwaysOnTop
 		{
 			get => this.ShowThumbnailsAlwaysOnTopCheckBox.Checked;
@@ -268,7 +274,7 @@ namespace EveOPreview.View
 			graphics.FillRectangle(backgroundBrush, e.Bounds);
 
 			// Use our own font
-			Font font = new Font("Arial", this.Font.Size * 1.2f, FontStyle.Bold, GraphicsUnit.Pixel);
+			Font font = new Font("Arial", this.Font.Size * 1.5f, FontStyle.Bold, GraphicsUnit.Pixel);
 
 			// Draw string and center the text
 			StringFormat stringFlags = new StringFormat();

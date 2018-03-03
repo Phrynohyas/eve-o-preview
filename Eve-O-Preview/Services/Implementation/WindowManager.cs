@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using EveOPreview.Services.Interop;
 
 namespace EveOPreview.Services.Implementation
@@ -29,9 +30,20 @@ namespace EveOPreview.Services.Implementation
 			}
 		}
 
-		public void DeactivateWindow(IntPtr handle)
+		public void MinimizeWindow(IntPtr handle, bool enableAnimation)
 		{
-			User32NativeMethods.SendMessage(handle, InteropConstants.WM_SYSCOMMAND, InteropConstants.SC_MINIMIZE, 0);
+			if (enableAnimation)
+			{
+				User32NativeMethods.SendMessage(handle, InteropConstants.WM_SYSCOMMAND, InteropConstants.SC_MINIMIZE, 0);
+			}
+			else
+			{
+				WINDOWPLACEMENT param = new WINDOWPLACEMENT();
+				param.length = Marshal.SizeOf(typeof(WINDOWPLACEMENT));
+				User32NativeMethods.GetWindowPlacement(handle, ref param);
+				param.showCmd = WINDOWPLACEMENT.SW_MINIMIZE;
+				User32NativeMethods.SetWindowPlacement(handle, ref param);
+			}
 		}
 
 		public void MoveWindow(IntPtr handle, int left, int top, int width, int height)

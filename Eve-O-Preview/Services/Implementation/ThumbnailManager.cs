@@ -13,7 +13,7 @@ namespace EveOPreview.Services
 	{
 		#region Private constants
 		private const int WindowPositionThreshold = -5000;
-		private const int WindowSizeThreshold = -5000;
+		private const int WindowSizeThreshold = 0;
 
 		private const string DefaultClientTitle = "EVE";
 		#endregion
@@ -320,14 +320,18 @@ namespace EveOPreview.Services
 
 		private void ThumbnailActivated(IntPtr id)
 		{
-			IThumbnailView view;
-			if (this._thumbnailViews.TryGetValue(id, out view))
+			// View is always available because this method is actually being called by
+			// a view callback
+			IThumbnailView view = this._thumbnailViews[id];
+
+			this._windowManager.ActivateWindow(view.Id);
+
+			if (this._configuration.MinimizeInactiveClients && (view.Id != this._activeClientHandle))
 			{
+				this._windowManager.MinimizeWindow(this._activeClientHandle, false);
 				this._activeClientHandle = view.Id;
 				this._activeClientTitle = view.Title;
 			}
-
-			this._windowManager.ActivateWindow(id);
 
 			if (this._configuration.EnableClientLayoutTracking)
 			{
@@ -346,7 +350,7 @@ namespace EveOPreview.Services
 				return;
 			}
 
-			this._windowManager.DeactivateWindow(view.Id);
+			this._windowManager.MinimizeWindow(view.Id, true);
 			this.RefreshThumbnails();
 		}
 
@@ -385,7 +389,6 @@ namespace EveOPreview.Services
 
 		private bool IsNonClientWindowActive(IntPtr windowHandle)
 		{
-			// We just don't know ATM
 			if (windowHandle == IntPtr.Zero)
 			{
 				return false;
@@ -438,11 +441,10 @@ namespace EveOPreview.Services
 
 		private void UpdateClientLayouts()
 		{
-			ICollection<IProcessInfo> processes = this._processMonitor.GetAllProcesses();
-
-			foreach (IProcessInfo process in processes)
+			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
-				this._windowManager.GetWindowCoordinates(process.Handle, out int left, out int top, out int right, out int bottom);
+				IThumbnailView view = entry.Value;
+				this._windowManager.GetWindowCoordinates(view.Id, out int left, out int top, out int right, out int bottom);
 
 				int width = Math.Abs(right - left);
 				int height = Math.Abs(bottom - top);
@@ -452,19 +454,18 @@ namespace EveOPreview.Services
 					continue;
 				}
 
-				this._configuration.SetClientLayout(process.Title, new ClientLayout(left, top, width, height));
+				this._configuration.SetClientLayout(view.Title, new ClientLayout(left, top, width, height));
 			}
 		}
 
-		// We should no manage some thumbnails (like thumbnail of the EVE client sitting on the login screen)
+		// We shouldn't manage some thumbnails (like thumbnail of the EVE client sitting on the login screen)
+		// TODO Move to a service (?)
 		private bool IsManageableThumbnail(IThumbnailView view)
 		{
 			return view.Title != ThumbnailManager.DefaultClientTitle;
 		}
 
-		// Quick sanity check
-		// EVE Online client can create a window on a really weird position outside of the screen for some reason
-		// In this case we need to just skip such clients
+		// Quick sanity check that the window is not minimized
 		private bool IsValidWindowPosition(int letf, int top, int width, int height)
 		{
 			return (letf >= ThumbnailManager.WindowPositionThreshold)
