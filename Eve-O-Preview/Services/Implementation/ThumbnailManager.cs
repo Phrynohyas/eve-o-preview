@@ -89,7 +89,25 @@ namespace EveOPreview.Services
 		private void RefreshThumbnails()
 		{
 			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
-			Boolean hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && this.IsNonClientWindowActive(foregroundWindowHandle);
+			string foregroundWindowTitle = null;
+
+			if (foregroundWindowHandle == this._activeClientHandle)
+			{
+				foregroundWindowTitle = this._activeClientTitle;
+			}
+			else if (this._thumbnailViews.TryGetValue(foregroundWindowHandle, out IThumbnailView foregroundView))
+			{
+				// This code will work only on Alt+Tab switch between clients
+				foregroundWindowTitle = foregroundView.Title;
+			}
+
+			// No need to minimize EVE clients when switching out to non-EVE window (like thumbnail)
+			if (!string.IsNullOrEmpty(foregroundWindowTitle))
+			{
+				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
+			}
+
+			Boolean hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(string.IsNullOrEmpty(foregroundWindowTitle) || this.IsClientWindowActive(foregroundWindowHandle));
 
 			this.DisableViewEvents();
 
@@ -179,8 +197,6 @@ namespace EveOPreview.Services
 		{
 			this._processMonitor.GetUpdatedProcesses(out ICollection<IProcessInfo> addedProcesses, out ICollection<IProcessInfo> updatedProcesses, out ICollection<IProcessInfo> removedProcesses);
 
-			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
-
 			List<string> viewsAdded = new List<string>();
 			List<string> viewsRemoved = new List<string>();
 
@@ -216,12 +232,6 @@ namespace EveOPreview.Services
 				{
 					viewsAdded.Add(view.Title);
 				}
-
-				if (process.Handle == foregroundWindowHandle)
-				{
-					this._activeClientHandle = view.Id;
-					this._activeClientTitle = view.Title;
-				}
 			}
 
 			foreach (IProcessInfo process in updatedProcesses)
@@ -243,12 +253,6 @@ namespace EveOPreview.Services
 					view.RegisterHotkey(this._configuration.GetClientHotkey(process.Title));
 
 					this.ApplyClientLayout(view.Id, view.Title);
-				}
-
-				if (process.Handle == foregroundWindowHandle)
-				{
-					this._activeClientHandle = process.Handle;
-					this._activeClientTitle = process.Title;
 				}
 			}
 
@@ -277,6 +281,24 @@ namespace EveOPreview.Services
 			{
 				await this._mediator.Publish(new ThumbnailListUpdated(viewsAdded, viewsRemoved));
 			}
+		}
+
+		private void SwitchActiveClient(IntPtr foregroungClientHandle, string foregroundClientTitle)
+		{
+			// Check if any actions are needed
+			if (this._activeClientHandle == foregroungClientHandle)
+			{
+				return;
+			}
+
+			// Minimize the currently active client if needed
+			if (this._configuration.MinimizeInactiveClients)
+			{
+				this._windowManager.MinimizeWindow(this._activeClientHandle, false);
+			}
+
+			this._activeClientHandle = foregroungClientHandle;
+			this._activeClientTitle = foregroundClientTitle;
 		}
 
 		private void ThumbnailViewFocused(IntPtr id)
@@ -325,22 +347,10 @@ namespace EveOPreview.Services
 			IThumbnailView view = this._thumbnailViews[id];
 
 			this._windowManager.ActivateWindow(view.Id);
-
-			if (this._configuration.MinimizeInactiveClients && (view.Id != this._activeClientHandle))
-			{
-				this._windowManager.MinimizeWindow(this._activeClientHandle, false);
-				this._activeClientHandle = view.Id;
-				this._activeClientTitle = view.Title;
-			}
-
-			if (this._configuration.EnableClientLayoutTracking)
-			{
-				this.UpdateClientLayouts();
-			}
-
+			this.SwitchActiveClient(view.Id, view.Title);
+			this.UpdateClientLayouts();
 			this.RefreshThumbnails();
-
-			view?.Refresh(true);
+			view.Refresh(true);
 		}
 
 		private void ThumbnailDeactivated(IntPtr id)
@@ -387,7 +397,7 @@ namespace EveOPreview.Services
 			view.Refresh(false);
 		}
 
-		private bool IsNonClientWindowActive(IntPtr windowHandle)
+		private bool IsClientWindowActive(IntPtr windowHandle)
 		{
 			if (windowHandle == IntPtr.Zero)
 			{
@@ -400,11 +410,11 @@ namespace EveOPreview.Services
 
 				if (view.IsKnownHandle(windowHandle))
 				{
-					return false;
+					return true;
 				}
 			}
 
-			return true;
+			return false;
 		}
 
 		private void ThumbnailZoomIn(IThumbnailView view)
@@ -441,6 +451,11 @@ namespace EveOPreview.Services
 
 		private void UpdateClientLayouts()
 		{
+			if (!this._configuration.EnableClientLayoutTracking)
+			{
+				return;
+			}
+
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				IThumbnailView view = entry.Value;
