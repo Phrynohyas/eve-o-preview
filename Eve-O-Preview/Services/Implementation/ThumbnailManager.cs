@@ -12,8 +12,9 @@ namespace EveOPreview.Services
 	class ThumbnailManager : IThumbnailManager
 	{
 		#region Private constants
-		private const int WindowPositionThreshold = -5000;
-		private const int WindowSizeThreshold = 0;
+		private const int WindowPositionThresholdLow = -10_000;
+		private const int WindowPositionThresholdHigh = 31_000;
+		private const int WindowSizeThreshold = 10;
 		private const int ForcedRefreshCycleThreshold = 1;
 
 		private const string DefaultClientTitle = "EVE";
@@ -500,10 +501,9 @@ namespace EveOPreview.Services
 		// Quick sanity check that the window is not minimized
 		private bool IsValidWindowPosition(int letf, int top, int width, int height)
 		{
-			return (letf >= ThumbnailManager.WindowPositionThreshold)
-					&& (top >= ThumbnailManager.WindowPositionThreshold)
-					&& (width >= ThumbnailManager.WindowSizeThreshold)
-					&& (height >= ThumbnailManager.WindowSizeThreshold);
+			return (letf > ThumbnailManager.WindowPositionThresholdLow) && (letf < ThumbnailManager.WindowPositionThresholdHigh)
+					&& (top > ThumbnailManager.WindowPositionThresholdLow) && (top < ThumbnailManager.WindowPositionThresholdHigh)
+					&& (width > ThumbnailManager.WindowSizeThreshold) && (height > ThumbnailManager.WindowSizeThreshold);
 		}
 	}
 }
