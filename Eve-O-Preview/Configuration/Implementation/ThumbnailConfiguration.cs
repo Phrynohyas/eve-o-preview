@@ -9,10 +9,17 @@ namespace EveOPreview.Configuration.Omplementation
 	{
 		#region Private fields
 		private bool _enablePerClientThumbnailLayouts;
+		private bool _enableClientLayoutTracking;
 		#endregion
 
 		public ThumbnailConfiguration()
 		{
+			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
+			this.FlatLayout = new Dictionary<string, Point>();
+			this.ClientLayout = new Dictionary<string, ClientLayout>();
+			this.ClientHotkey = new Dictionary<string, string>();
+			this.DisableThumbnail = new Dictionary<string, bool>();
+
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
 
@@ -23,7 +30,7 @@ namespace EveOPreview.Configuration.Omplementation
 			this.MinimizeInactiveClients = false;
 			this.ShowThumbnailsAlwaysOnTop = true;
 			this.HideThumbnailsOnLostFocus = false;
-			this._enablePerClientThumbnailLayouts = false;
+			this.EnablePerClientThumbnailLayouts = false;
 
 			this.ThumbnailSize = new Size(384, 216);
 			this.ThumbnailMinimumSize = new Size(192, 108);
@@ -39,12 +46,6 @@ namespace EveOPreview.Configuration.Omplementation
 			this.EnableActiveClientHighlight = false;
 			this.ActiveClientHighlightColor = Color.GreenYellow;
 			this.ActiveClientHighlightThickness = 3;
-
-			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
-			this.FlatLayout = new Dictionary<string, Point>();
-			this.ClientLayout = new Dictionary<string, ClientLayout>();
-			this.ClientHotkey = new Dictionary<string, string>();
-			this.DisableThumbnail = new Dictionary<string, bool>();
 		}
 
 		public bool MinimizeToTray { get; set; }
@@ -53,11 +54,25 @@ namespace EveOPreview.Configuration.Omplementation
 		[JsonProperty("ThumbnailsOpacity")]
 		public double ThumbnailOpacity { get; set; }
 
-		public bool EnableClientLayoutTracking { get; set; }
+		public bool EnableClientLayoutTracking
+		{
+			get => this._enableClientLayoutTracking;
+			set
+			{
+				if (!value)
+				{
+					this.ClientLayout.Clear();
+				}
+
+				this._enableClientLayoutTracking = value;
+			}
+		}
+
 		public bool HideActiveClientThumbnail { get; set; }
 		public bool MinimizeInactiveClients { get; set; }
 		public bool ShowThumbnailsAlwaysOnTop { get; set; }
 		public bool HideThumbnailsOnLostFocus { get; set; }
+
 		public bool EnablePerClientThumbnailLayouts
 		{
 			get => this._enablePerClientThumbnailLayouts;
@@ -67,6 +82,7 @@ namespace EveOPreview.Configuration.Omplementation
 				{
 					this.PerClientLayout.Clear();
 				}
+
 				this._enablePerClientThumbnailLayouts = value;
 			}
 		}
