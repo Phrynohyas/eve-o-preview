@@ -14,6 +14,7 @@ namespace EveOPreview.Services
 		#region Private constants
 		private const int WindowPositionThreshold = -5000;
 		private const int WindowSizeThreshold = 0;
+		private const int ForcedRefreshCycleThreshold = 1;
 
 		private const string DefaultClientTitle = "EVE";
 		#endregion
@@ -32,6 +33,8 @@ namespace EveOPreview.Services
 
 		private bool _ignoreViewEvents;
 		private bool _isHoverEffectActive;
+
+		private int _refreshCycleCount;
 		#endregion
 
 		public ThumbnailManager(IMediator mediator, IThumbnailConfiguration configuration, IProcessMonitor processMonitor, IWindowManager windowManager, IThumbnailViewFactory factory)
@@ -47,6 +50,8 @@ namespace EveOPreview.Services
 
 			this.EnableViewEvents();
 			this._isHoverEffectActive = false;
+
+			this._refreshCycleCount = 0;
 
 			this._thumbnailViews = new Dictionary<IntPtr, IThumbnailView>();
 
@@ -107,7 +112,19 @@ namespace EveOPreview.Services
 				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
 			}
 
-			Boolean hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(string.IsNullOrEmpty(foregroundWindowTitle) || this.IsClientWindowActive(foregroundWindowHandle));
+			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(string.IsNullOrEmpty(foregroundWindowTitle) || this.IsClientWindowActive(foregroundWindowHandle));
+
+			bool forceRefresh;
+			if (this._refreshCycleCount > ThumbnailManager.ForcedRefreshCycleThreshold)
+			{
+				this._refreshCycleCount = 0;
+				forceRefresh = true;
+			}
+			else
+			{
+				this._refreshCycleCount++;
+				forceRefresh = false;
+			}
 
 			this.DisableViewEvents();
 
@@ -158,7 +175,7 @@ namespace EveOPreview.Services
 				}
 				else
 				{
-					view.Refresh(false);
+					view.Refresh(forceRefresh);
 				}
 			}
 
