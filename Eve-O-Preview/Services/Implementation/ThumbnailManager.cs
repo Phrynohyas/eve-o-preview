@@ -15,7 +15,7 @@ namespace EveOPreview.Services
 		private const int WindowPositionThresholdLow = -10_000;
 		private const int WindowPositionThresholdHigh = 31_000;
 		private const int WindowSizeThreshold = 10;
-		private const int ForcedRefreshCycleThreshold = 1;
+		private const int ForcedRefreshCycleThreshold = 2;
 
 		private const string DefaultClientTitle = "EVE";
 		#endregion
@@ -115,15 +115,16 @@ namespace EveOPreview.Services
 
 			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(string.IsNullOrEmpty(foregroundWindowTitle) || this.IsClientWindowActive(foregroundWindowHandle));
 
+			this._refreshCycleCount++;
+
 			bool forceRefresh;
-			if (this._refreshCycleCount > ThumbnailManager.ForcedRefreshCycleThreshold)
+			if (this._refreshCycleCount >= ThumbnailManager.ForcedRefreshCycleThreshold)
 			{
 				this._refreshCycleCount = 0;
 				forceRefresh = true;
 			}
 			else
 			{
-				this._refreshCycleCount++;
 				forceRefresh = false;
 			}
 
