@@ -29,8 +29,7 @@ namespace EveOPreview.Services
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
 
-		private IntPtr _activeClientHandle;
-		private string _activeClientTitle;
+		private (IntPtr Handle, string Title) _activeClient;
 
 		private bool _ignoreViewEvents;
 		private bool _isHoverEffectActive;
@@ -46,8 +45,7 @@ namespace EveOPreview.Services
 			this._configuration = configuration;
 			this._thumbnailViewFactory = factory;
 
-			this._activeClientHandle = (IntPtr)0;
-			this._activeClientTitle = ThumbnailManager.DefaultClientTitle;
+			this._activeClient = (IntPtr.Zero, ThumbnailManager.DefaultClientTitle);
 
 			this.EnableViewEvents();
 			this._isHoverEffectActive = false;
@@ -97,9 +95,9 @@ namespace EveOPreview.Services
 			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
 			string foregroundWindowTitle = null;
 
-			if (foregroundWindowHandle == this._activeClientHandle)
+			if (foregroundWindowHandle == this._activeClient.Handle)
 			{
-				foregroundWindowTitle = this._activeClientTitle;
+				foregroundWindowTitle = this._activeClient.Title;
 			}
 			else if (this._thumbnailViews.TryGetValue(foregroundWindowHandle, out IThumbnailView foregroundView))
 			{
@@ -144,7 +142,7 @@ namespace EveOPreview.Services
 					continue;
 				}
 
-				if (this._configuration.HideActiveClientThumbnail && (view.Id == this._activeClientHandle))
+				if (this._configuration.HideActiveClientThumbnail && (view.Id == this._activeClient.Handle))
 				{
 					if (view.IsActive)
 					{
@@ -159,7 +157,7 @@ namespace EveOPreview.Services
 					// Do not even move thumbnails with default caption
 					if (this.IsManageableThumbnail(view))
 					{
-						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation);
+						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClient.Title, view.ThumbnailLocation);
 					}
 
 					view.SetOpacity(this._configuration.ThumbnailOpacity);
@@ -168,7 +166,7 @@ namespace EveOPreview.Services
 
 				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
 
-				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClientHandle),
+				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClient.Handle),
 										this._configuration.ActiveClientHighlightColor, this._configuration.ActiveClientHighlightThickness);
 
 				if (!view.IsActive)
@@ -230,7 +228,7 @@ namespace EveOPreview.Services
 				view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
 
 				view.ThumbnailLocation = this.IsManageableThumbnail(view)
-											? this._configuration.GetThumbnailLocation(view.Title, this._activeClientTitle, view.ThumbnailLocation)
+											? this._configuration.GetThumbnailLocation(view.Title, this._activeClient.Title, view.ThumbnailLocation)
 											: this._configuration.GetDefaultThumbnailLocation();
 
 				this._thumbnailViews.Add(view.Id, view);
@@ -305,7 +303,7 @@ namespace EveOPreview.Services
 		private void SwitchActiveClient(IntPtr foregroungClientHandle, string foregroundClientTitle)
 		{
 			// Check if any actions are needed
-			if (this._activeClientHandle == foregroungClientHandle)
+			if (this._activeClient.Handle == foregroungClientHandle)
 			{
 				return;
 			}
@@ -313,11 +311,10 @@ namespace EveOPreview.Services
 			// Minimize the currently active client if needed
 			if (this._configuration.MinimizeInactiveClients)
 			{
-				this._windowManager.MinimizeWindow(this._activeClientHandle, false);
+				this._windowManager.MinimizeWindow(this._activeClient.Handle, false);
 			}
 
-			this._activeClientHandle = foregroungClientHandle;
-			this._activeClientTitle = foregroundClientTitle;
+			this._activeClient = (foregroungClientHandle, foregroundClientTitle);
 		}
 
 		private void ThumbnailViewFocused(IntPtr id)
@@ -410,7 +407,7 @@ namespace EveOPreview.Services
 
 			if (this.IsManageableThumbnail(view))
 			{
-				await this._mediator.Publish(new ThumbnailLocationUpdated(view.Title, this._activeClientTitle, view.ThumbnailLocation));
+				await this._mediator.Publish(new ThumbnailLocationUpdated(view.Title, this._activeClient.Title, view.ThumbnailLocation));
 			}
 
 			view.Refresh(false);
@@ -478,17 +475,17 @@ namespace EveOPreview.Services
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				IThumbnailView view = entry.Value;
-				this._windowManager.GetWindowCoordinates(view.Id, out int left, out int top, out int right, out int bottom);
+				(int Left, int Top, int Right, int Bottom) position = this._windowManager.GetWindowPosition(view.Id);
 
-				int width = Math.Abs(right - left);
-				int height = Math.Abs(bottom - top);
+				int width = Math.Abs(position.Right - position.Left);
+				int height = Math.Abs(position.Bottom - position.Top);
 
-				if (!this.IsValidWindowPosition(left, top, width, height))
+				if (!this.IsValidWindowPosition(position.Left, position.Top, width, height))
 				{
 					continue;
 				}
 
-				this._configuration.SetClientLayout(view.Title, new ClientLayout(left, top, width, height));
+				this._configuration.SetClientLayout(view.Title, new ClientLayout(position.Left, position.Top, width, height));
 			}
 		}
 

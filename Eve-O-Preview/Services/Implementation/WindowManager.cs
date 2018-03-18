@@ -51,14 +51,11 @@ namespace EveOPreview.Services.Implementation
 			User32NativeMethods.MoveWindow(handle, left, top, width, height, true);
 		}
 
-		public void GetWindowCoordinates(IntPtr handle, out int left, out int top, out int right, out int bottom)
+		public (int Left, int Top, int Right, int Bottom) GetWindowPosition(IntPtr handle)
 		{
 			User32NativeMethods.GetWindowRect(handle, out RECT windowRectangle);
 
-			left = windowRectangle.Left;
-			top = windowRectangle.Top;
-			right = windowRectangle.Right;
-			bottom = windowRectangle.Bottom;
+			return (windowRectangle.Left, windowRectangle.Top, windowRectangle.Right, windowRectangle.Bottom);
 		}
 
 		public bool IsWindowMinimized(IntPtr handle)

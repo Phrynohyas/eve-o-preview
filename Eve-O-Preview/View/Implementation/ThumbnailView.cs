@@ -18,7 +18,7 @@ namespace EveOPreview.View
 		// was moved to the view due to the performance reasons
 		private bool _isOverlayVisible;
 		private bool _isTopMost;
-		private bool _isPositionChanged;
+		private bool _isLocationChanged;
 		private bool _isSizeChanged;
 		private bool _isCustomMouseModeActive;
 		private bool _isHighlightEnabled;
@@ -42,7 +42,7 @@ namespace EveOPreview.View
 			this._isOverlayVisible = false;
 			this._isTopMost = false;
 
-			this._isPositionChanged = true;
+			this._isLocationChanged = true;
 			this._isSizeChanged = true;
 			this._isCustomMouseModeActive = false;
 
@@ -106,7 +106,7 @@ namespace EveOPreview.View
 		{
 			base.Show();
 
-			this._isPositionChanged = true;
+			this._isLocationChanged = true;
 			this._isSizeChanged = true;
 			this._isOverlayVisible = false;
 
@@ -314,7 +314,7 @@ namespace EveOPreview.View
 			}
 
 			bool sizeChanged = this._isSizeChanged || forceRefresh;
-			bool locationChanged = this._isPositionChanged || forceRefresh;
+			bool locationChanged = this._isLocationChanged || forceRefresh;
 
 			if (sizeChanged)
 			{
@@ -352,7 +352,7 @@ namespace EveOPreview.View
 			overlayLocation.X += borderWidth;
 			overlayLocation.Y += (this.Size.Height - this.ClientSize.Height) - borderWidth;
 
-			this._isPositionChanged = false;
+			this._isLocationChanged = false;
 			this._overlay.Size = overlaySize;
 			this._overlay.Location = overlayLocation;
 			this._overlay.Refresh();
@@ -397,7 +397,7 @@ namespace EveOPreview.View
 
 		private void Move_Handler(object sender, EventArgs e)
 		{
-			this._isPositionChanged = true;
+			this._isLocationChanged = true;
 			this.ThumbnailMoved?.Invoke(this.Id);
 		}
 
