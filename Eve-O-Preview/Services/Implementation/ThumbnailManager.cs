@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
@@ -387,11 +388,9 @@ namespace EveOPreview.Services
 			// a view callback
 			IThumbnailView view = this._thumbnailViews[id];
 
-			this._windowManager.ActivateWindow(view.Id);
-			this.SwitchActiveClient(view.Id, view.Title);
+			Task.Run(() => this._windowManager.ActivateWindow(view.Id));
+
 			this.UpdateClientLayouts();
-			this.RefreshThumbnails();
-			view.Refresh(true);
 		}
 
 		private void ThumbnailDeactivated(IntPtr id)
