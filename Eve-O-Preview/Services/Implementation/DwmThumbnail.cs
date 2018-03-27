@@ -14,6 +14,7 @@ namespace EveOPreview.Services.Implementation
 		public DwmThumbnail(IWindowManager windowManager)
 		{
 			this._windowManager = windowManager;
+			this._handle = IntPtr.Zero;
 		}
 
 		public void Register(IntPtr destination, IntPtr source)
@@ -32,12 +33,23 @@ namespace EveOPreview.Services.Implementation
 				return;
 			}
 
-			this._handle = DwmApiNativeMethods.DwmRegisterThumbnail(destination, source);
+			try
+			{
+				this._handle = DwmApiNativeMethods.DwmRegisterThumbnail(destination, source);
+			}
+			catch (ArgumentException)
+			{
+				// This exception is raised if the source client is already closed
+				// Can happen on a really slow CPU's that the window is still being
+				// lised in the process list yet it already cannot be used as
+				// a thumbnail source
+				this._handle = IntPtr.Zero;
+			}
 		}
 
 		public void Unregister()
 		{
-			if (!this._windowManager.IsCompositionEnabled)
+			if ((!this._windowManager.IsCompositionEnabled) || (this._handle == IntPtr.Zero))
 			{
 				return;
 			}
@@ -58,7 +70,7 @@ namespace EveOPreview.Services.Implementation
 
 		public void Update()
 		{
-			if (!this._windowManager.IsCompositionEnabled)
+			if ((!this._windowManager.IsCompositionEnabled) || (this._handle == IntPtr.Zero))
 			{
 				return;
 			}

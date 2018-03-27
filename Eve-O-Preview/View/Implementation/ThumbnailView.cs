@@ -127,7 +127,7 @@ namespace EveOPreview.View
 		public new void Close()
 		{
 			this.IsActive = false;
-			this._thumbnail.Unregister();
+			this._thumbnail?.Unregister();
 			this._overlay.Close();
 			base.Close();
 		}
