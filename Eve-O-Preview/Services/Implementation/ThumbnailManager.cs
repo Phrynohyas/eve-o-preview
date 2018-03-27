@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
@@ -16,6 +17,7 @@ namespace EveOPreview.Services
 		private const int WindowPositionThresholdHigh = 31_000;
 		private const int WindowSizeThreshold = 10;
 		private const int ForcedRefreshCycleThreshold = 2;
+		private const int DefaultLocationChangeNotificationDelay = 2;
 
 		private const string DefaultClientTitle = "EVE";
 		#endregion
@@ -30,6 +32,9 @@ namespace EveOPreview.Services
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
 
 		private (IntPtr Handle, string Title) _activeClient;
+
+		private readonly object _locationChangeNotificationSyncRoot;
+		private (IntPtr Handle, string Title, string ActiveClient, Point Location, int Delay) _enqueuedLocationChangeNotification;
 
 		private bool _ignoreViewEvents;
 		private bool _isHoverEffectActive;
@@ -51,6 +56,8 @@ namespace EveOPreview.Services
 			this._isHoverEffectActive = false;
 
 			this._refreshCycleCount = 0;
+			this._locationChangeNotificationSyncRoot = new object();
+			this._enqueuedLocationChangeNotification = (IntPtr.Zero, null, null, Point.Empty, -1);
 
 			this._thumbnailViews = new Dictionary<IntPtr, IThumbnailView>();
 
@@ -72,142 +79,10 @@ namespace EveOPreview.Services
 			this._thumbnailUpdateTimer.Stop();
 		}
 
-		public void UpdateThumbnailsSize()
-		{
-			this.SetThumbnailsSize(this._configuration.ThumbnailSize);
-		}
-
-		private void SetThumbnailsSize(Size size)
-		{
-			this.DisableViewEvents();
-
-			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
-			{
-				entry.Value.ThumbnailSize = size;
-				entry.Value.Refresh(false);
-			}
-
-			this.EnableViewEvents();
-		}
-
-		private void RefreshThumbnails()
-		{
-			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
-			string foregroundWindowTitle = null;
-
-			if (foregroundWindowHandle == this._activeClient.Handle)
-			{
-				foregroundWindowTitle = this._activeClient.Title;
-			}
-			else if (this._thumbnailViews.TryGetValue(foregroundWindowHandle, out IThumbnailView foregroundView))
-			{
-				// This code will work only on Alt+Tab switch between clients
-				foregroundWindowTitle = foregroundView.Title;
-			}
-
-			// No need to minimize EVE clients when switching out to non-EVE window (like thumbnail)
-			if (!string.IsNullOrEmpty(foregroundWindowTitle))
-			{
-				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
-			}
-
-			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(string.IsNullOrEmpty(foregroundWindowTitle) || this.IsClientWindowActive(foregroundWindowHandle));
-
-			this._refreshCycleCount++;
-
-			bool forceRefresh;
-			if (this._refreshCycleCount >= ThumbnailManager.ForcedRefreshCycleThreshold)
-			{
-				this._refreshCycleCount = 0;
-				forceRefresh = true;
-			}
-			else
-			{
-				forceRefresh = false;
-			}
-
-			this.DisableViewEvents();
-
-			// Hide, show, resize and move
-			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
-			{
-				IThumbnailView view = entry.Value;
-
-				if (hideAllThumbnails || this._configuration.IsThumbnailDisabled(view.Title))
-				{
-					if (view.IsActive)
-					{
-						view.Hide();
-					}
-					continue;
-				}
-
-				if (this._configuration.HideActiveClientThumbnail && (view.Id == this._activeClient.Handle))
-				{
-					if (view.IsActive)
-					{
-						view.Hide();
-					}
-					continue;
-				}
-
-				// No need to update Thumbnails while one of them is highlighted
-				if (!this._isHoverEffectActive)
-				{
-					// Do not even move thumbnails with default caption
-					if (this.IsManageableThumbnail(view))
-					{
-						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClient.Title, view.ThumbnailLocation);
-					}
-
-					view.SetOpacity(this._configuration.ThumbnailOpacity);
-					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
-				}
-
-				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
-
-				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClient.Handle),
-										this._configuration.ActiveClientHighlightColor, this._configuration.ActiveClientHighlightThickness);
-
-				if (!view.IsActive)
-				{
-					view.Show();
-				}
-				else
-				{
-					view.Refresh(forceRefresh);
-				}
-			}
-
-			this.EnableViewEvents();
-		}
-
-		public void UpdateThumbnailFrames()
-		{
-			this.DisableViewEvents();
-
-			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
-			{
-				entry.Value.SetFrames(this._configuration.ShowThumbnailFrames);
-			}
-
-			this.EnableViewEvents();
-		}
-
 		private void ThumbnailUpdateTimerTick(object sender, EventArgs e)
 		{
 			this.UpdateThumbnailsList();
 			this.RefreshThumbnails();
-		}
-
-		private void EnableViewEvents()
-		{
-			this._ignoreViewEvents = false;
-		}
-
-		private void DisableViewEvents()
-		{
-			this._ignoreViewEvents = true;
 		}
 
 		private async void UpdateThumbnailsList()
@@ -298,6 +173,156 @@ namespace EveOPreview.Services
 			{
 				await this._mediator.Publish(new ThumbnailListUpdated(viewsAdded, viewsRemoved));
 			}
+		}
+
+		private void RefreshThumbnails()
+		{
+			// TODO Split this method
+			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
+			string foregroundWindowTitle = null;
+
+			if (foregroundWindowHandle == this._activeClient.Handle)
+			{
+				foregroundWindowTitle = this._activeClient.Title;
+			}
+			else if (this._thumbnailViews.TryGetValue(foregroundWindowHandle, out IThumbnailView foregroundView))
+			{
+				// This code will work only on Alt+Tab switch between clients
+				foregroundWindowTitle = foregroundView.Title;
+			}
+
+			// No need to minimize EVE clients when switching out to non-EVE window (like thumbnail)
+			if (!string.IsNullOrEmpty(foregroundWindowTitle))
+			{
+				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
+			}
+
+			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(string.IsNullOrEmpty(foregroundWindowTitle) || this.IsClientWindowActive(foregroundWindowHandle));
+
+			this._refreshCycleCount++;
+
+			bool forceRefresh;
+			if (this._refreshCycleCount >= ThumbnailManager.ForcedRefreshCycleThreshold)
+			{
+				this._refreshCycleCount = 0;
+				forceRefresh = true;
+			}
+			else
+			{
+				forceRefresh = false;
+			}
+
+			this.DisableViewEvents();
+
+			// Dock thumbnail
+			// No need to update Thumbnails while one of them is highlighted
+			// TODO Make this configurable
+			if ((!this._isHoverEffectActive) && this.TryDequeueLocationChange(out var locationChange))
+			{
+				if ((locationChange.ActiveClient == this._activeClient.Title) && this._thumbnailViews.TryGetValue(locationChange.Handle, out var view))
+				{
+					this.DockThumbnailView(view);
+
+					this.RaiseThumbnailLocationUpdatedNotification(view.Title, this._activeClient.Title, view.ThumbnailLocation);
+				}
+				else
+				{
+					this.RaiseThumbnailLocationUpdatedNotification(locationChange.Title, locationChange.ActiveClient, locationChange.Location);
+				}
+			}
+
+			// Hide, show, resize and move
+			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
+			{
+				IThumbnailView view = entry.Value;
+
+				if (hideAllThumbnails || this._configuration.IsThumbnailDisabled(view.Title))
+				{
+					if (view.IsActive)
+					{
+						view.Hide();
+					}
+					continue;
+				}
+
+				if (this._configuration.HideActiveClientThumbnail && (view.Id == this._activeClient.Handle))
+				{
+					if (view.IsActive)
+					{
+						view.Hide();
+					}
+					continue;
+				}
+
+				// No need to update Thumbnails while one of them is highlighted
+				if (!this._isHoverEffectActive)
+				{
+					// Do not even move thumbnails with default caption
+					if (this.IsManageableThumbnail(view))
+					{
+						view.ThumbnailLocation = this._configuration.GetThumbnailLocation(view.Title, this._activeClient.Title, view.ThumbnailLocation);
+					}
+
+					view.SetOpacity(this._configuration.ThumbnailOpacity);
+					view.SetTopMost(this._configuration.ShowThumbnailsAlwaysOnTop);
+				}
+
+				view.IsOverlayEnabled = this._configuration.ShowThumbnailOverlays;
+
+				view.SetHighlight(this._configuration.EnableActiveClientHighlight && (view.Id == this._activeClient.Handle),
+										this._configuration.ActiveClientHighlightColor, this._configuration.ActiveClientHighlightThickness);
+
+				if (!view.IsActive)
+				{
+					view.Show();
+				}
+				else
+				{
+					view.Refresh(forceRefresh);
+				}
+			}
+
+			this.EnableViewEvents();
+		}
+
+		public void UpdateThumbnailsSize()
+		{
+			this.SetThumbnailsSize(this._configuration.ThumbnailSize);
+		}
+
+		private void SetThumbnailsSize(Size size)
+		{
+			this.DisableViewEvents();
+
+			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
+			{
+				entry.Value.ThumbnailSize = size;
+				entry.Value.Refresh(false);
+			}
+
+			this.EnableViewEvents();
+		}
+
+		public void UpdateThumbnailFrames()
+		{
+			this.DisableViewEvents();
+
+			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
+			{
+				entry.Value.SetFrames(this._configuration.ShowThumbnailFrames);
+			}
+
+			this.EnableViewEvents();
+		}
+
+		private void EnableViewEvents()
+		{
+			this._ignoreViewEvents = false;
+		}
+
+		private void DisableViewEvents()
+		{
+			this._ignoreViewEvents = true;
 		}
 
 		private void SwitchActiveClient(IntPtr foregroungClientHandle, string foregroundClientTitle)
@@ -396,7 +421,7 @@ namespace EveOPreview.Services
 			await this._mediator.Publish(new ThumbnailActiveSizeUpdated(view.ThumbnailSize));
 		}
 
-		private async void ThumbnailViewMoved(IntPtr id)
+		private void ThumbnailViewMoved(IntPtr id)
 		{
 			if (this._ignoreViewEvents)
 			{
@@ -404,13 +429,8 @@ namespace EveOPreview.Services
 			}
 
 			IThumbnailView view = this._thumbnailViews[id];
-
-			if (this.IsManageableThumbnail(view))
-			{
-				await this._mediator.Publish(new ThumbnailLocationUpdated(view.Title, this._activeClient.Title, view.ThumbnailLocation));
-			}
-
 			view.Refresh(false);
+			this.EnqueueLocationChange(view);
 		}
 
 		private bool IsClientWindowActive(IntPtr windowHandle)
@@ -453,6 +473,80 @@ namespace EveOPreview.Services
 			this.EnableViewEvents();
 		}
 
+		private void DockThumbnailView(IThumbnailView view)
+		{
+			// Only borderless thumbnails can be docked
+			if (this._configuration.ShowThumbnailFrames)
+			{
+				return;
+			}
+
+			int width = this._configuration.ThumbnailSize.Width;
+			int height = this._configuration.ThumbnailSize.Height;
+
+			// TODO Extract method
+			int baseX = view.ThumbnailLocation.X;
+			int baseY = view.ThumbnailLocation.Y;
+
+			Point[] viewPoints = { new Point(baseX, baseY), new Point(baseX + width, baseY), new Point(baseX, baseY + height), new Point(baseX + width, baseY + height) };
+
+			// TODO Extract constants
+			int thresholdX = Math.Max(20, width / 5);
+			int thresholdY = Math.Max(20, height / 5);
+
+			foreach (var entry in this._thumbnailViews)
+			{
+				IThumbnailView testView = entry.Value;
+
+				if (view.Id == testView.Id)
+				{
+					continue;
+				}
+
+				int testX = testView.ThumbnailLocation.X;
+				int testY = testView.ThumbnailLocation.Y;
+
+				Point[] testPoints = { new Point(testX, testY), new Point(testX + width, testY), new Point(testX, testY + height), new Point(testX + width, testY + height) };
+
+				var delta = ThumbnailManager.TestViewPoints(viewPoints, testPoints, thresholdX, thresholdY);
+
+				if ((delta.X == 0) && (delta.Y == 0))
+				{
+					continue;
+				}
+
+				view.ThumbnailLocation = new Point(view.ThumbnailLocation.X + delta.X, view.ThumbnailLocation.Y + delta.Y);
+				this._configuration.SetThumbnailLocation(view.Title, this._activeClient.Title, view.ThumbnailLocation);
+				break;
+			}
+		}
+
+		private static (int X, int Y) TestViewPoints(Point[] viewPoints, Point[] testPoints, int thresholdX, int thresholdY)
+		{
+			// Point combinations that we need to check
+			// No need to check all 4x4 combinations
+			(int ViewOffset, int TestOffset)[] testOffsets =
+								{   ( 0, 3 ), ( 0, 2 ), ( 1, 2 ),
+									( 0, 1 ), ( 0, 0 ), ( 1, 0 ),
+									( 2, 1 ), ( 2, 0 ), ( 3, 0 )};
+
+			foreach (var testOffset in testOffsets)
+			{
+				Point viewPoint = viewPoints[testOffset.ViewOffset];
+				Point testPoint = testPoints[testOffset.TestOffset];
+
+				int deltaX = testPoint.X - viewPoint.X;
+				int deltaY = testPoint.Y - viewPoint.Y;
+
+				if ((Math.Abs(deltaX) <= thresholdX) && (Math.Abs(deltaY) <= thresholdY))
+				{
+					return (deltaX, deltaY);
+				}
+			}
+
+			return (0, 0);
+		}
+
 		private void ApplyClientLayout(IntPtr clientHandle, string clientTitle)
 		{
 			ClientLayout clientLayout = this._configuration.GetClientLayout(clientTitle);
@@ -487,6 +581,68 @@ namespace EveOPreview.Services
 
 				this._configuration.SetClientLayout(view.Title, new ClientLayout(position.Left, position.Top, width, height));
 			}
+		}
+
+		private void EnqueueLocationChange(IThumbnailView view)
+		{
+			string activeClientTitle = this._activeClient.Title;
+			// TODO ??
+			this._configuration.SetThumbnailLocation(view.Title, activeClientTitle, view.ThumbnailLocation);
+
+			lock (this._locationChangeNotificationSyncRoot)
+			{
+				if (this._enqueuedLocationChangeNotification.Handle == IntPtr.Zero)
+				{
+					this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DefaultLocationChangeNotificationDelay);
+					return;
+				}
+
+				// Reset the delay and exit
+				if ((this._enqueuedLocationChangeNotification.Handle == view.Id) &&
+					(this._enqueuedLocationChangeNotification.ActiveClient == activeClientTitle))
+				{
+					this._enqueuedLocationChangeNotification.Delay = ThumbnailManager.DefaultLocationChangeNotificationDelay;
+					return;
+				}
+
+				this.RaiseThumbnailLocationUpdatedNotification(this._enqueuedLocationChangeNotification.Title, activeClientTitle, this._enqueuedLocationChangeNotification.Location);
+				this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DefaultLocationChangeNotificationDelay);
+			}
+		}
+
+		private bool TryDequeueLocationChange(out (IntPtr Handle, string Title, string ActiveClient, Point Location) change)
+		{
+			lock (this._locationChangeNotificationSyncRoot)
+			{
+				change = (IntPtr.Zero, null, null, Point.Empty);
+
+				if (this._enqueuedLocationChangeNotification.Handle == IntPtr.Zero)
+				{
+					return false;
+				}
+
+				this._enqueuedLocationChangeNotification.Delay--;
+
+				if (this._enqueuedLocationChangeNotification.Delay > 0)
+				{
+					return false;
+				}
+
+				change = (this._enqueuedLocationChangeNotification.Handle, this._enqueuedLocationChangeNotification.Title, this._enqueuedLocationChangeNotification.ActiveClient, this._enqueuedLocationChangeNotification.Location);
+				this._enqueuedLocationChangeNotification = (IntPtr.Zero, null, null, Point.Empty, -1);
+
+				return true;
+			}
+		}
+
+		private void RaiseThumbnailLocationUpdatedNotification(string title, string activeClient, Point location)
+		{
+			if (string.IsNullOrEmpty(title) || (title == ThumbnailManager.DefaultClientTitle))
+			{
+				return;
+			}
+
+			// TODO Raise 'cave config' notification
 		}
 
 		// We shouldn't manage some thumbnails (like thumbnail of the EVE client sitting on the login screen)
