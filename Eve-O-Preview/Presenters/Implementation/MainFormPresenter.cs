@@ -205,12 +205,14 @@ namespace EveOPreview.Presenters
 			return new ThumbnailDescription(title, isDisabled);
 		}
 
-		private void UpdateThumbnailState(String title)
+		private async void UpdateThumbnailState(String title)
 		{
 			if (this._descriptionsCache.TryGetValue(title, out IThumbnailDescription description))
 			{
 				this._configuration.ToggleThumbnail(title, description.IsDisabled);
 			}
+
+			await this._mediator.Send(new SaveConfiguration());
 		}
 
 		public void UpdateThumbnailSize(Size size)
