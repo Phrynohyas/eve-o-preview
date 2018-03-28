@@ -495,8 +495,8 @@ namespace EveOPreview.Services
 			Point[] viewPoints = { new Point(baseX, baseY), new Point(baseX + width, baseY), new Point(baseX, baseY + height), new Point(baseX + width, baseY + height) };
 
 			// TODO Extract constants
-			int thresholdX = Math.Max(20, width / 5);
-			int thresholdY = Math.Max(20, height / 5);
+			int thresholdX = Math.Max(20, width / 10);
+			int thresholdY = Math.Max(20, height / 10);
 
 			foreach (var entry in this._thumbnailViews)
 			{
