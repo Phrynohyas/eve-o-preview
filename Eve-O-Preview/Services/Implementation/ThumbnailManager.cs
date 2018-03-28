@@ -215,9 +215,8 @@ namespace EveOPreview.Services
 
 			this.DisableViewEvents();
 
-			// Dock thumbnail
+			// Snap thumbnail
 			// No need to update Thumbnails while one of them is highlighted
-			// TODO Make this configurable
 			if ((!this._isHoverEffectActive) && this.TryDequeueLocationChange(out var locationChange))
 			{
 				if ((locationChange.ActiveClient == this._activeClient.Title) && this._thumbnailViews.TryGetValue(locationChange.Handle, out var view))
@@ -640,14 +639,14 @@ namespace EveOPreview.Services
 			}
 		}
 
-		private void RaiseThumbnailLocationUpdatedNotification(string title, string activeClient, Point location)
+		private async void RaiseThumbnailLocationUpdatedNotification(string title, string activeClient, Point location)
 		{
 			if (string.IsNullOrEmpty(title) || (title == ThumbnailManager.DefaultClientTitle))
 			{
 				return;
 			}
 
-			// TODO Raise 'cave config' notification
+			await this._mediator.Send(new SaveConfiguration());
 		}
 
 		// We shouldn't manage some thumbnails (like thumbnail of the EVE client sitting on the login screen)
