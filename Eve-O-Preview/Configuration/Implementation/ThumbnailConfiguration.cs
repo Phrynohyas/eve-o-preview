@@ -36,6 +36,8 @@ namespace EveOPreview.Configuration.Omplementation
 			this.ThumbnailMinimumSize = new Size(192, 108);
 			this.ThumbnailMaximumSize = new Size(960, 540);
 
+			this.EnableThumbnailSnap = true;
+
 			this.ThumbnailZoomEnabled = false;
 			this.ThumbnailZoomFactor = 2;
 			this.ThumbnailZoomAnchor = ZoomAnchor.NW;
@@ -90,6 +92,8 @@ namespace EveOPreview.Configuration.Omplementation
 		public Size ThumbnailSize { get; set; }
 		public Size ThumbnailMaximumSize { get; set; }
 		public Size ThumbnailMinimumSize { get; set; }
+
+		public bool EnableThumbnailSnap { get; set; }
 
 		[JsonProperty("EnableThumbnailZoom")]
 		public bool ThumbnailZoomEnabled { get; set; }

@@ -222,7 +222,7 @@ namespace EveOPreview.Services
 			{
 				if ((locationChange.ActiveClient == this._activeClient.Title) && this._thumbnailViews.TryGetValue(locationChange.Handle, out var view))
 				{
-					this.DockThumbnailView(view);
+					this.SnapThumbnailView(view);
 
 					this.RaiseThumbnailLocationUpdatedNotification(view.Title, this._activeClient.Title, view.ThumbnailLocation);
 				}
@@ -472,8 +472,14 @@ namespace EveOPreview.Services
 			this.EnableViewEvents();
 		}
 
-		private void DockThumbnailView(IThumbnailView view)
+		private void SnapThumbnailView(IThumbnailView view)
 		{
+			// Check if this feature is enabled
+			if (!this._configuration.EnableThumbnailSnap)
+			{
+				return;
+			}
+
 			// Only borderless thumbnails can be docked
 			if (this._configuration.ShowThumbnailFrames)
 			{

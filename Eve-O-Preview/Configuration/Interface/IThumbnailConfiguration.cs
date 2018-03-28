@@ -21,6 +21,8 @@ namespace EveOPreview.Configuration
 		Size ThumbnailMinimumSize { get; set; }
 		Size ThumbnailMaximumSize { get; set; }
 
+		bool EnableThumbnailSnap { get; set; }
+
 		bool ThumbnailZoomEnabled { get; set; }
 		int ThumbnailZoomFactor { get; set; }
 		ZoomAnchor ThumbnailZoomAnchor { get; set; }
