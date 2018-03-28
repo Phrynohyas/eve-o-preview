@@ -19,6 +19,7 @@ namespace EveOPreview.Configuration.Omplementation
 			this.ClientLayout = new Dictionary<string, ClientLayout>();
 			this.ClientHotkey = new Dictionary<string, string>();
 			this.DisableThumbnail = new Dictionary<string, bool>();
+			this.PriorityClients = new List<string>();
 
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
@@ -119,6 +120,8 @@ namespace EveOPreview.Configuration.Omplementation
 		private Dictionary<string, string> ClientHotkey { get; set; }
 		[JsonProperty]
 		private Dictionary<string, bool> DisableThumbnail { get; set; }
+		[JsonProperty]
+		private List<string> PriorityClients { get; set; }
 
 		public Point GetDefaultThumbnailLocation()
 		{
@@ -206,6 +209,11 @@ namespace EveOPreview.Configuration.Omplementation
 		public void SetClientHotkey(string currentClient, Keys hotkey)
 		{
 			this.ClientHotkey[currentClient] = (new KeysConverter()).ConvertToInvariantString(hotkey);
+		}
+
+		public bool IsPriorityClient(string currentClient)
+		{
+			return this.PriorityClients.Contains(currentClient);
 		}
 
 		public bool IsThumbnailDisabled(string currentClient)

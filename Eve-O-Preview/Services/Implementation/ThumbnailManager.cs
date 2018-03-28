@@ -334,7 +334,7 @@ namespace EveOPreview.Services
 			}
 
 			// Minimize the currently active client if needed
-			if (this._configuration.MinimizeInactiveClients)
+			if (this._configuration.MinimizeInactiveClients && !this._configuration.IsPriorityClient(this._activeClient.Title))
 			{
 				this._windowManager.MinimizeWindow(this._activeClient.Handle, false);
 			}

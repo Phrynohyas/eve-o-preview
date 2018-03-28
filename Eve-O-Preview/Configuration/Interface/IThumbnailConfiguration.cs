@@ -44,6 +44,8 @@ namespace EveOPreview.Configuration
 		Keys GetClientHotkey(string currentClient);
 		void SetClientHotkey(string currentClient, Keys hotkey);
 
+		bool IsPriorityClient(string currentClient);
+
 		bool IsThumbnailDisabled(string currentClient);
 		void ToggleThumbnail(string currentClient, bool isDisabled);
 
