@@ -36,8 +36,16 @@ namespace EveOPreview.Configuration
 		public void Save()
 		{
 			string rawData = JsonConvert.SerializeObject(this._thumbnailConfiguration, Formatting.Indented);
+			string filename = this.GetConfigFileName();
 
-			File.WriteAllText(this.GetConfigFileName(), rawData);
+			try
+			{
+				File.WriteAllText(filename, rawData);
+			}
+			catch (IOException)
+			{
+				// Ignore error if for some reason the updated config cannot be written down
+			}
 		}
 
 		private string GetConfigFileName()
