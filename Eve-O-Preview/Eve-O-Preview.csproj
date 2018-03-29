@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EveOPreview</RootNamespace>
     <AssemblyName>Eve-O Preview</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
@@ -79,12 +79,16 @@
       <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="LightInject, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LightInject.5.1.1\lib\net452\LightInject.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>R:\eve-o-preview\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="LightInject">
+      <HintPath>..\packages\LightInject.5.1.2\lib\net452\LightInject.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="MediatR, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediatR.4.0.1\lib\net45\MediatR.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Deployment" />
@@ -107,53 +111,79 @@
     <Compile Include="Configuration\AppConfig.cs" />
     <Compile Include="Configuration\ConfigurationStorage.cs" />
     <Compile Include="Configuration\IAppConfig.cs" />
-    <Compile Include="Configuration\IThumbnailConfig.cs" />
+    <Compile Include="Configuration\Interface\IThumbnailConfiguration.cs" />
     <Compile Include="Configuration\ZoomAnchor.cs" />
-    <Compile Include="DwmAPI\DWM_BLURBEHIND.cs" />
-    <Compile Include="DwmAPI\DWM_THUMBNAIL_PROPERTIES.cs" />
-    <Compile Include="DwmAPI\DWM_TNP_CONSTANTS.cs" />
-    <Compile Include="DwmAPI\MARGINS.cs" />
-    <Compile Include="DwmAPI\RECT.cs" />
+    <Compile Include="Mediator\Handlers\Configuration\SaveConfigurationHandler.cs" />
+    <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailFrameSettingsUpdatedHandler.cs" />
+    <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailConfiguredSizeUpdatedHandler.cs" />
+    <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailListUpdatedHandler.cs" />
+    <Compile Include="Mediator\Messages\Thumbnails\ThumbnailFrameSettingsUpdated.cs" />
+    <Compile Include="Mediator\Messages\Thumbnails\ThumbnailConfiguredSizeUpdated.cs" />
+    <Compile Include="Mediator\Messages\Thumbnails\ThumbnailListUpdated.cs" />
+    <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailLocationUpdatedHandler.cs" />
+    <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailActiveSizeUpdatedHandler.cs" />
+    <Compile Include="Mediator\Handlers\Services\StartStopServiceHandler.cs" />
+    <Compile Include="Mediator\Messages\Base\NotificationBase.cs" />
+    <Compile Include="Mediator\Messages\Configuration\SaveConfiguration.cs" />
+    <Compile Include="Mediator\Messages\Services\StartService.cs" />
+    <Compile Include="Mediator\Messages\Services\StopService.cs" />
+    <Compile Include="Mediator\Messages\Thumbnails\ThumbnailLocationUpdated.cs" />
+    <Compile Include="Mediator\Messages\Thumbnails\ThumbnailActiveSizeUpdated.cs" />
+    <Compile Include="Presenters\Interface\IMainFormPresenter.cs" />
+    <Compile Include="Services\Implementation\ProcessInfo.cs" />
+    <Compile Include="Services\Implementation\ProcessMonitor.cs" />
+    <Compile Include="Services\Interface\IProcessInfo.cs" />
+    <Compile Include="Services\Interface\IProcessMonitor.cs" />
+    <Compile Include="Services\Implementation\DwmThumbnail.cs" />
+    <Compile Include="Services\Interface\IDwmThumbnail.cs" />
+    <Compile Include="Services\Interface\InteropConstants.cs" />
+    <Compile Include="Services\Interop\DWM_BLURBEHIND.cs" />
+    <Compile Include="Services\Interop\DWM_THUMBNAIL_PROPERTIES.cs" />
+    <Compile Include="Services\Interop\DWM_TNP_CONSTANTS.cs" />
+    <Compile Include="Services\Interface\IWindowManager.cs" />
+    <Compile Include="Services\Interop\MARGINS.cs" />
+    <Compile Include="Services\Interop\RECT.cs" />
     <Compile Include="Configuration\ClientLayout.cs" />
     <Compile Include="ApplicationBase\IPresenter.cs" />
-    <Compile Include="Presentation\MainPresenter.cs" />
-    <Compile Include="Presentation\ViewCloseRequest.cs" />
-    <Compile Include="Presentation\ViewZoomAnchorConverter.cs" />
-    <Compile Include="UI\Interface\IThumbnailViewFactory.cs" />
-    <Compile Include="Presentation\IThumbnailManager.cs" />
-    <Compile Include="UI\Implementation\ThumbnailDescriptionView.cs" />
-    <Compile Include="UI\Factory\ThumbnailDescriptionViewFactory.cs" />
-    <Compile Include="UI\Interface\IMainView.cs" />
+    <Compile Include="Services\Implementation\WindowManager.cs" />
+    <Compile Include="Services\Interop\User32NativeMethods.cs" />
+    <Compile Include="Presenters\Implementation\MainFormPresenter.cs" />
+    <Compile Include="Presenters\Interface\ViewCloseRequest.cs" />
+    <Compile Include="Presenters\Implementation\ViewZoomAnchorConverter.cs" />
+    <Compile Include="Services\Interop\WINDOWPLACEMENT.cs" />
+    <Compile Include="View\Interface\IThumbnailViewFactory.cs" />
+    <Compile Include="Services\Interface\IThumbnailManager.cs" />
+    <Compile Include="View\Implementation\ThumbnailDescription.cs" />
+    <Compile Include="View\Interface\IMainFormView.cs" />
     <Compile Include="ApplicationBase\IView.cs" />
-    <Compile Include="UI\Interface\IThumbnailDescriptionView.cs" />
-    <Compile Include="UI\Interface\IThumbnailDescriptionViewFactory.cs" />
-    <Compile Include="UI\Interface\ViewZoomAnchor.cs" />
-    <Compile Include="Configuration\ThumbnailConfig.cs" />
+    <Compile Include="View\Interface\IThumbnailDescription.cs" />
+    <Compile Include="View\Interface\ViewZoomAnchor.cs" />
+    <Compile Include="Configuration\Implementation\ThumbnailConfiguration.cs" />
     <Compile Include="Hotkeys\HotkeyHandler.cs" />
     <Compile Include="Hotkeys\HotkeyHandlerNativeMethods.cs" />
-    <Compile Include="UI\Implementation\MainForm.cs">
+    <Compile Include="View\Implementation\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Implementation\MainForm.Designer.cs">
+    <Compile Include="View\Implementation\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\IConfigurationStorage.cs" />
-    <Compile Include="UI\Interface\IThumbnailView.cs" />
-    <Compile Include="UI\Factory\ThumbnailViewFactory.cs" />
-    <Compile Include="Presentation\ThumbnailManager.cs" />
-    <Compile Include="UI\Implementation\ThumbnailOverlay.cs">
+    <Compile Include="View\Interface\IThumbnailView.cs" />
+    <Compile Include="View\Implementation\ThumbnailViewFactory.cs" />
+    <Compile Include="Services\Implementation\ThumbnailManager.cs" />
+    <Compile Include="View\Implementation\ThumbnailOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Implementation\ThumbnailOverlay.Designer.cs">
+    <Compile Include="View\Implementation\ThumbnailOverlay.Designer.cs">
       <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="UI\Implementation\MainForm.resx">
+    <EmbeddedResource Include="View\Implementation\MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Implementation\ThumbnailOverlay.resx">
+    <EmbeddedResource Include="View\Implementation\ThumbnailOverlay.resx">
       <DependentUpon>ThumbnailOverlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -161,7 +191,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Implementation\ThumbnailView.resx">
+    <EmbeddedResource Include="View\Implementation\ThumbnailView.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ThumbnailView.cs</DependentUpon>
     </EmbeddedResource>
@@ -170,13 +200,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="UI\Implementation\ThumbnailView.cs">
+    <Compile Include="View\Implementation\ThumbnailView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Implementation\ThumbnailView.Designer.cs">
+    <Compile Include="View\Implementation\ThumbnailView.Designer.cs">
       <DependentUpon>ThumbnailView.cs</DependentUpon>
     </Compile>
-    <Compile Include="DwmAPI\WindowManagerNativeMethods.cs" />
+    <Compile Include="Services\Interop\DwmApiNativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -192,17 +222,15 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Fody.2.2.0\build\netstandard1.2\Fody.targets" Condition="Exists('..\packages\Fody.2.2.0\build\netstandard1.2\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.2.2.0\build\netstandard1.2\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.2.0\build\netstandard1.2\Fody.targets'))" />
     <Error Condition="!Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
-    <Error Condition="!Exists('R:\eve-o-preview\packages\Fody.2.2.0\build\net452\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'R:\eve-o-preview\packages\Fody.2.2.0\build\net452\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.2.4.6\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.4.6\build\Fody.targets'))" />
   </Target>
   <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
-  <Import Project="R:\eve-o-preview\packages\Fody.2.2.0\build\net452\Fody.targets" Condition="Exists('R:\eve-o-preview\packages\Fody.2.2.0\build\net452\Fody.targets')" />
+  <Import Project="..\packages\Fody.2.4.6\build\Fody.targets" Condition="Exists('..\packages\Fody.2.4.6\build\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

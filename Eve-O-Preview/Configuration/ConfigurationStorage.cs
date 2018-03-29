@@ -9,12 +9,12 @@ namespace EveOPreview.Configuration
 		private const string ConfigurationFileName = "EVE-O Preview.json";
 
 		private readonly IAppConfig _appConfig;
-		private readonly IThumbnailConfig _thumbnailConfig;
+		private readonly IThumbnailConfiguration _thumbnailConfiguration;
 
-		public ConfigurationStorage(IAppConfig appConfig, IThumbnailConfig thumbnailConfig)
+		public ConfigurationStorage(IAppConfig appConfig, IThumbnailConfiguration thumbnailConfiguration)
 		{
 			this._appConfig = appConfig;
-			this._thumbnailConfig = thumbnailConfig;
+			this._thumbnailConfiguration = thumbnailConfiguration;
 		}
 
 		public void Load()
@@ -28,16 +28,20 @@ namespace EveOPreview.Configuration
 
 			string rawData = File.ReadAllText(filename);
 
-			JsonConvert.PopulateObject(rawData, this._thumbnailConfig);
+			JsonConvert.PopulateObject(rawData, this._thumbnailConfiguration);
 
 			// Validate data after loading it
-			this._thumbnailConfig.ApplyRestrictions();
+			this._thumbnailConfiguration.ApplyRestrictions();
 		}
 
 		public void Save()
 		{
+<<<<<<< HEAD
 			string rawData = JsonConvert.SerializeObject(this._thumbnailConfig, Formatting.Indented);
 			string filename = this.GetConfigFileName();
+=======
+			string rawData = JsonConvert.SerializeObject(this._thumbnailConfiguration, Formatting.Indented);
+>>>>>>> develop
 
 			try
 			{
