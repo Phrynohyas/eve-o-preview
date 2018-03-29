@@ -18,9 +18,8 @@ If you have find out that some of the features or their combination of EVE-O Pre
 # System Requirements
 
 * Windows Vista, Windows 7, Windows 8/8.1, Windows 10
-* Windows Aero Enabled
-* Microsoft .NET Framework 4.5+
-
+* Microsoft .NET Framework 4.7+
+* EVE clients Display Mode should be set to **Fixed Window** or **Window Mode**. **Fullscreen** mode is not supported.
 
 # How To Install & Use
 
@@ -47,12 +46,6 @@ CCP Grimmi wrote:
 
 # Application Options
 
-## Startup Parameters
-
-| Parameter | Description |
-| --- | --- |
-| **config** | This option allows to start the application with a custom configuration file. If the provided file doesn't exists it will be created with default values.<br />For example **"Eve-O&nbsp;Preview.exe"&nbsp;--config:TestSetup.json** |
-
 ## Application Options Available Via GUI
 
 | Tab | Option | Description |
@@ -60,6 +53,7 @@ CCP Grimmi wrote:
 | **General** | Minimize to System Tray | Determines whether the main window form be minimized to windows tray when it is closed |
 | General | Track client locations | Determines whether the client's window position should be restored when it is activated or started |
 | General | Hide preview of active EVE client | Determines whether the thumbnail corresponding to the active EVE client is not displayed |
+| General | Minimize inactive EVE clients | Allows to auto-minimize inactive EVE clients to save CPU and GPU |
 | General | Previews always on top | Determines whether EVE client thumbnails should stay on top of all other windows |
 | General | Hide previews when EVE client is not active | Determines whether all thumbnails should be visible only when an EVE client is active |
 | General | Unique layout for each EVE client | Determines whether thumbnails positions are different depending on the EVE client being active (f.e. links char have thumbnails of the Falcon and DPS char in the right bottom corner while DPS and Falcon alts have them placed at the top of the main EVE window ) |
@@ -69,8 +63,8 @@ CCP Grimmi wrote:
 | **Zoom** | Zoom on hover | Determines whether a thumbnail should be zoomed when the mouse pointer is over it  |
 | Zoom | Zoom factor | Thumbnail zoom factor. Can be set to any value from **2** to **10** |
 | Zoom | Zoom anchor | Sets the starting point of the thumbnail zoom |
-| **Overlay** | Show overlay | Determines whether a name of the corresponding EVE cliet should be displayed on the thumbnail |
-| Overlay | Show frames | Determines whether thumbnails should be displayd with window caption and borders |
+| **Overlay** | Show overlay | Determines whether a name of the corresponding EVE client should be displayed on the thumbnail |
+| Overlay | Show frames | Determines whether thumbnails should be displays with window caption and borders |
 | Overlay | Highlight active client | Determines whether the thumbnail of the active EVE client should be highlighted with a bright border |
 | Overlay | Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
 | **Active Clients** | Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
@@ -89,19 +83,21 @@ Mouse gestures are applied to the thumbnail window currently being hovered over.
 
 ## Configuration File-Only Options
 
-Some of the application options are not exposed in the GUI. They can be ajusted directly in the configuration file.
+Some of the application options are not exposed in the GUI. They can be adjusted directly in the configuration file.
 
 **Note:** Do any changes to the configuration file only while the EVE-O Preview itself is closed. Otherwise the changes you made might be lost.
 
 | Option | Description |
 | --- | --- |
 | **ActiveClientHighlightThickness** | Thickness of the border used to highlight the active client's thumbnail.<br />Allowed values are **1**...**6**.<br />The default value is **3**<br />For example: **"ActiveClientHighlightThickness": 3** |
-| **ThumbnailMinimumSize** | Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80"** |
-| **ThumbnailMaximumSize** | Maximum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is witten in the form "width, height"<br />The default value is **"640, 400"**.<br />For example: **"ThumbnailMaximumSize": "640, 400"** |
+| **EnableThumbnailSnap** | Allows to disable thumbnails snap feature by setting its value to **false**<br />The default value is **true**<br />For example: **"EnableThumbnailSnap": true** |
+| **PriorityClients** | Allows to set a list of clients that are not auto-minimized on inactivity even if the **Minimize inactive EVE clients** option is enabled. Listed clients still can be minimized using Windows hotkeys or via _Ctrl+Click_ on the corresponding thumbnail<br />The default value is empty list **[]**<br />For example: **"PriorityClients": [ "EVE - Phrynohyas Tig-Rah", "EVE - Ondatra Patrouette" ]** |
+| **ThumbnailMinimumSize** | Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is written in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80"** |
+| **ThumbnailMaximumSize** | Maximum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is written in the form "width, height"<br />The default value is **"640, 400"**.<br />For example: **"ThumbnailMaximumSize": "640, 400"** |
 
 ## Hotkey Setup
 
-It is possible to set a key kombinations to immediately jump to cetrain EVE window. However currently EVE-O Preview doesn't provide any GUI to set the these hotkeys. It should be done via editind the configuration file directly. Don't forget to make a backup copy of the file before editing it.
+It is possible to set a key combinations to immediately jump to certain EVE window. However currently EVE-O Preview doesn't provide any GUI to set the these hotkeys. It should be done via editing the configuration file directly. Don't forget to make a backup copy of the file before editing it.
 
 **Note**: Don't forget to make a backup copy of the file before editing it.
 
