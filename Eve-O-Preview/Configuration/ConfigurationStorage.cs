@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Newtonsoft.Json;
 
 namespace EveOPreview.Configuration
@@ -36,12 +35,8 @@ namespace EveOPreview.Configuration
 
 		public void Save()
 		{
-<<<<<<< HEAD
-			string rawData = JsonConvert.SerializeObject(this._thumbnailConfig, Formatting.Indented);
-			string filename = this.GetConfigFileName();
-=======
 			string rawData = JsonConvert.SerializeObject(this._thumbnailConfiguration, Formatting.Indented);
->>>>>>> develop
+			string filename = this.GetConfigFileName();
 
 			try
 			{
