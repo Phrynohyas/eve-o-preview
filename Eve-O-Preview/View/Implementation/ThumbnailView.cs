@@ -176,12 +176,12 @@ namespace EveOPreview.View
 
 		public void SetTopMost(bool enableTopmost)
 		{
-			// IMO WinForms could check this too
 			if (this._isTopMost == enableTopmost)
 			{
 				return;
 			}
 
+			this.TopLevel = enableTopmost;
 			this.TopMost = enableTopmost;
 			this._overlay.TopMost = enableTopmost;
 
