@@ -9,6 +9,10 @@ namespace EveOPreview.View
 {
 	public partial class ThumbnailView : Form, IThumbnailView
 	{
+		#region Private constants
+		private const int ResizeEventTimeout = 500;
+		#endregion
+
 		#region Private fields
 		private readonly IWindowManager _windowManager;
 		private readonly ThumbnailOverlay _overlay;
@@ -34,6 +38,8 @@ namespace EveOPreview.View
 
 		public ThumbnailView(IWindowManager windowManager)
 		{
+			this.SuppressResizeEvent();
+
 			this._windowManager = windowManager;
 
 			this.IsActive = false;
@@ -47,8 +53,6 @@ namespace EveOPreview.View
 			this._isCustomMouseModeActive = false;
 
 			this._isHighlightEnabled = false;
-
-			this._suppressResizeEventsTimestamp = DateTime.UtcNow;
 
 			InitializeComponent();
 
@@ -104,20 +108,23 @@ namespace EveOPreview.View
 
 		public new void Show()
 		{
+			this.SuppressResizeEvent();
+
 			base.Show();
 
 			this._isLocationChanged = true;
 			this._isSizeChanged = true;
 			this._isOverlayVisible = false;
 
-			// Thumbnail will be properly registered during the Manager's Refresh cycle
-			this.Refresh();
+			this.Refresh(true);
 
 			this.IsActive = true;
 		}
 
 		public new void Hide()
 		{
+			this.SuppressResizeEvent();
+
 			this.IsActive = false;
 
 			this._overlay.Hide();
@@ -126,6 +133,8 @@ namespace EveOPreview.View
 
 		public new void Close()
 		{
+			this.SuppressResizeEvent();
+
 			this.IsActive = false;
 			this._thumbnail?.Unregister();
 			this._overlay.Close();
@@ -165,9 +174,8 @@ namespace EveOPreview.View
 				return;
 			}
 
-			// Fix for WinForms issue with the Resize event being fired with inconsistent ClientSize value
-			// Any Resize events fired before this timestamp will be ignored
-			this._suppressResizeEventsTimestamp = DateTime.UtcNow.AddMilliseconds(450);
+			this.SuppressResizeEvent();
+
 			this.FormBorderStyle = style;
 
 			// Notify about possible contents position change
@@ -176,12 +184,12 @@ namespace EveOPreview.View
 
 		public void SetTopMost(bool enableTopmost)
 		{
-			// IMO WinForms could check this too
 			if (this._isTopMost == enableTopmost)
 			{
 				return;
 			}
 
+			this.TopLevel = enableTopmost;
 			this.TopMost = enableTopmost;
 			this._overlay.TopMost = enableTopmost;
 
@@ -382,6 +390,13 @@ namespace EveOPreview.View
 			int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
 
 			this._thumbnail.Move(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
+		}
+
+		private void SuppressResizeEvent()
+		{
+			// Workaround for WinForms issue with the Resize event being fired with inconsistent ClientSize value
+			// Any Resize events fired before this timestamp will be ignored
+			this._suppressResizeEventsTimestamp = DateTime.UtcNow.AddMilliseconds(ThumbnailView.ResizeEventTimeout);
 		}
 
 		#region GUI events

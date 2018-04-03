@@ -12,7 +12,7 @@ namespace EveOPreview.Presenters
 	public class MainFormPresenter : Presenter<IMainFormView>, IMainFormPresenter
 	{
 		#region Private constants
-		private const string ForumUrl = @"https://meta.eveonline.com/t/4202";
+		private const string ForumUrl = @"https://forum.eveonline.com/t/4202";
 		#endregion
 
 		#region Private fields
@@ -232,7 +232,7 @@ namespace EveOPreview.Presenters
 		private string GetApplicationVersion()
 		{
 			Version version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-			return $"{version.Major}.{version.Minor}.{version.Revision}";
+			return $"{version.Major}.{version.Minor}.{version.Build}";
 		}
 
 		private void ExitApplication()

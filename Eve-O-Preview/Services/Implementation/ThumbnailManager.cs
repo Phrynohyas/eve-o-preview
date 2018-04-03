@@ -198,7 +198,7 @@ namespace EveOPreview.Services
 				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
 			}
 
-			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(string.IsNullOrEmpty(foregroundWindowTitle) || this.IsClientWindowActive(foregroundWindowHandle));
+			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !this.IsClientWindowActive(foregroundWindowHandle);
 
 			this._refreshCycleCount++;
 
@@ -383,11 +383,20 @@ namespace EveOPreview.Services
 
 		private void ThumbnailActivated(IntPtr id)
 		{
-			// View is always available because this method is actually being called by
-			// a view callback
 			IThumbnailView view = this._thumbnailViews[id];
 
-			Task.Run(() => this._windowManager.ActivateWindow(view.Id));
+			Task.Run(() =>
+				{
+					this._windowManager.ActivateWindow(view.Id);
+				})
+				.ConfigureAwait(true)
+				.GetAwaiter()
+				.OnCompleted(() =>
+				{
+					this.SwitchActiveClient(view.Id, view.Title);
+					this.UpdateClientLayouts();
+					this.RefreshThumbnails();
+				});
 
 			this.UpdateClientLayouts();
 		}
