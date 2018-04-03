@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
-namespace EveOPreview.Configuration.Omplementation
+namespace EveOPreview.Configuration.Implementation
 {
 	sealed class ThumbnailConfiguration : IThumbnailConfiguration
 	{

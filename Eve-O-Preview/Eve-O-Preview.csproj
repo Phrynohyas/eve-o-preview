@@ -108,11 +108,11 @@
     <Compile Include="ApplicationBase\LightInjectContainer.cs" />
     <Compile Include="ApplicationBase\Presenter.cs" />
     <Compile Include="ApplicationBase\PresenterGeneric.cs" />
-    <Compile Include="Configuration\AppConfig.cs" />
-    <Compile Include="Configuration\ConfigurationStorage.cs" />
-    <Compile Include="Configuration\IAppConfig.cs" />
+    <Compile Include="Configuration\Implementation\AppConfig.cs" />
+    <Compile Include="Configuration\Implementation\ConfigurationStorage.cs" />
+    <Compile Include="Configuration\Interface\IAppConfig.cs" />
     <Compile Include="Configuration\Interface\IThumbnailConfiguration.cs" />
-    <Compile Include="Configuration\ZoomAnchor.cs" />
+    <Compile Include="Configuration\Interface\ZoomAnchor.cs" />
     <Compile Include="Mediator\Handlers\Configuration\SaveConfigurationHandler.cs" />
     <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailFrameSettingsUpdatedHandler.cs" />
     <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailConfiguredSizeUpdatedHandler.cs" />
@@ -143,7 +143,7 @@
     <Compile Include="Services\Interface\IWindowManager.cs" />
     <Compile Include="Services\Interop\MARGINS.cs" />
     <Compile Include="Services\Interop\RECT.cs" />
-    <Compile Include="Configuration\ClientLayout.cs" />
+    <Compile Include="Configuration\Interface\ClientLayout.cs" />
     <Compile Include="ApplicationBase\IPresenter.cs" />
     <Compile Include="Services\Implementation\WindowManager.cs" />
     <Compile Include="Services\Interop\User32NativeMethods.cs" />
@@ -167,7 +167,7 @@
     <Compile Include="View\Implementation\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\IConfigurationStorage.cs" />
+    <Compile Include="Configuration\Interface\IConfigurationStorage.cs" />
     <Compile Include="View\Interface\IThumbnailView.cs" />
     <Compile Include="View\Implementation\ThumbnailViewFactory.cs" />
     <Compile Include="Services\Implementation\ThumbnailManager.cs" />

@@ -1,4 +1,4 @@
-﻿namespace EveOPreview.Configuration
+﻿namespace EveOPreview.Configuration.Implementation
 {
 	class AppConfig : IAppConfig
 	{

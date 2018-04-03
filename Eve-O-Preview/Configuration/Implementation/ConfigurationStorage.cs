@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
 
-namespace EveOPreview.Configuration
+namespace EveOPreview.Configuration.Implementation
 {
 	class ConfigurationStorage : IConfigurationStorage
 	{
