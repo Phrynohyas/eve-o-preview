@@ -198,7 +198,7 @@ namespace EveOPreview.Services
 				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
 			}
 
-			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(string.IsNullOrEmpty(foregroundWindowTitle) || this.IsClientWindowActive(foregroundWindowHandle));
+			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !this.IsClientWindowActive(foregroundWindowHandle);
 
 			this._refreshCycleCount++;
 
