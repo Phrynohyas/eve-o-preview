@@ -116,8 +116,7 @@ namespace EveOPreview.View
 			this._isSizeChanged = true;
 			this._isOverlayVisible = false;
 
-			// Thumbnail will be properly registered during the Manager's Refresh cycle
-			this.Refresh();
+			this.Refresh(true);
 
 			this.IsActive = true;
 		}
