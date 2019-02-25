@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using EveOPreview.Services.Interop;
 
 namespace EveOPreview.Services.Implementation
@@ -45,6 +46,12 @@ namespace EveOPreview.Services.Implementation
 				// a thumbnail source
 				this._handle = IntPtr.Zero;
 			}
+			catch (COMException)
+			{
+				// This exception is raised if DWM is suddenly not available
+				// (f.e. when switching between Windows user accounts)
+				this._handle = IntPtr.Zero;
+			}
 		}
 
 		public void Unregister()
@@ -60,6 +67,10 @@ namespace EveOPreview.Services.Implementation
 			}
 			catch (ArgumentException)
 			{
+			}
+			catch (COMException)
+			{
+				// This exception is raised when DWM is not available for some reason
 			}
 		}
 
@@ -81,7 +92,11 @@ namespace EveOPreview.Services.Implementation
 			}
 			catch (ArgumentException)
 			{
-				//This exception will be thrown if the EVE client disappears while this method is running
+				// This exception will be thrown if the EVE client disappears while this method is running
+			}
+			catch (COMException)
+			{
+				// This exception is raised when DWM is not available for some reason
 			}
 		}
 	}
