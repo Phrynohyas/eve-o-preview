@@ -397,8 +397,6 @@ namespace EveOPreview.Services
 					this.UpdateClientLayouts();
 					this.RefreshThumbnails();
 				});
-
-			this.UpdateClientLayouts();
 		}
 
 		private void ThumbnailDeactivated(IntPtr id)
@@ -562,6 +560,11 @@ namespace EveOPreview.Services
 
 		private void ApplyClientLayout(IntPtr clientHandle, string clientTitle)
 		{
+			if (!this._configuration.EnableClientLayoutTracking)
+			{
+				return;
+			}
+
 			ClientLayout clientLayout = this._configuration.GetClientLayout(clientTitle);
 
 			if (clientLayout == null)
