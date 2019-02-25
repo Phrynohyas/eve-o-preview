@@ -287,15 +287,7 @@ namespace EveOPreview.View
 
 			this._hotkeyHandler = new HotkeyHandler(this.Handle, hotkey);
 			this._hotkeyHandler.Pressed += HotkeyPressed_Handler;
-			try
-			{
-				this._hotkeyHandler.Register();
-			}
-			catch (Exception)
-			{
-				// There can be a lot of possible exception reasons here
-				// In case of any of them the hotkey setting is silently ignored
-			}
+			this._hotkeyHandler.Register();
 		}
 
 		public void UnregisterHotkey()
