@@ -7,7 +7,7 @@ namespace EveOPreview.UI.Hotkeys
 	class HotkeyHandler : IMessageFilter, IDisposable
 	{
 		private static int _currentId;
-		private const int MaxId = 0xBFFF;
+		private const int MAX_ID = 0xBFFF;
 
 		#region Private fields
 		private readonly int _hotkeyId;
@@ -17,7 +17,7 @@ namespace EveOPreview.UI.Hotkeys
 		public HotkeyHandler(IntPtr target, Keys hotkey)
 		{
 			this._hotkeyId = HotkeyHandler._currentId;
-			HotkeyHandler._currentId = (HotkeyHandler._currentId + 1) & HotkeyHandler.MaxId;
+			HotkeyHandler._currentId = (HotkeyHandler._currentId + 1) & HotkeyHandler.MAX_ID;
 
 			this._hotkeyTarget = target;
 
@@ -106,10 +106,7 @@ namespace EveOPreview.UI.Hotkeys
 			Application.RemoveMessageFilter(this);
 
 			// Clean up after ourselves
-			if (!HotkeyHandlerNativeMethods.UnregisterHotKey(this._hotkeyTarget, this._hotkeyId))
-			{
-				return;
-			}
+			HotkeyHandlerNativeMethods.UnregisterHotKey(this._hotkeyTarget, this._hotkeyId);
 		}
 
 		#region IMessageFilter

@@ -10,7 +10,7 @@ namespace EveOPreview.View
 	public partial class ThumbnailView : Form, IThumbnailView
 	{
 		#region Private constants
-		private const int ResizeEventTimeout = 500;
+		private const int RESIZE_EVENT_TIMEOUT = 500;
 		#endregion
 
 		#region Private fields
@@ -388,7 +388,7 @@ namespace EveOPreview.View
 		{
 			// Workaround for WinForms issue with the Resize event being fired with inconsistent ClientSize value
 			// Any Resize events fired before this timestamp will be ignored
-			this._suppressResizeEventsTimestamp = DateTime.UtcNow.AddMilliseconds(ThumbnailView.ResizeEventTimeout);
+			this._suppressResizeEventsTimestamp = DateTime.UtcNow.AddMilliseconds(ThumbnailView.RESIZE_EVENT_TIMEOUT);
 		}
 
 		#region GUI events

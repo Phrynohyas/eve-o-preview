@@ -214,7 +214,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Resources\icon.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />

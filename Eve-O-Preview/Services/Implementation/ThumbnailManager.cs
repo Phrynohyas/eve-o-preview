@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
@@ -14,13 +13,13 @@ namespace EveOPreview.Services
 	class ThumbnailManager : IThumbnailManager
 	{
 		#region Private constants
-		private const int WindowPositionThresholdLow = -10_000;
-		private const int WindowPositionThresholdHigh = 31_000;
-		private const int WindowSizeThreshold = 10;
-		private const int ForcedRefreshCycleThreshold = 2;
-		private const int DefaultLocationChangeNotificationDelay = 2;
+		private const int WINDOW_POSITION_THRESHOLD_LOW = -10_000;
+		private const int WINDOW_POSITION_THRESHOLD_HIGH = 31_000;
+		private const int WINDOW_SIZE_THRESHOLD = 10;
+		private const int FORCED_REFRESH_CYCLE_THRESHOLD = 2;
+		private const int DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY = 2;
 
-		private const string DefaultClientTitle = "EVE";
+		private const string DEFAULT_CLIENT_TITLE = "EVE";
 		#endregion
 
 		#region Private fields
@@ -51,7 +50,7 @@ namespace EveOPreview.Services
 			this._configuration = configuration;
 			this._thumbnailViewFactory = factory;
 
-			this._activeClient = (IntPtr.Zero, ThumbnailManager.DefaultClientTitle);
+			this._activeClient = (IntPtr.Zero, ThumbnailManager.DEFAULT_CLIENT_TITLE);
 
 			this.EnableViewEvents();
 			this._isHoverEffectActive = false;
@@ -121,7 +120,7 @@ namespace EveOPreview.Services
 				this.ApplyClientLayout(view.Id, view.Title);
 
 				// TODO Add extension filter here later
-				if (view.Title != ThumbnailManager.DefaultClientTitle)
+				if (view.Title != ThumbnailManager.DEFAULT_CLIENT_TITLE)
 				{
 					viewsAdded.Add(view.Title);
 				}
@@ -154,7 +153,7 @@ namespace EveOPreview.Services
 				IThumbnailView view = this._thumbnailViews[process.Handle];
 
 				this._thumbnailViews.Remove(view.Id);
-				if (view.Title != ThumbnailManager.DefaultClientTitle)
+				if (view.Title != ThumbnailManager.DEFAULT_CLIENT_TITLE)
 				{
 					viewsRemoved.Add(view.Title);
 				}
@@ -203,7 +202,7 @@ namespace EveOPreview.Services
 			this._refreshCycleCount++;
 
 			bool forceRefresh;
-			if (this._refreshCycleCount >= ThumbnailManager.ForcedRefreshCycleThreshold)
+			if (this._refreshCycleCount >= ThumbnailManager.FORCED_REFRESH_CYCLE_THRESHOLD)
 			{
 				this._refreshCycleCount = 0;
 				forceRefresh = true;
@@ -223,11 +222,11 @@ namespace EveOPreview.Services
 				{
 					this.SnapThumbnailView(view);
 
-					this.RaiseThumbnailLocationUpdatedNotification(view.Title, this._activeClient.Title, view.ThumbnailLocation);
+					this.RaiseThumbnailLocationUpdatedNotification(view.Title);
 				}
 				else
 				{
-					this.RaiseThumbnailLocationUpdatedNotification(locationChange.Title, locationChange.ActiveClient, locationChange.Location);
+					this.RaiseThumbnailLocationUpdatedNotification(locationChange.Title);
 				}
 			}
 
@@ -609,7 +608,7 @@ namespace EveOPreview.Services
 			{
 				if (this._enqueuedLocationChangeNotification.Handle == IntPtr.Zero)
 				{
-					this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DefaultLocationChangeNotificationDelay);
+					this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY);
 					return;
 				}
 
@@ -617,12 +616,12 @@ namespace EveOPreview.Services
 				if ((this._enqueuedLocationChangeNotification.Handle == view.Id) &&
 					(this._enqueuedLocationChangeNotification.ActiveClient == activeClientTitle))
 				{
-					this._enqueuedLocationChangeNotification.Delay = ThumbnailManager.DefaultLocationChangeNotificationDelay;
+					this._enqueuedLocationChangeNotification.Delay = ThumbnailManager.DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY;
 					return;
 				}
 
-				this.RaiseThumbnailLocationUpdatedNotification(this._enqueuedLocationChangeNotification.Title, activeClientTitle, this._enqueuedLocationChangeNotification.Location);
-				this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DefaultLocationChangeNotificationDelay);
+				this.RaiseThumbnailLocationUpdatedNotification(this._enqueuedLocationChangeNotification.Title);
+				this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY);
 			}
 		}
 
@@ -651,9 +650,9 @@ namespace EveOPreview.Services
 			}
 		}
 
-		private async void RaiseThumbnailLocationUpdatedNotification(string title, string activeClient, Point location)
+		private async void RaiseThumbnailLocationUpdatedNotification(string title)
 		{
-			if (string.IsNullOrEmpty(title) || (title == ThumbnailManager.DefaultClientTitle))
+			if (string.IsNullOrEmpty(title) || (title == ThumbnailManager.DEFAULT_CLIENT_TITLE))
 			{
 				return;
 			}
@@ -665,15 +664,15 @@ namespace EveOPreview.Services
 		// TODO Move to a service (?)
 		private bool IsManageableThumbnail(IThumbnailView view)
 		{
-			return view.Title != ThumbnailManager.DefaultClientTitle;
+			return view.Title != ThumbnailManager.DEFAULT_CLIENT_TITLE;
 		}
 
 		// Quick sanity check that the window is not minimized
 		private bool IsValidWindowPosition(int letf, int top, int width, int height)
 		{
-			return (letf > ThumbnailManager.WindowPositionThresholdLow) && (letf < ThumbnailManager.WindowPositionThresholdHigh)
-					&& (top > ThumbnailManager.WindowPositionThresholdLow) && (top < ThumbnailManager.WindowPositionThresholdHigh)
-					&& (width > ThumbnailManager.WindowSizeThreshold) && (height > ThumbnailManager.WindowSizeThreshold);
+			return (letf > ThumbnailManager.WINDOW_POSITION_THRESHOLD_LOW) && (letf < ThumbnailManager.WINDOW_POSITION_THRESHOLD_HIGH)
+					&& (top > ThumbnailManager.WINDOW_POSITION_THRESHOLD_LOW) && (top < ThumbnailManager.WINDOW_POSITION_THRESHOLD_HIGH)
+					&& (width > ThumbnailManager.WINDOW_SIZE_THRESHOLD) && (height > ThumbnailManager.WINDOW_SIZE_THRESHOLD);
 		}
 	}
 }

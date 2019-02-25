@@ -12,7 +12,7 @@ namespace EveOPreview.Presenters
 	public class MainFormPresenter : Presenter<IMainFormView>, IMainFormPresenter
 	{
 		#region Private constants
-		private const string ForumUrl = @"https://forum.eveonline.com/t/4202";
+		private const string FORUM_URL = @"https://forum.eveonline.com/t/4202";
 		#endregion
 
 		#region Private fields
@@ -50,7 +50,7 @@ namespace EveOPreview.Presenters
 		private void Activate()
 		{
 			this.LoadApplicationSettings();
-			this.View.SetDocumentationUrl(MainFormPresenter.ForumUrl);
+			this.View.SetDocumentationUrl(MainFormPresenter.FORUM_URL);
 			this.View.SetVersionInfo(this.GetApplicationVersion());
 			if (this._configuration.MinimizeToTray)
 			{
@@ -225,7 +225,7 @@ namespace EveOPreview.Presenters
 		private void OpenDocumentationLink()
 		{
 			// TODO Move out to a separate service / presenter / message handler
-			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainFormPresenter.ForumUrl).AbsoluteUri);
+			ProcessStartInfo processStartInfo = new ProcessStartInfo(new Uri(MainFormPresenter.FORUM_URL).AbsoluteUri);
 			Process.Start(processStartInfo);
 		}
 
