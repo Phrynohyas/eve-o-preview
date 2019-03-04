@@ -196,7 +196,12 @@ namespace EveOPreview.Services
 			}
 			else if (!isClientWindow)
 			{
-				this._externalApplication = foregroundWindowHandle;
+				// Under some circumstances Foreground WindowHandle can be zero
+				// (f.e. when Thumbnail is silently stealing focus from the currently open app)
+				if (foregroundWindowHandle != IntPtr.Zero)
+				{
+					this._externalApplication = foregroundWindowHandle;
+				}
 			}
 
 			// No need to minimize EVE clients when switching out to non-EVE window (like thumbnail)
