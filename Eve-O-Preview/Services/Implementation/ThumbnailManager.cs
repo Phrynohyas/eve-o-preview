@@ -396,14 +396,13 @@ namespace EveOPreview.Services
 				{
 					this._windowManager.ActivateWindow(view.Id);
 				})
-				.ConfigureAwait(true)
-				.GetAwaiter()
-				.OnCompleted(() =>
+				.ContinueWith((task) =>
 				{
+					// This code should be executed on UI thread
 					this.SwitchActiveClient(view.Id, view.Title);
 					this.UpdateClientLayouts();
 					this.RefreshThumbnails();
-				});
+				}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void ThumbnailDeactivated(IntPtr id, bool switchOut)
@@ -683,9 +682,9 @@ namespace EveOPreview.Services
 		}
 
 		// Quick sanity check that the window is not minimized
-		private bool IsValidWindowPosition(int letf, int top, int width, int height)
+		private bool IsValidWindowPosition(int left, int top, int width, int height)
 		{
-			return (letf > ThumbnailManager.WINDOW_POSITION_THRESHOLD_LOW) && (letf < ThumbnailManager.WINDOW_POSITION_THRESHOLD_HIGH)
+			return (left > ThumbnailManager.WINDOW_POSITION_THRESHOLD_LOW) && (left < ThumbnailManager.WINDOW_POSITION_THRESHOLD_HIGH)
 					&& (top > ThumbnailManager.WINDOW_POSITION_THRESHOLD_LOW) && (top < ThumbnailManager.WINDOW_POSITION_THRESHOLD_HIGH)
 					&& (width > ThumbnailManager.WINDOW_SIZE_THRESHOLD) && (height > ThumbnailManager.WINDOW_SIZE_THRESHOLD);
 		}
