@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using EveOPreview.Configuration;
 using EveOPreview.Presenters;
 using EveOPreview.Services;
-using EveOPreview.UI;
 using EveOPreview.View;
 using MediatR;
 
@@ -80,8 +79,7 @@ namespace EveOPreview
 
 			// MediatR
 			container.Register<IMediator, MediatR.Mediator>();
-			container.RegisterInstance<SingleInstanceFactory>(t => container.Resolve(t));
-			container.RegisterInstance<MultiInstanceFactory>(t => container.ResolveAll(t));
+			container.RegisterInstance<ServiceFactory>(t => container.Resolve(t));
 			container.Register(typeof(INotificationHandler<>), typeof(Program).Assembly);
 			container.Register(typeof(IRequestHandler<>), typeof(Program).Assembly);
 			container.Register(typeof(IRequestHandler<,>), typeof(Program).Assembly);
