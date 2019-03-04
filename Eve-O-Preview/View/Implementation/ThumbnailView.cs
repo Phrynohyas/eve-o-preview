@@ -104,7 +104,7 @@ namespace EveOPreview.View
 
 		public Action<IntPtr> ThumbnailActivated { get; set; }
 
-		public Action<IntPtr> ThumbnailDeactivated { get; set; }
+		public Action<IntPtr, bool> ThumbnailDeactivated { get; set; }
 
 		public new void Show()
 		{
@@ -159,7 +159,7 @@ namespace EveOPreview.View
 
 			// Overlay opacity settings
 			// Of the thumbnail's opacity is almost full then set the overlay's one to
-			// full. Otherwise set it to half of the thumnail opacity
+			// full. Otherwise set it to half of the thumbnail opacity
 			// Opacity value is stored even if the overlay is not displayed atm
 			this._overlay.Opacity = this.Opacity > 0.9 ? 1.0 : 1.0 - (1.0 - this.Opacity) / 2;
 		}
@@ -231,7 +231,7 @@ namespace EveOPreview.View
 
 			// First change size, THEN move the window
 			// Otherwise there is a chance to fail in a loop
-			// Zoom requied -> Moved the windows 1st -> Focus is lost -> Window is moved back -> Focus is back on -> Zoom required -> ...
+			// Zoom required -> Moved the windows 1st -> Focus is lost -> Window is moved back -> Focus is back on -> Zoom required -> ...
 			this.MaximumSize = new Size(0, 0);
 			this.Size = new Size(newWidth, newHeight);
 
@@ -439,7 +439,12 @@ namespace EveOPreview.View
 			{
 				if (Control.ModifierKeys == Keys.Control)
 				{
-					this.ThumbnailDeactivated?.Invoke(this.Id);
+					this.ThumbnailDeactivated?.Invoke(this.Id, false);
+				}
+				else
+				if (Control.ModifierKeys == (Keys.Control | Keys.Shift))
+				{
+					this.ThumbnailDeactivated?.Invoke(this.Id, true);
 				}
 				else
 				{
@@ -490,7 +495,7 @@ namespace EveOPreview.View
 		#endregion
 
 		#region Custom Mouse mode
-		// This pair of methods saves/restores certain window propeties
+		// This pair of methods saves/restores certain window properties
 		// Methods are used to remove the 'Zoom' effect (if any) when the
 		// custom resize/move mode is activated
 		// Methods are kept on this level because moving to the presenter

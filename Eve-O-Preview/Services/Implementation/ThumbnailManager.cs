@@ -32,6 +32,7 @@ namespace EveOPreview.Services
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
 
 		private (IntPtr Handle, string Title) _activeClient;
+		private IntPtr _externalApplication;
 
 		private readonly object _locationChangeNotificationSyncRoot;
 		private (IntPtr Handle, string Title, string ActiveClient, Point Location, int Delay) _enqueuedLocationChangeNotification;
@@ -181,6 +182,9 @@ namespace EveOPreview.Services
 			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
 			string foregroundWindowTitle = null;
 
+			// Check if the foreground window handle is one of the known handles for client windows or their thumbnails
+			bool isClientWindow = this.IsClientWindowActive(foregroundWindowHandle);
+
 			if (foregroundWindowHandle == this._activeClient.Handle)
 			{
 				foregroundWindowTitle = this._activeClient.Title;
@@ -190,6 +194,10 @@ namespace EveOPreview.Services
 				// This code will work only on Alt+Tab switch between clients
 				foregroundWindowTitle = foregroundView.Title;
 			}
+			else if (!isClientWindow)
+			{
+				this._externalApplication = foregroundWindowHandle;
+			}
 
 			// No need to minimize EVE clients when switching out to non-EVE window (like thumbnail)
 			if (!string.IsNullOrEmpty(foregroundWindowTitle))
@@ -197,7 +205,7 @@ namespace EveOPreview.Services
 				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
 			}
 
-			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !this.IsClientWindowActive(foregroundWindowHandle);
+			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !isClientWindow;
 
 			this._refreshCycleCount++;
 
@@ -324,10 +332,10 @@ namespace EveOPreview.Services
 			this._ignoreViewEvents = true;
 		}
 
-		private void SwitchActiveClient(IntPtr foregroungClientHandle, string foregroundClientTitle)
+		private void SwitchActiveClient(IntPtr foregroundClientHandle, string foregroundClientTitle)
 		{
 			// Check if any actions are needed
-			if (this._activeClient.Handle == foregroungClientHandle)
+			if (this._activeClient.Handle == foregroundClientHandle)
 			{
 				return;
 			}
@@ -338,7 +346,7 @@ namespace EveOPreview.Services
 				this._windowManager.MinimizeWindow(this._activeClient.Handle, false);
 			}
 
-			this._activeClient = (foregroungClientHandle, foregroundClientTitle);
+			this._activeClient = (foregroundClientHandle, foregroundClientTitle);
 		}
 
 		private void ThumbnailViewFocused(IntPtr id)
@@ -398,15 +406,22 @@ namespace EveOPreview.Services
 				});
 		}
 
-		private void ThumbnailDeactivated(IntPtr id)
+		private void ThumbnailDeactivated(IntPtr id, bool switchOut)
 		{
-			if (!this._thumbnailViews.TryGetValue(id, out IThumbnailView view))
+			if (switchOut)
 			{
-				return;
+				this._windowManager.ActivateWindow(this._externalApplication);
 			}
+			else
+			{
+				if (!this._thumbnailViews.TryGetValue(id, out IThumbnailView view))
+				{
+					return;
+				}
 
-			this._windowManager.MinimizeWindow(view.Id, true);
-			this.RefreshThumbnails();
+				this._windowManager.MinimizeWindow(view.Id, true);
+				this.RefreshThumbnails();
+			}
 		}
 
 		private async void ThumbnailViewResized(IntPtr id)
