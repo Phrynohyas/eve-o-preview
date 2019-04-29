@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace EveOPreview.Services
 {
@@ -15,6 +16,7 @@ namespace EveOPreview.Services
 		(int Left, int Top, int Right, int Bottom) GetWindowPosition(IntPtr handle);
 		bool IsWindowMinimized(IntPtr handle);
 
-		IDwmThumbnail RegisterThumbnail(IntPtr destination, IntPtr source);
+		IDwmThumbnail GetLiveThumbnail(IntPtr destination, IntPtr source);
+		Image GetStaticThumbnail(IntPtr source);
 	}
 }

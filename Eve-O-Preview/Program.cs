@@ -18,7 +18,7 @@ namespace EveOPreview
 		static void Main()
 		{
 #if DEBUG
-			var expirationDate = new DateTime(2019, 5, 1);
+			var expirationDate = new DateTime(2019, 5, 15);
 			if (DateTime.Today >= expirationDate)
 			{
 				MessageBox.Show(@"This Beta version is expired. Please download a new build at https://github.com/Phrynohyas/eve-o-preview/releases", @"EVE-O Preview", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -105,9 +105,11 @@ namespace EveOPreview
 			IApplicationController controller = new ApplicationController(container);
 
 			// UI classes
-			controller.RegisterView<IMainFormView, MainForm>()
-				.RegisterView<IThumbnailView, ThumbnailView>()
-				.RegisterInstance(new ApplicationContext());
+			controller.RegisterView<StaticThumbnailView, StaticThumbnailView>();
+			controller.RegisterView<LiveThumbnailView, LiveThumbnailView>();
+
+			controller.RegisterView<IMainFormView, MainForm>();
+			controller.RegisterInstance(new ApplicationContext());
 
 			return controller;
 		}

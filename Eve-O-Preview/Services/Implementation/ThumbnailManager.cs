@@ -10,7 +10,7 @@ using MediatR;
 
 namespace EveOPreview.Services
 {
-	class ThumbnailManager : IThumbnailManager
+	sealed class ThumbnailManager : IThumbnailManager
 	{
 		#region Private constants
 		private const int WINDOW_POSITION_THRESHOLD_LOW = -10_000;

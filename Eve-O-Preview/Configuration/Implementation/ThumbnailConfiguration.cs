@@ -24,6 +24,8 @@ namespace EveOPreview.Configuration.Implementation
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
 
+			this.EnableCompatibilityMode = false;
+
 			this.ThumbnailOpacity = 0.5;
 
 			this.EnableClientLayoutTracking = false;
@@ -53,6 +55,9 @@ namespace EveOPreview.Configuration.Implementation
 
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
+
+		[JsonProperty("PotatoMode")]
+		public bool EnableCompatibilityMode { get; set; }
 
 		[JsonProperty("ThumbnailsOpacity")]
 		public double ThumbnailOpacity { get; set; }
