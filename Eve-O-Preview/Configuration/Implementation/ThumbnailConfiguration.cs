@@ -56,7 +56,7 @@ namespace EveOPreview.Configuration.Implementation
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
 
-		[JsonProperty("PotatoMode")]
+		[JsonProperty("CompatibilityMode")]
 		public bool EnableCompatibilityMode { get; set; }
 
 		[JsonProperty("ThumbnailsOpacity")]
