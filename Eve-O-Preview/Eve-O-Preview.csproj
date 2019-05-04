@@ -147,6 +147,7 @@
     <Compile Include="Services\Interop\DWM_THUMBNAIL_PROPERTIES.cs" />
     <Compile Include="Services\Interop\DWM_TNP_CONSTANTS.cs" />
     <Compile Include="Services\Interface\IWindowManager.cs" />
+    <Compile Include="Services\Interop\Gdi32NativeMethods.cs" />
     <Compile Include="Services\Interop\MARGINS.cs" />
     <Compile Include="Services\Interop\RECT.cs" />
     <Compile Include="Configuration\Interface\ClientLayout.cs" />
@@ -157,6 +158,15 @@
     <Compile Include="Presenters\Interface\ViewCloseRequest.cs" />
     <Compile Include="Presenters\Implementation\ViewZoomAnchorConverter.cs" />
     <Compile Include="Services\Interop\WINDOWPLACEMENT.cs" />
+    <Compile Include="View\Implementation\LiveThumbnailView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Implementation\StaticThumbnailImage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="View\Implementation\StaticThumbnailView.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="View\Interface\IThumbnailViewFactory.cs" />
     <Compile Include="Services\Interface\IThumbnailManager.cs" />
     <Compile Include="View\Implementation\ThumbnailDescription.cs" />
@@ -212,7 +222,7 @@
     <Compile Include="View\Implementation\ThumbnailView.Designer.cs">
       <DependentUpon>ThumbnailView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Services\Interop\DwmApiNativeMethods.cs" />
+    <Compile Include="Services\Interop\DwmNativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

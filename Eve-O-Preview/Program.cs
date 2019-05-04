@@ -11,14 +11,16 @@ namespace EveOPreview
 {
 	static class Program
 	{
-		private static string MutexName = "EVE-O Preview Single Instance Mutex";
+		private static string MUTEX_NAME = "EVE-O Preview Single Instance Mutex";
+
+		private static Mutex _singleInstanceMutex;
 
 		/// <summary>The main entry point for the application.</summary>
 		[STAThread]
 		static void Main()
 		{
 #if DEBUG
-			var expirationDate = new DateTime(2019, 5, 1);
+			var expirationDate = new DateTime(2019, 5, 15);
 			if (DateTime.Today >= expirationDate)
 			{
 				MessageBox.Show(@"This Beta version is expired. Please download a new build at https://github.com/Phrynohyas/eve-o-preview/releases", @"EVE-O Preview", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -28,11 +30,11 @@ namespace EveOPreview
 			// The very usual Mutex-based single-instance screening
 			// 'token' variable is used to store reference to the instance Mutex
 			// during the app lifetime
-			object token = Program.GetInstanceToken();
+			Program._singleInstanceMutex = Program.GetInstanceToken();
 
 			// If it was not possible to acquire the app token then another app instance is already running
 			// Nothing to do here
-			if (token == null)
+			if (Program._singleInstanceMutex == null)
 			{
 				return;
 			}
@@ -46,7 +48,7 @@ namespace EveOPreview
 			controller.Run<MainFormPresenter>();
 		}
 
-		private static object GetInstanceToken()
+		private static Mutex GetInstanceToken()
 		{
 			// The code might look overcomplicated here for a single Mutex operation
 			// Yet we had already experienced a Windows-level issue
@@ -55,7 +57,7 @@ namespace EveOPreview
 			// exceptions later
 			try
 			{
-				Mutex.OpenExisting(Program.MutexName);
+				Mutex.OpenExisting(Program.MUTEX_NAME);
 				// if that didn't fail then another instance is already running
 				return null;
 			}
@@ -65,7 +67,7 @@ namespace EveOPreview
 			}
 			catch (Exception)
 			{
-				Mutex token = new Mutex(true, Program.MutexName, out var result);
+				Mutex token = new Mutex(true, Program.MUTEX_NAME, out var result);
 				return result ? token : null;
 			}
 		}
@@ -105,9 +107,11 @@ namespace EveOPreview
 			IApplicationController controller = new ApplicationController(container);
 
 			// UI classes
-			controller.RegisterView<IMainFormView, MainForm>()
-				.RegisterView<IThumbnailView, ThumbnailView>()
-				.RegisterInstance(new ApplicationContext());
+			controller.RegisterView<StaticThumbnailView, StaticThumbnailView>();
+			controller.RegisterView<LiveThumbnailView, LiveThumbnailView>();
+
+			controller.RegisterView<IMainFormView, MainForm>();
+			controller.RegisterInstance(new ApplicationContext());
 
 			return controller;
 		}

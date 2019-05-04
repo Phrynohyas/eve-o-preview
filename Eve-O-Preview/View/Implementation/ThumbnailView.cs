@@ -7,26 +7,32 @@ using EveOPreview.UI.Hotkeys;
 
 namespace EveOPreview.View
 {
-	public partial class ThumbnailView : Form, IThumbnailView
+	public abstract partial class ThumbnailView : Form, IThumbnailView
 	{
 		#region Private constants
 		private const int RESIZE_EVENT_TIMEOUT = 500;
+f		private const double OPACITY_THRESHOLD = 0.9;
+		private const double OPACITY_EPSILON = 0.1;
 		#endregion
 
 		#region Private fields
-		private readonly IWindowManager _windowManager;
 		private readonly ThumbnailOverlay _overlay;
-		private IDwmThumbnail _thumbnail;
 
 		// Part of the logic (namely current size / position management)
 		// was moved to the view due to the performance reasons
 		private bool _isOverlayVisible;
 		private bool _isTopMost;
+		private bool _isHighlightEnabled;
+		private bool _isHighlightRequested;
+		private int _highlightWidth;
+
 		private bool _isLocationChanged;
 		private bool _isSizeChanged;
+
 		private bool _isCustomMouseModeActive;
-		private bool _isHighlightEnabled;
-		private int _highlightWidth;
+
+		private double _opacity;
+
 		private DateTime _suppressResizeEventsTimestamp;
 		private Size _baseZoomSize;
 		private Point _baseZoomLocation;
@@ -36,28 +42,33 @@ namespace EveOPreview.View
 		private HotkeyHandler _hotkeyHandler;
 		#endregion
 
-		public ThumbnailView(IWindowManager windowManager)
+		protected ThumbnailView(IWindowManager windowManager)
 		{
 			this.SuppressResizeEvent();
 
-			this._windowManager = windowManager;
+			this.WindowManager = windowManager;
 
 			this.IsActive = false;
 
 			this.IsOverlayEnabled = false;
 			this._isOverlayVisible = false;
 			this._isTopMost = false;
+			this._isHighlightEnabled = false;
+			this._isHighlightRequested = false;
 
 			this._isLocationChanged = true;
 			this._isSizeChanged = true;
+
 			this._isCustomMouseModeActive = false;
 
-			this._isHighlightEnabled = false;
+			this._opacity = 1.0;
 
 			InitializeComponent();
 
 			this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
 		}
+
+		protected IWindowManager WindowManager { get; }
 
 		public IntPtr Id { get; set; }
 
@@ -131,12 +142,11 @@ namespace EveOPreview.View
 			base.Hide();
 		}
 
-		public new void Close()
+		public new virtual void Close()
 		{
 			this.SuppressResizeEvent();
 
 			this.IsActive = false;
-			this._thumbnail?.Unregister();
 			this._overlay.Close();
 			base.Close();
 		}
@@ -155,13 +165,33 @@ namespace EveOPreview.View
 
 		public void SetOpacity(double opacity)
 		{
-			this.Opacity = opacity;
+			if (opacity >= OPACITY_THRESHOLD)
+			{
+				opacity = 1.0;
+			}
 
-			// Overlay opacity settings
-			// Of the thumbnail's opacity is almost full then set the overlay's one to
-			// full. Otherwise set it to half of the thumbnail opacity
-			// Opacity value is stored even if the overlay is not displayed atm
-			this._overlay.Opacity = this.Opacity > 0.9 ? 1.0 : 1.0 - (1.0 - this.Opacity) / 2;
+			if (Math.Abs(opacity - this._opacity) < OPACITY_EPSILON)
+			{
+				return;
+			}
+
+			try
+			{
+				this.Opacity = opacity;
+
+				// Overlay opacity settings
+				// Of the thumbnail's opacity is almost full then set the overlay's one to
+				// full. Otherwise set it to half of the thumbnail opacity
+				// Opacity value is stored even if the overlay is not displayed atm
+				this._overlay.Opacity = opacity > 0.8 ? 1.0 : 1.0 - (1.0 - opacity) / 2;
+
+				this._opacity = opacity;
+			}
+			catch (Win32Exception)
+			{
+				// Something went wrong in WinForms internals
+				// Opacity will be updated in the next cycle
+			}
 		}
 
 		public void SetFrames(bool enable)
@@ -177,9 +207,6 @@ namespace EveOPreview.View
 			this.SuppressResizeEvent();
 
 			this.FormBorderStyle = style;
-
-			// Notify about possible contents position change
-			this._isSizeChanged = true;
 		}
 
 		public void SetTopMost(bool enableTopmost)
@@ -198,20 +225,20 @@ namespace EveOPreview.View
 
 		public void SetHighlight(bool enabled, Color color, int width)
 		{
-			if (this._isHighlightEnabled == enabled)
+			if (this._isHighlightRequested == enabled)
 			{
 				return;
 			}
 
 			if (enabled)
 			{
-				this._isHighlightEnabled = true;
+				this._isHighlightRequested = true;
 				this._highlightWidth = width;
 				this.BackColor = color;
 			}
 			else
 			{
-				this._isHighlightEnabled = false;
+				this._isHighlightRequested = false;
 				this.BackColor = SystemColors.Control;
 			}
 
@@ -305,69 +332,31 @@ namespace EveOPreview.View
 
 		public void Refresh(bool forceRefresh)
 		{
-			// To prevent flickering the old broken thumbnail is removed AFTER the new shiny one is created
-			IDwmThumbnail obsoleteThumbnail = forceRefresh ? this._thumbnail : null;
+			this.RefreshThumbnail(forceRefresh);
+			this.HighlightThumbnail(forceRefresh || this._isSizeChanged);
+			this.RefreshOverlay(forceRefresh || this._isSizeChanged || this._isLocationChanged);
 
-			if ((this._thumbnail == null) || forceRefresh)
-			{
-				this.RegisterThumbnail();
-			}
-
-			bool sizeChanged = this._isSizeChanged || forceRefresh;
-			bool locationChanged = this._isLocationChanged || forceRefresh;
-
-			if (sizeChanged)
-			{
-				this.RecalculateThumbnailSize();
-
-				this.UpdateThumbnail();
-
-				this._isSizeChanged = false;
-			}
-
-			obsoleteThumbnail?.Unregister();
-
-			this._overlay.EnableOverlayLabel(this.IsOverlayEnabled);
-
-			if (!this._isOverlayVisible)
-			{
-				// One-time action to show the Overlay before it is set up
-				// Otherwise its position won't be set
-				this._overlay.Show();
-				this._isOverlayVisible = true;
-			}
-			else
-			{
-				if (!(sizeChanged || locationChanged))
-				{
-					// No need to adjust in the overlay location if it is already visible and properly set
-					return;
-				}
-			}
-
-			Size overlaySize = this.ClientSize;
-			Point overlayLocation = this.Location;
-
-			int borderWidth = (this.Size.Width - this.ClientSize.Width) / 2;
-			overlayLocation.X += borderWidth;
-			overlayLocation.Y += (this.Size.Height - this.ClientSize.Height) - borderWidth;
-
-			this._isLocationChanged = false;
-			this._overlay.Size = overlaySize;
-			this._overlay.Location = overlayLocation;
-			this._overlay.Refresh();
+			this._isSizeChanged = false;
 		}
 
-		private void RecalculateThumbnailSize()
+		protected abstract void RefreshThumbnail(bool forceRefresh);
+
+		protected abstract void ResizeThumbnail(int baseWidth, int baseHeight, int highlightWidthTop, int highlightWidthRight, int highlightWidthBottom, int highlightWidthLeft);
+
+		private void HighlightThumbnail(bool forceRefresh)
 		{
-			// This approach would work only for square-shaped thumbnail window
-			// To get PROPER results we have to do some crazy math
-			//int delta = this._isHighlightEnabled ? this._highlightWidth : 0;
-			//this._thumbnail.rcDestination = new RECT(0 + delta, 0 + delta, this.ClientSize.Width - delta, this.ClientSize.Height - delta);
-			if (!this._isHighlightEnabled)
+			if (!forceRefresh && (this._isHighlightRequested == this._isHighlightEnabled))
 			{
-				//No highlighting enabled, so no odd math required
-				this._thumbnail.Move(0, 0, this.ClientSize.Width, this.ClientSize.Height);
+				// Nothing to do here
+				return;
+			}
+
+			this._isHighlightEnabled = this._isHighlightRequested;
+
+			if (!this._isHighlightRequested)
+			{
+				//No highlighting enabled, so no math required
+				this.ResizeThumbnail(this.ClientSize.Width, this.ClientSize.Height, 0, 0, 0, 0);
 				return;
 			}
 
@@ -381,7 +370,38 @@ namespace EveOPreview.View
 			int highlightWidthLeft = (baseWidth - actualWidth) / 2;
 			int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
 
-			this._thumbnail.Move(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
+			this.ResizeThumbnail(this.ClientSize.Width, this.ClientSize.Height, this._highlightWidth, highlightWidthRight, this._highlightWidth, highlightWidthLeft);
+		}
+
+		private void RefreshOverlay(bool forceRefresh)
+		{
+			if (this._isOverlayVisible && !forceRefresh)
+			{
+				// No need to update anything. Everything is already set up
+				return;
+			}
+
+			this._overlay.EnableOverlayLabel(this.IsOverlayEnabled);
+
+			if (!this._isOverlayVisible)
+			{
+				// One-time action to show the Overlay before it is set up
+				// Otherwise its position won't be set
+				this._overlay.Show();
+				this._isOverlayVisible = true;
+			}
+
+			Size overlaySize = this.ClientSize;
+			Point overlayLocation = this.Location;
+
+			int borderWidth = (this.Size.Width - this.ClientSize.Width) / 2;
+			overlayLocation.X += borderWidth;
+			overlayLocation.Y += (this.Size.Height - this.ClientSize.Height) - borderWidth;
+
+			this._isLocationChanged = false;
+			this._overlay.Size = overlaySize;
+			this._overlay.Location = overlayLocation;
+			this._overlay.Refresh();
 		}
 
 		private void SuppressResizeEvent()
@@ -479,18 +499,6 @@ namespace EveOPreview.View
 			this.ThumbnailActivated?.Invoke(this.Id);
 
 			e.Handled = true;
-		}
-		#endregion
-
-		#region Thumbnail management
-		private void RegisterThumbnail()
-		{
-			this._thumbnail = this._windowManager.RegisterThumbnail(this.Handle, this.Id);
-		}
-
-		private void UpdateThumbnail()
-		{
-			this._thumbnail.Update();
 		}
 		#endregion
 

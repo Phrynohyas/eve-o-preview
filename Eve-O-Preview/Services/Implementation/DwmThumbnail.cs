@@ -36,7 +36,7 @@ namespace EveOPreview.Services.Implementation
 
 			try
 			{
-				this._handle = DwmApiNativeMethods.DwmRegisterThumbnail(destination, source);
+				this._handle = DwmNativeMethods.DwmRegisterThumbnail(destination, source);
 			}
 			catch (ArgumentException)
 			{
@@ -63,7 +63,7 @@ namespace EveOPreview.Services.Implementation
 
 			try
 			{
-				DwmApiNativeMethods.DwmUnregisterThumbnail(this._handle);
+				DwmNativeMethods.DwmUnregisterThumbnail(this._handle);
 			}
 			catch (ArgumentException)
 			{
@@ -88,7 +88,7 @@ namespace EveOPreview.Services.Implementation
 
 			try
 			{
-				DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._handle, this._properties);
+				DwmNativeMethods.DwmUpdateThumbnailProperties(this._handle, this._properties);
 			}
 			catch (ArgumentException)
 			{
