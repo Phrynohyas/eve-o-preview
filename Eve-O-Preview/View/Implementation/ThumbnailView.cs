@@ -11,6 +11,8 @@ namespace EveOPreview.View
 	{
 		#region Private constants
 		private const int RESIZE_EVENT_TIMEOUT = 500;
+f		private const double OPACITY_THRESHOLD = 0.9;
+		private const double OPACITY_EPSILON = 0.1;
 		#endregion
 
 		#region Private fields
@@ -23,9 +25,14 @@ namespace EveOPreview.View
 		private bool _isHighlightEnabled;
 		private bool _isHighlightRequested;
 		private int _highlightWidth;
+
 		private bool _isLocationChanged;
 		private bool _isSizeChanged;
+
 		private bool _isCustomMouseModeActive;
+
+		private double _opacity;
+
 		private DateTime _suppressResizeEventsTimestamp;
 		private Size _baseZoomSize;
 		private Point _baseZoomLocation;
@@ -47,12 +54,14 @@ namespace EveOPreview.View
 			this._isOverlayVisible = false;
 			this._isTopMost = false;
 			this._isHighlightEnabled = false;
+			this._isHighlightRequested = false;
 
 			this._isLocationChanged = true;
 			this._isSizeChanged = true;
+
 			this._isCustomMouseModeActive = false;
 
-			this._isHighlightRequested = false;
+			this._opacity = 1.0;
 
 			InitializeComponent();
 
@@ -156,13 +165,33 @@ namespace EveOPreview.View
 
 		public void SetOpacity(double opacity)
 		{
-			this.Opacity = opacity;
+			if (opacity >= OPACITY_THRESHOLD)
+			{
+				opacity = 1.0;
+			}
 
-			// Overlay opacity settings
-			// Of the thumbnail's opacity is almost full then set the overlay's one to
-			// full. Otherwise set it to half of the thumbnail opacity
-			// Opacity value is stored even if the overlay is not displayed atm
-			this._overlay.Opacity = this.Opacity > 0.9 ? 1.0 : 1.0 - (1.0 - this.Opacity) / 2;
+			if (Math.Abs(opacity - this._opacity) < OPACITY_EPSILON)
+			{
+				return;
+			}
+
+			try
+			{
+				this.Opacity = opacity;
+
+				// Overlay opacity settings
+				// Of the thumbnail's opacity is almost full then set the overlay's one to
+				// full. Otherwise set it to half of the thumbnail opacity
+				// Opacity value is stored even if the overlay is not displayed atm
+				this._overlay.Opacity = opacity > 0.8 ? 1.0 : 1.0 - (1.0 - opacity) / 2;
+
+				this._opacity = opacity;
+			}
+			catch (Win32Exception)
+			{
+				// Something went wrong in WinForms internals
+				// Opacity will be updated in the next cycle
+			}
 		}
 
 		public void SetFrames(bool enable)
