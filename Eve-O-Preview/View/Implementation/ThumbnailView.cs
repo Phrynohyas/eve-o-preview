@@ -11,7 +11,7 @@ namespace EveOPreview.View
 	{
 		#region Private constants
 		private const int RESIZE_EVENT_TIMEOUT = 500;
-f		private const double OPACITY_THRESHOLD = 0.9;
+		private const double OPACITY_THRESHOLD = 0.9;
 		private const double OPACITY_EPSILON = 0.1;
 		#endregion
 
@@ -61,7 +61,7 @@ f		private const double OPACITY_THRESHOLD = 0.9;
 
 			this._isCustomMouseModeActive = false;
 
-			this._opacity = 1.0;
+			this._opacity = 0.1;
 
 			InitializeComponent();
 
