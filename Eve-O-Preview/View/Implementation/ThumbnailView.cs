@@ -253,8 +253,10 @@ namespace EveOPreview.View
 			int locationX = this.Location.X;
 			int locationY = this.Location.Y;
 
-			int newWidth = (zoomFactor * this.ClientSize.Width) + (this.Size.Width - this.ClientSize.Width);
-			int newHeight = (zoomFactor * this.ClientSize.Height) + (this.Size.Height - this.ClientSize.Height);
+			int clientSizeWidth = this.ClientSize.Width;
+			int clientSizeHeight = this.ClientSize.Height;
+			int newWidth = (zoomFactor * clientSizeWidth) + (this.Size.Width - clientSizeWidth);
+			int newHeight = (zoomFactor * clientSizeHeight) + (this.Size.Height - clientSizeHeight);
 
 			// First change size, THEN move the window
 			// Otherwise there is a chance to fail in a loop
@@ -353,15 +355,16 @@ namespace EveOPreview.View
 
 			this._isHighlightEnabled = this._isHighlightRequested;
 
+			int baseWidth = this.ClientSize.Width;
+			int baseHeight = this.ClientSize.Height;
+
 			if (!this._isHighlightRequested)
 			{
 				//No highlighting enabled, so no math required
-				this.ResizeThumbnail(this.ClientSize.Width, this.ClientSize.Height, 0, 0, 0, 0);
+				this.ResizeThumbnail(baseWidth, baseHeight, 0, 0, 0, 0);
 				return;
 			}
 
-			int baseWidth = this.ClientSize.Width;
-			int baseHeight = this.ClientSize.Height;
 			double baseAspectRatio = ((double)baseWidth) / baseHeight;
 
 			int actualHeight = baseHeight - 2 * this._highlightWidth;

@@ -42,7 +42,7 @@ namespace EveOPreview.Services.Implementation
 			{
 				// This exception is raised if the source client is already closed
 				// Can happen on a really slow CPU's that the window is still being
-				// lised in the process list yet it already cannot be used as
+				// listed in the process list yet it already cannot be used as
 				// a thumbnail source
 				this._handle = IntPtr.Zero;
 			}
