@@ -42,8 +42,29 @@ namespace EveOPreview.View
 
 		protected override void ResizeThumbnail(int baseWidth, int baseHeight, int highlightWidthTop, int highlightWidthRight, int highlightWidthBottom, int highlightWidthLeft)
 		{
-			this._thumbnail.Location = new Point(0 + highlightWidthLeft, 0 + highlightWidthTop);
-			this._thumbnail.Size = new Size(baseWidth - highlightWidthLeft - highlightWidthRight, baseHeight - highlightWidthTop - highlightWidthBottom);
+			var left = 0 + highlightWidthLeft;
+			var top = 0 + highlightWidthTop;
+			if (this.IsLocationUpdateRequired(this._thumbnail.Location, left, top))
+			{
+				this._thumbnail.Location = new Point(left, top);
+			}
+
+			var width = baseWidth - highlightWidthLeft - highlightWidthRight;
+			var height = baseHeight - highlightWidthTop - highlightWidthBottom;
+			if (this.IsSizeUpdateRequired(this._thumbnail.Size, width, height))
+			{
+				this._thumbnail.Size = new Size(width, height);
+			}
+		}
+
+		private bool IsLocationUpdateRequired(Point currentLocation, int left, int top)
+		{
+			return (currentLocation.X != left) || (currentLocation.Y != top);
+		}
+
+		private bool IsSizeUpdateRequired(Size currentSize, int width, int height)
+		{
+			return (currentSize.Width != width) || (currentSize.Height != height);
 		}
 	}
 }
