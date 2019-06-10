@@ -19,14 +19,6 @@ namespace EveOPreview
 		[STAThread]
 		static void Main()
 		{
-#if DEBUG
-			var expirationDate = new DateTime(2019, 5, 15);
-			if (DateTime.Today >= expirationDate)
-			{
-				MessageBox.Show(@"This Beta version is expired. Please download a new build at https://github.com/Phrynohyas/eve-o-preview/releases", @"EVE-O Preview", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}
-#endif
-
 			// The very usual Mutex-based single-instance screening
 			// 'token' variable is used to store reference to the instance Mutex
 			// during the app lifetime
