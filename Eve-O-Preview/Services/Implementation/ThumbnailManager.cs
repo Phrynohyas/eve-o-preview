@@ -590,7 +590,14 @@ namespace EveOPreview.Services
 				return;
 			}
 
-			this._windowManager.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height);
+			if (clientLayout.IsMaximized)
+			{
+				this._windowManager.MaximizeWindow(clientHandle);
+			}
+			else
+			{
+				this._windowManager.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height);
+			}
 		}
 
 		private void UpdateClientLayouts()
@@ -604,16 +611,17 @@ namespace EveOPreview.Services
 			{
 				IThumbnailView view = entry.Value;
 				(int Left, int Top, int Right, int Bottom) position = this._windowManager.GetWindowPosition(view.Id);
-
 				int width = Math.Abs(position.Right - position.Left);
 				int height = Math.Abs(position.Bottom - position.Top);
 
-				if (!this.IsValidWindowPosition(position.Left, position.Top, width, height))
+				var isMaximized = this._windowManager.IsWindowMaximized(view.Id);
+
+				if (!(isMaximized || this.IsValidWindowPosition(position.Left, position.Top, width, height)))
 				{
 					continue;
 				}
 
-				this._configuration.SetClientLayout(view.Title, new ClientLayout(position.Left, position.Top, width, height));
+				this._configuration.SetClientLayout(view.Title, new ClientLayout(position.Left, position.Top, width, height, isMaximized));
 			}
 		}
 

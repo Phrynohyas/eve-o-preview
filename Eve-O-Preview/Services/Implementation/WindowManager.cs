@@ -31,7 +31,7 @@ namespace EveOPreview.Services.Implementation
 
 			if ((style & InteropConstants.WS_MINIMIZE) == InteropConstants.WS_MINIMIZE)
 			{
-				User32NativeMethods.ShowWindowAsync(handle, InteropConstants.SW_SHOWNORMAL);
+				User32NativeMethods.ShowWindowAsync(handle, InteropConstants.SW_RESTORE);
 			}
 		}
 
@@ -56,11 +56,21 @@ namespace EveOPreview.Services.Implementation
 			User32NativeMethods.MoveWindow(handle, left, top, width, height, true);
 		}
 
+		public void MaximizeWindow(IntPtr handle)
+		{
+			User32NativeMethods.ShowWindowAsync(handle, InteropConstants.SW_SHOWMAXIMIZED);
+		}
+
 		public (int Left, int Top, int Right, int Bottom) GetWindowPosition(IntPtr handle)
 		{
 			User32NativeMethods.GetWindowRect(handle, out RECT windowRectangle);
 
 			return (windowRectangle.Left, windowRectangle.Top, windowRectangle.Right, windowRectangle.Bottom);
+		}
+
+		public bool IsWindowMaximized(IntPtr handle)
+		{
+			return User32NativeMethods.IsZoomed(handle);
 		}
 
 		public bool IsWindowMinimized(IntPtr handle)

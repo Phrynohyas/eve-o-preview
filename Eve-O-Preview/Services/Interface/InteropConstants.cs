@@ -56,7 +56,7 @@ namespace EveOPreview.Services
 		public const UInt32 WS_EX_OVERLAPPEDWINDOW = (WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE);
 		public const UInt32 WS_EX_PALETTEWINDOW = (WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
 		public const UInt32 WS_EX_LAYERED = 0x00080000;
-		public const UInt32 WS_EX_NOINHERITLAYOUT = 0x00100000; // Disable inheritence of mirroring by children
+		public const UInt32 WS_EX_NOINHERITLAYOUT = 0x00100000; // Disable inheritance of mirroring by children
 		public const UInt32 WS_EX_LAYOUTRTL = 0x00400000; // Right to left mirroring
 		public const UInt32 WS_EX_COMPOSITED = 0x02000000;
 		public const UInt32 WS_EX_NOACTIVATE = 0x08000000;
@@ -78,5 +78,6 @@ namespace EveOPreview.Services
 		public const int SW_SHOWNORMAL = 1;
 		public const int SW_SHOWMINIMIZED = 2;
 		public const int SW_SHOWMAXIMIZED = 3;
+		public const int SW_RESTORE = 9;
 	}
 }
