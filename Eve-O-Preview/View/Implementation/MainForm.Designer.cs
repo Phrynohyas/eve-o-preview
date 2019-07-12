@@ -820,7 +820,7 @@ namespace EveOPreview.View
 			DocumentationLinkLabel.Padding = new System.Windows.Forms.Padding(12, 5, 12, 5);
 			DocumentationLinkLabel.Size = new System.Drawing.Size(336, 30);
 			DocumentationLinkLabel.TabIndex = 6;
-			DocumentationLinkLabel.Text = "For more information visit our forum thread:";
+			DocumentationLinkLabel.Text = "For more information visit the forum thread:";
 			// 
 			// DescriptionLabel
 			// 

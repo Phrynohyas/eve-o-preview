@@ -13,7 +13,11 @@ namespace EveOPreview.Services.Implementation
 
 		public WindowManager()
 		{
-			this.IsCompositionEnabled = DwmNativeMethods.DwmIsCompositionEnabled();
+			// Composition is always enabled for Windows 8+
+			this.IsCompositionEnabled = 
+				((Environment.OSVersion.Version.Major == 6) && (Environment.OSVersion.Version.Minor >= 2)) // Win 8 and Win 8.1
+				|| (Environment.OSVersion.Version.Major >= 10) // Win 10
+				|| DwmNativeMethods.DwmIsCompositionEnabled(); // In case of Win 7 an API call is requiredWin 7
 		}
 
 		public bool IsCompositionEnabled { get; }
