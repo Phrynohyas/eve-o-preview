@@ -128,7 +128,6 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
 ## Compatibility Mode
 
 This setting allows to enable an alternate thumbnail render. This render doesn't use advanced DWM API to create live previews. Instead it is a screenshot-based render with the following pros and cons:
-* `+`  Doesn't require Aero to work
 * `+`  Should work even in remote desktop environments
 * `-`  Consumes significantly more memory. In the testing environment EVE-O Preview did consume around 180 MB to manage 3 thumbnails using this render. At the same time the primary render did consume around 50 MB when run in the same environment.
 * `-`  Thumbnail images are refreshed at 1 FPS rate
