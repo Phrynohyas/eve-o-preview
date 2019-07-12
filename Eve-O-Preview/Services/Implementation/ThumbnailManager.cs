@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using EveOPreview.Configuration;
@@ -11,16 +10,16 @@ using MediatR;
 
 namespace EveOPreview.Services
 {
-	class ThumbnailManager : IThumbnailManager
+	sealed class ThumbnailManager : IThumbnailManager
 	{
 		#region Private constants
-		private const int WindowPositionThresholdLow = -10_000;
-		private const int WindowPositionThresholdHigh = 31_000;
-		private const int WindowSizeThreshold = 10;
-		private const int ForcedRefreshCycleThreshold = 2;
-		private const int DefaultLocationChangeNotificationDelay = 2;
+		private const int WINDOW_POSITION_THRESHOLD_LOW = -10_000;
+		private const int WINDOW_POSITION_THRESHOLD_HIGH = 31_000;
+		private const int WINDOW_SIZE_THRESHOLD = 10;
+		private const int FORCED_REFRESH_CYCLE_THRESHOLD = 2;
+		private const int DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY = 2;
 
-		private const string DefaultClientTitle = "EVE";
+		private const string DEFAULT_CLIENT_TITLE = "EVE";
 		#endregion
 
 		#region Private fields
@@ -33,6 +32,7 @@ namespace EveOPreview.Services
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
 
 		private (IntPtr Handle, string Title) _activeClient;
+		private IntPtr _externalApplication;
 
 		private readonly object _locationChangeNotificationSyncRoot;
 		private (IntPtr Handle, string Title, string ActiveClient, Point Location, int Delay) _enqueuedLocationChangeNotification;
@@ -51,7 +51,7 @@ namespace EveOPreview.Services
 			this._configuration = configuration;
 			this._thumbnailViewFactory = factory;
 
-			this._activeClient = (IntPtr.Zero, ThumbnailManager.DefaultClientTitle);
+			this._activeClient = (IntPtr.Zero, ThumbnailManager.DEFAULT_CLIENT_TITLE);
 
 			this.EnableViewEvents();
 			this._isHoverEffectActive = false;
@@ -121,7 +121,7 @@ namespace EveOPreview.Services
 				this.ApplyClientLayout(view.Id, view.Title);
 
 				// TODO Add extension filter here later
-				if (view.Title != ThumbnailManager.DefaultClientTitle)
+				if (view.Title != ThumbnailManager.DEFAULT_CLIENT_TITLE)
 				{
 					viewsAdded.Add(view.Title);
 				}
@@ -154,7 +154,7 @@ namespace EveOPreview.Services
 				IThumbnailView view = this._thumbnailViews[process.Handle];
 
 				this._thumbnailViews.Remove(view.Id);
-				if (view.Title != ThumbnailManager.DefaultClientTitle)
+				if (view.Title != ThumbnailManager.DEFAULT_CLIENT_TITLE)
 				{
 					viewsRemoved.Add(view.Title);
 				}
@@ -182,6 +182,9 @@ namespace EveOPreview.Services
 			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
 			string foregroundWindowTitle = null;
 
+			// Check if the foreground window handle is one of the known handles for client windows or their thumbnails
+			bool isClientWindow = this.IsClientWindowActive(foregroundWindowHandle);
+
 			if (foregroundWindowHandle == this._activeClient.Handle)
 			{
 				foregroundWindowTitle = this._activeClient.Title;
@@ -191,6 +194,15 @@ namespace EveOPreview.Services
 				// This code will work only on Alt+Tab switch between clients
 				foregroundWindowTitle = foregroundView.Title;
 			}
+			else if (!isClientWindow)
+			{
+				// Under some circumstances Foreground WindowHandle can be zero
+				// (f.e. when Thumbnail is silently stealing focus from the currently open app)
+				if (foregroundWindowHandle != IntPtr.Zero)
+				{
+					this._externalApplication = foregroundWindowHandle;
+				}
+			}
 
 			// No need to minimize EVE clients when switching out to non-EVE window (like thumbnail)
 			if (!string.IsNullOrEmpty(foregroundWindowTitle))
@@ -198,12 +210,12 @@ namespace EveOPreview.Services
 				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
 			}
 
-			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !this.IsClientWindowActive(foregroundWindowHandle);
+			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !isClientWindow;
 
 			this._refreshCycleCount++;
 
 			bool forceRefresh;
-			if (this._refreshCycleCount >= ThumbnailManager.ForcedRefreshCycleThreshold)
+			if (this._refreshCycleCount >= ThumbnailManager.FORCED_REFRESH_CYCLE_THRESHOLD)
 			{
 				this._refreshCycleCount = 0;
 				forceRefresh = true;
@@ -223,11 +235,11 @@ namespace EveOPreview.Services
 				{
 					this.SnapThumbnailView(view);
 
-					this.RaiseThumbnailLocationUpdatedNotification(view.Title, this._activeClient.Title, view.ThumbnailLocation);
+					this.RaiseThumbnailLocationUpdatedNotification(view.Title);
 				}
 				else
 				{
-					this.RaiseThumbnailLocationUpdatedNotification(locationChange.Title, locationChange.ActiveClient, locationChange.Location);
+					this.RaiseThumbnailLocationUpdatedNotification(locationChange.Title);
 				}
 			}
 
@@ -325,10 +337,10 @@ namespace EveOPreview.Services
 			this._ignoreViewEvents = true;
 		}
 
-		private void SwitchActiveClient(IntPtr foregroungClientHandle, string foregroundClientTitle)
+		private void SwitchActiveClient(IntPtr foregroundClientHandle, string foregroundClientTitle)
 		{
 			// Check if any actions are needed
-			if (this._activeClient.Handle == foregroungClientHandle)
+			if (this._activeClient.Handle == foregroundClientHandle)
 			{
 				return;
 			}
@@ -339,7 +351,7 @@ namespace EveOPreview.Services
 				this._windowManager.MinimizeWindow(this._activeClient.Handle, false);
 			}
 
-			this._activeClient = (foregroungClientHandle, foregroundClientTitle);
+			this._activeClient = (foregroundClientHandle, foregroundClientTitle);
 		}
 
 		private void ThumbnailViewFocused(IntPtr id)
@@ -389,27 +401,31 @@ namespace EveOPreview.Services
 				{
 					this._windowManager.ActivateWindow(view.Id);
 				})
-				.ConfigureAwait(true)
-				.GetAwaiter()
-				.OnCompleted(() =>
+				.ContinueWith((task) =>
 				{
+					// This code should be executed on UI thread
 					this.SwitchActiveClient(view.Id, view.Title);
 					this.UpdateClientLayouts();
 					this.RefreshThumbnails();
-				});
-
-			this.UpdateClientLayouts();
+				}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		private void ThumbnailDeactivated(IntPtr id)
+		private void ThumbnailDeactivated(IntPtr id, bool switchOut)
 		{
-			if (!this._thumbnailViews.TryGetValue(id, out IThumbnailView view))
+			if (switchOut)
 			{
-				return;
+				this._windowManager.ActivateWindow(this._externalApplication);
 			}
+			else
+			{
+				if (!this._thumbnailViews.TryGetValue(id, out IThumbnailView view))
+				{
+					return;
+				}
 
-			this._windowManager.MinimizeWindow(view.Id, true);
-			this.RefreshThumbnails();
+				this._windowManager.MinimizeWindow(view.Id, true);
+				this.RefreshThumbnails();
+			}
 		}
 
 		private async void ThumbnailViewResized(IntPtr id)
@@ -562,6 +578,11 @@ namespace EveOPreview.Services
 
 		private void ApplyClientLayout(IntPtr clientHandle, string clientTitle)
 		{
+			if (!this._configuration.EnableClientLayoutTracking)
+			{
+				return;
+			}
+
 			ClientLayout clientLayout = this._configuration.GetClientLayout(clientTitle);
 
 			if (clientLayout == null)
@@ -569,7 +590,14 @@ namespace EveOPreview.Services
 				return;
 			}
 
-			this._windowManager.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height);
+			if (clientLayout.IsMaximized)
+			{
+				this._windowManager.MaximizeWindow(clientHandle);
+			}
+			else
+			{
+				this._windowManager.MoveWindow(clientHandle, clientLayout.X, clientLayout.Y, clientLayout.Width, clientLayout.Height);
+			}
 		}
 
 		private void UpdateClientLayouts()
@@ -583,16 +611,17 @@ namespace EveOPreview.Services
 			{
 				IThumbnailView view = entry.Value;
 				(int Left, int Top, int Right, int Bottom) position = this._windowManager.GetWindowPosition(view.Id);
-
 				int width = Math.Abs(position.Right - position.Left);
 				int height = Math.Abs(position.Bottom - position.Top);
 
-				if (!this.IsValidWindowPosition(position.Left, position.Top, width, height))
+				var isMaximized = this._windowManager.IsWindowMaximized(view.Id);
+
+				if (!(isMaximized || this.IsValidWindowPosition(position.Left, position.Top, width, height)))
 				{
 					continue;
 				}
 
-				this._configuration.SetClientLayout(view.Title, new ClientLayout(position.Left, position.Top, width, height));
+				this._configuration.SetClientLayout(view.Title, new ClientLayout(position.Left, position.Top, width, height, isMaximized));
 			}
 		}
 
@@ -606,7 +635,7 @@ namespace EveOPreview.Services
 			{
 				if (this._enqueuedLocationChangeNotification.Handle == IntPtr.Zero)
 				{
-					this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DefaultLocationChangeNotificationDelay);
+					this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY);
 					return;
 				}
 
@@ -614,12 +643,12 @@ namespace EveOPreview.Services
 				if ((this._enqueuedLocationChangeNotification.Handle == view.Id) &&
 					(this._enqueuedLocationChangeNotification.ActiveClient == activeClientTitle))
 				{
-					this._enqueuedLocationChangeNotification.Delay = ThumbnailManager.DefaultLocationChangeNotificationDelay;
+					this._enqueuedLocationChangeNotification.Delay = ThumbnailManager.DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY;
 					return;
 				}
 
-				this.RaiseThumbnailLocationUpdatedNotification(this._enqueuedLocationChangeNotification.Title, activeClientTitle, this._enqueuedLocationChangeNotification.Location);
-				this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DefaultLocationChangeNotificationDelay);
+				this.RaiseThumbnailLocationUpdatedNotification(this._enqueuedLocationChangeNotification.Title);
+				this._enqueuedLocationChangeNotification = (view.Id, view.Title, activeClientTitle, view.ThumbnailLocation, ThumbnailManager.DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY);
 			}
 		}
 
@@ -648,9 +677,9 @@ namespace EveOPreview.Services
 			}
 		}
 
-		private async void RaiseThumbnailLocationUpdatedNotification(string title, string activeClient, Point location)
+		private async void RaiseThumbnailLocationUpdatedNotification(string title)
 		{
-			if (string.IsNullOrEmpty(title) || (title == ThumbnailManager.DefaultClientTitle))
+			if (string.IsNullOrEmpty(title) || (title == ThumbnailManager.DEFAULT_CLIENT_TITLE))
 			{
 				return;
 			}
@@ -662,15 +691,15 @@ namespace EveOPreview.Services
 		// TODO Move to a service (?)
 		private bool IsManageableThumbnail(IThumbnailView view)
 		{
-			return view.Title != ThumbnailManager.DefaultClientTitle;
+			return view.Title != ThumbnailManager.DEFAULT_CLIENT_TITLE;
 		}
 
 		// Quick sanity check that the window is not minimized
-		private bool IsValidWindowPosition(int letf, int top, int width, int height)
+		private bool IsValidWindowPosition(int left, int top, int width, int height)
 		{
-			return (letf > ThumbnailManager.WindowPositionThresholdLow) && (letf < ThumbnailManager.WindowPositionThresholdHigh)
-					&& (top > ThumbnailManager.WindowPositionThresholdLow) && (top < ThumbnailManager.WindowPositionThresholdHigh)
-					&& (width > ThumbnailManager.WindowSizeThreshold) && (height > ThumbnailManager.WindowSizeThreshold);
+			return (left > ThumbnailManager.WINDOW_POSITION_THRESHOLD_LOW) && (left < ThumbnailManager.WINDOW_POSITION_THRESHOLD_HIGH)
+					&& (top > ThumbnailManager.WINDOW_POSITION_THRESHOLD_LOW) && (top < ThumbnailManager.WINDOW_POSITION_THRESHOLD_HIGH)
+					&& (width > ThumbnailManager.WINDOW_SIZE_THRESHOLD) && (height > ThumbnailManager.WINDOW_SIZE_THRESHOLD);
 		}
 	}
 }

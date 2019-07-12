@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using EveOPreview.Services.Interop;
 
 namespace EveOPreview.Services.Implementation
@@ -35,14 +36,20 @@ namespace EveOPreview.Services.Implementation
 
 			try
 			{
-				this._handle = DwmApiNativeMethods.DwmRegisterThumbnail(destination, source);
+				this._handle = DwmNativeMethods.DwmRegisterThumbnail(destination, source);
 			}
 			catch (ArgumentException)
 			{
 				// This exception is raised if the source client is already closed
 				// Can happen on a really slow CPU's that the window is still being
-				// lised in the process list yet it already cannot be used as
+				// listed in the process list yet it already cannot be used as
 				// a thumbnail source
+				this._handle = IntPtr.Zero;
+			}
+			catch (COMException)
+			{
+				// This exception is raised if DWM is suddenly not available
+				// (f.e. when switching between Windows user accounts)
 				this._handle = IntPtr.Zero;
 			}
 		}
@@ -56,10 +63,14 @@ namespace EveOPreview.Services.Implementation
 
 			try
 			{
-				DwmApiNativeMethods.DwmUnregisterThumbnail(this._handle);
+				DwmNativeMethods.DwmUnregisterThumbnail(this._handle);
 			}
 			catch (ArgumentException)
 			{
+			}
+			catch (COMException)
+			{
+				// This exception is raised when DWM is not available for some reason
 			}
 		}
 
@@ -77,11 +88,15 @@ namespace EveOPreview.Services.Implementation
 
 			try
 			{
-				DwmApiNativeMethods.DwmUpdateThumbnailProperties(this._handle, this._properties);
+				DwmNativeMethods.DwmUpdateThumbnailProperties(this._handle, this._properties);
 			}
 			catch (ArgumentException)
 			{
-				//This exception will be thrown if the EVE client disappears while this method is running
+				// This exception will be thrown if the EVE client disappears while this method is running
+			}
+			catch (COMException)
+			{
+				// This exception is raised when DWM is not available for some reason
 			}
 		}
 	}

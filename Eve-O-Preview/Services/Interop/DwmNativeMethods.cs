@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace EveOPreview.Services.Interop
 {
-	static class DwmApiNativeMethods
+	static class DwmNativeMethods
 	{
 		[DllImport("dwmapi.dll", PreserveSig = false)]
 		public static extern void DwmEnableBlurBehindWindow(IntPtr hWnd, DWM_BLURBEHIND pBlurBehind);

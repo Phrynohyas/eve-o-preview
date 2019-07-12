@@ -7,7 +7,7 @@ namespace EveOPreview.UI.Hotkeys
 	class HotkeyHandler : IMessageFilter, IDisposable
 	{
 		private static int _currentId;
-		private const int MaxId = 0xBFFF;
+		private const int MAX_ID = 0xBFFF;
 
 		#region Private fields
 		private readonly int _hotkeyId;
@@ -17,7 +17,7 @@ namespace EveOPreview.UI.Hotkeys
 		public HotkeyHandler(IntPtr target, Keys hotkey)
 		{
 			this._hotkeyId = HotkeyHandler._currentId;
-			HotkeyHandler._currentId = (HotkeyHandler._currentId + 1) & HotkeyHandler.MaxId;
+			HotkeyHandler._currentId = (HotkeyHandler._currentId + 1) & HotkeyHandler.MAX_ID;
 
 			this._hotkeyTarget = target;
 
@@ -29,28 +29,14 @@ namespace EveOPreview.UI.Hotkeys
 
 		public void Dispose()
 		{
-			if (this.IsRegistered)
-			{
-				this.Unregister();
-			}
-
+			this.Unregister();
 			GC.SuppressFinalize(this);
 		}
 
 		~HotkeyHandler()
 		{
 			// Unregister the hotkey if necessary
-			if (this.IsRegistered)
-			{
-				try
-				{
-					this.Unregister();
-				}
-				catch (Exception)
-				{
-					// Please no exceptions in the finalizer thread
-				}
-			}
+			this.Unregister();
 		}
 
 		public bool IsRegistered { get; private set; }
@@ -61,22 +47,12 @@ namespace EveOPreview.UI.Hotkeys
 
 		public bool CanRegister()
 		{
-			// Any exception means "no, you can't register"
-			try
+			// Attempt to register
+			if (this.Register())
 			{
-				// Attempt to register
-				if (this.Register())
-				{
-					// Unregister and say we managed it
-					this.Unregister();
-					return true;
-				}
-			}
-			catch (Win32Exception)
-			{
-			}
-			catch (NotSupportedException)
-			{
+				// Unregister and say we managed it
+				this.Unregister();
+				return true;
 			}
 
 			return false;
@@ -87,12 +63,12 @@ namespace EveOPreview.UI.Hotkeys
 			// Check that we have not registered
 			if (this.IsRegistered)
 			{
-				throw new NotSupportedException("This hotkey is already registered");
+				return false;
 			}
 
 			if (this.KeyCode == Keys.None)
 			{
-				throw new NotSupportedException("Cannot register an empty hotkey");
+				return false;
 			}
 
 			// Remove all modifiers from the 'main' hotkey
@@ -122,18 +98,15 @@ namespace EveOPreview.UI.Hotkeys
 			// Check that we have registered
 			if (!this.IsRegistered)
 			{
-				throw new NotSupportedException("This hotkey was not registered");
+				return;
 			}
+
+			this.IsRegistered = false;
 
 			Application.RemoveMessageFilter(this);
 
 			// Clean up after ourselves
-			if (!HotkeyHandlerNativeMethods.UnregisterHotKey(this._hotkeyTarget, this._hotkeyId))
-			{
-				throw new Win32Exception();
-			}
-
-			this.IsRegistered = false;
+			HotkeyHandlerNativeMethods.UnregisterHotKey(this._hotkeyTarget, this._hotkeyId);
 		}
 
 		#region IMessageFilter

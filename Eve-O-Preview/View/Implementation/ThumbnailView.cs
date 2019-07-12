@@ -7,26 +7,32 @@ using EveOPreview.UI.Hotkeys;
 
 namespace EveOPreview.View
 {
-	public partial class ThumbnailView : Form, IThumbnailView
+	public abstract partial class ThumbnailView : Form, IThumbnailView
 	{
 		#region Private constants
-		private const int ResizeEventTimeout = 500;
+		private const int RESIZE_EVENT_TIMEOUT = 500;
+		private const double OPACITY_THRESHOLD = 0.9;
+		private const double OPACITY_EPSILON = 0.1;
 		#endregion
 
 		#region Private fields
-		private readonly IWindowManager _windowManager;
 		private readonly ThumbnailOverlay _overlay;
-		private IDwmThumbnail _thumbnail;
 
 		// Part of the logic (namely current size / position management)
 		// was moved to the view due to the performance reasons
 		private bool _isOverlayVisible;
 		private bool _isTopMost;
+		private bool _isHighlightEnabled;
+		private bool _isHighlightRequested;
+		private int _highlightWidth;
+
 		private bool _isLocationChanged;
 		private bool _isSizeChanged;
+
 		private bool _isCustomMouseModeActive;
-		private bool _isHighlightEnabled;
-		private int _highlightWidth;
+
+		private double _opacity;
+
 		private DateTime _suppressResizeEventsTimestamp;
 		private Size _baseZoomSize;
 		private Point _baseZoomLocation;
@@ -36,28 +42,33 @@ namespace EveOPreview.View
 		private HotkeyHandler _hotkeyHandler;
 		#endregion
 
-		public ThumbnailView(IWindowManager windowManager)
+		protected ThumbnailView(IWindowManager windowManager)
 		{
 			this.SuppressResizeEvent();
 
-			this._windowManager = windowManager;
+			this.WindowManager = windowManager;
 
 			this.IsActive = false;
 
 			this.IsOverlayEnabled = false;
 			this._isOverlayVisible = false;
 			this._isTopMost = false;
+			this._isHighlightEnabled = false;
+			this._isHighlightRequested = false;
 
 			this._isLocationChanged = true;
 			this._isSizeChanged = true;
+
 			this._isCustomMouseModeActive = false;
 
-			this._isHighlightEnabled = false;
+			this._opacity = 0.1;
 
 			InitializeComponent();
 
 			this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
 		}
+
+		protected IWindowManager WindowManager { get; }
 
 		public IntPtr Id { get; set; }
 
@@ -104,7 +115,7 @@ namespace EveOPreview.View
 
 		public Action<IntPtr> ThumbnailActivated { get; set; }
 
-		public Action<IntPtr> ThumbnailDeactivated { get; set; }
+		public Action<IntPtr, bool> ThumbnailDeactivated { get; set; }
 
 		public new void Show()
 		{
@@ -131,12 +142,11 @@ namespace EveOPreview.View
 			base.Hide();
 		}
 
-		public new void Close()
+		public new virtual void Close()
 		{
 			this.SuppressResizeEvent();
 
 			this.IsActive = false;
-			this._thumbnail?.Unregister();
 			this._overlay.Close();
 			base.Close();
 		}
@@ -155,13 +165,33 @@ namespace EveOPreview.View
 
 		public void SetOpacity(double opacity)
 		{
-			this.Opacity = opacity;
+			if (opacity >= OPACITY_THRESHOLD)
+			{
+				opacity = 1.0;
+			}
 
-			// Overlay opacity settings
-			// Of the thumbnail's opacity is almost full then set the overlay's one to
-			// full. Otherwise set it to half of the thumnail opacity
-			// Opacity value is stored even if the overlay is not displayed atm
-			this._overlay.Opacity = this.Opacity > 0.9 ? 1.0 : 1.0 - (1.0 - this.Opacity) / 2;
+			if (Math.Abs(opacity - this._opacity) < OPACITY_EPSILON)
+			{
+				return;
+			}
+
+			try
+			{
+				this.Opacity = opacity;
+
+				// Overlay opacity settings
+				// Of the thumbnail's opacity is almost full then set the overlay's one to
+				// full. Otherwise set it to half of the thumbnail opacity
+				// Opacity value is stored even if the overlay is not displayed atm
+				this._overlay.Opacity = opacity > 0.8 ? 1.0 : 1.0 - (1.0 - opacity) / 2;
+
+				this._opacity = opacity;
+			}
+			catch (Win32Exception)
+			{
+				// Something went wrong in WinForms internals
+				// Opacity will be updated in the next cycle
+			}
 		}
 
 		public void SetFrames(bool enable)
@@ -177,9 +207,6 @@ namespace EveOPreview.View
 			this.SuppressResizeEvent();
 
 			this.FormBorderStyle = style;
-
-			// Notify about possible contents position change
-			this._isSizeChanged = true;
 		}
 
 		public void SetTopMost(bool enableTopmost)
@@ -198,20 +225,20 @@ namespace EveOPreview.View
 
 		public void SetHighlight(bool enabled, Color color, int width)
 		{
-			if (this._isHighlightEnabled == enabled)
+			if (this._isHighlightRequested == enabled)
 			{
 				return;
 			}
 
 			if (enabled)
 			{
-				this._isHighlightEnabled = true;
+				this._isHighlightRequested = true;
 				this._highlightWidth = width;
 				this.BackColor = color;
 			}
 			else
 			{
-				this._isHighlightEnabled = false;
+				this._isHighlightRequested = false;
 				this.BackColor = SystemColors.Control;
 			}
 
@@ -226,12 +253,14 @@ namespace EveOPreview.View
 			int locationX = this.Location.X;
 			int locationY = this.Location.Y;
 
-			int newWidth = (zoomFactor * this.ClientSize.Width) + (this.Size.Width - this.ClientSize.Width);
-			int newHeight = (zoomFactor * this.ClientSize.Height) + (this.Size.Height - this.ClientSize.Height);
+			int clientSizeWidth = this.ClientSize.Width;
+			int clientSizeHeight = this.ClientSize.Height;
+			int newWidth = (zoomFactor * clientSizeWidth) + (this.Size.Width - clientSizeWidth);
+			int newHeight = (zoomFactor * clientSizeHeight) + (this.Size.Height - clientSizeHeight);
 
 			// First change size, THEN move the window
 			// Otherwise there is a chance to fail in a loop
-			// Zoom requied -> Moved the windows 1st -> Focus is lost -> Window is moved back -> Focus is back on -> Zoom required -> ...
+			// Zoom required -> Moved the windows 1st -> Focus is lost -> Window is moved back -> Focus is back on -> Zoom required -> ...
 			this.MaximumSize = new Size(0, 0);
 			this.Size = new Size(newWidth, newHeight);
 
@@ -287,15 +316,7 @@ namespace EveOPreview.View
 
 			this._hotkeyHandler = new HotkeyHandler(this.Handle, hotkey);
 			this._hotkeyHandler.Pressed += HotkeyPressed_Handler;
-			try
-			{
-				this._hotkeyHandler.Register();
-			}
-			catch (Exception)
-			{
-				// There can be a lot of possible exception reasons here
-				// In case of any of them the hotkey setting is silently ignored
-			}
+			this._hotkeyHandler.Register();
 		}
 
 		public void UnregisterHotkey()
@@ -313,27 +334,55 @@ namespace EveOPreview.View
 
 		public void Refresh(bool forceRefresh)
 		{
-			// To prevent flickering the old broken thumbnail is removed AFTER the new shiny one is created
-			IDwmThumbnail obsoleteThumbnail = forceRefresh ? this._thumbnail : null;
+			this.RefreshThumbnail(forceRefresh);
+			this.HighlightThumbnail(forceRefresh || this._isSizeChanged);
+			this.RefreshOverlay(forceRefresh || this._isSizeChanged || this._isLocationChanged);
 
-			if ((this._thumbnail == null) || forceRefresh)
+			this._isSizeChanged = false;
+		}
+
+		protected abstract void RefreshThumbnail(bool forceRefresh);
+
+		protected abstract void ResizeThumbnail(int baseWidth, int baseHeight, int highlightWidthTop, int highlightWidthRight, int highlightWidthBottom, int highlightWidthLeft);
+
+		private void HighlightThumbnail(bool forceRefresh)
+		{
+			if (!forceRefresh && (this._isHighlightRequested == this._isHighlightEnabled))
 			{
-				this.RegisterThumbnail();
+				// Nothing to do here
+				return;
 			}
 
-			bool sizeChanged = this._isSizeChanged || forceRefresh;
-			bool locationChanged = this._isLocationChanged || forceRefresh;
+			this._isHighlightEnabled = this._isHighlightRequested;
 
-			if (sizeChanged)
+			int baseWidth = this.ClientSize.Width;
+			int baseHeight = this.ClientSize.Height;
+
+			if (!this._isHighlightRequested)
 			{
-				this.RecalculateThumbnailSize();
-
-				this.UpdateThumbnail();
-
-				this._isSizeChanged = false;
+				//No highlighting enabled, so no math required
+				this.ResizeThumbnail(baseWidth, baseHeight, 0, 0, 0, 0);
+				return;
 			}
 
-			obsoleteThumbnail?.Unregister();
+			double baseAspectRatio = ((double)baseWidth) / baseHeight;
+
+			int actualHeight = baseHeight - 2 * this._highlightWidth;
+			double desiredWidth = actualHeight * baseAspectRatio;
+			int actualWidth = (int)Math.Round(desiredWidth, MidpointRounding.AwayFromZero);
+			int highlightWidthLeft = (baseWidth - actualWidth) / 2;
+			int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
+
+			this.ResizeThumbnail(this.ClientSize.Width, this.ClientSize.Height, this._highlightWidth, highlightWidthRight, this._highlightWidth, highlightWidthLeft);
+		}
+
+		private void RefreshOverlay(bool forceRefresh)
+		{
+			if (this._isOverlayVisible && !forceRefresh)
+			{
+				// No need to update anything. Everything is already set up
+				return;
+			}
 
 			this._overlay.EnableOverlayLabel(this.IsOverlayEnabled);
 
@@ -343,14 +392,6 @@ namespace EveOPreview.View
 				// Otherwise its position won't be set
 				this._overlay.Show();
 				this._isOverlayVisible = true;
-			}
-			else
-			{
-				if (!(sizeChanged || locationChanged))
-				{
-					// No need to adjust in the overlay location if it is already visible and properly set
-					return;
-				}
 			}
 
 			Size overlaySize = this.ClientSize;
@@ -366,37 +407,11 @@ namespace EveOPreview.View
 			this._overlay.Refresh();
 		}
 
-		private void RecalculateThumbnailSize()
-		{
-			// This approach would work only for square-shaped thumbnail window
-			// To get PROPER results we have to do some crazy math
-			//int delta = this._isHighlightEnabled ? this._highlightWidth : 0;
-			//this._thumbnail.rcDestination = new RECT(0 + delta, 0 + delta, this.ClientSize.Width - delta, this.ClientSize.Height - delta);
-			if (!this._isHighlightEnabled)
-			{
-				//No highlighting enabled, so no odd math required
-				this._thumbnail.Move(0, 0, this.ClientSize.Width, this.ClientSize.Height);
-				return;
-			}
-
-			int baseWidth = this.ClientSize.Width;
-			int baseHeight = this.ClientSize.Height;
-			double baseAspectRatio = ((double)baseWidth) / baseHeight;
-
-			int actualHeight = baseHeight - 2 * this._highlightWidth;
-			double desiredWidth = actualHeight * baseAspectRatio;
-			int actualWidth = (int)Math.Round(desiredWidth, MidpointRounding.AwayFromZero);
-			int highlightWidthLeft = (baseWidth - actualWidth) / 2;
-			int highlightWidthRight = baseWidth - actualWidth - highlightWidthLeft;
-
-			this._thumbnail.Move(0 + highlightWidthLeft, 0 + this._highlightWidth, baseWidth - highlightWidthRight, baseHeight - this._highlightWidth);
-		}
-
 		private void SuppressResizeEvent()
 		{
 			// Workaround for WinForms issue with the Resize event being fired with inconsistent ClientSize value
 			// Any Resize events fired before this timestamp will be ignored
-			this._suppressResizeEventsTimestamp = DateTime.UtcNow.AddMilliseconds(ThumbnailView.ResizeEventTimeout);
+			this._suppressResizeEventsTimestamp = DateTime.UtcNow.AddMilliseconds(ThumbnailView.RESIZE_EVENT_TIMEOUT);
 		}
 
 		#region GUI events
@@ -447,7 +462,12 @@ namespace EveOPreview.View
 			{
 				if (Control.ModifierKeys == Keys.Control)
 				{
-					this.ThumbnailDeactivated?.Invoke(this.Id);
+					this.ThumbnailDeactivated?.Invoke(this.Id, false);
+				}
+				else
+				if (Control.ModifierKeys == (Keys.Control | Keys.Shift))
+				{
+					this.ThumbnailDeactivated?.Invoke(this.Id, true);
 				}
 				else
 				{
@@ -485,20 +505,8 @@ namespace EveOPreview.View
 		}
 		#endregion
 
-		#region Thumbnail management
-		private void RegisterThumbnail()
-		{
-			this._thumbnail = this._windowManager.RegisterThumbnail(this.Handle, this.Id);
-		}
-
-		private void UpdateThumbnail()
-		{
-			this._thumbnail.Update();
-		}
-		#endregion
-
 		#region Custom Mouse mode
-		// This pair of methods saves/restores certain window propeties
+		// This pair of methods saves/restores certain window properties
 		// Methods are used to remove the 'Zoom' effect (if any) when the
 		// custom resize/move mode is activated
 		// Methods are kept on this level because moving to the presenter

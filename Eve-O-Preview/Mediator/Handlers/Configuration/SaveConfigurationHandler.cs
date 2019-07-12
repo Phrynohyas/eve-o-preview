@@ -15,11 +15,11 @@ namespace EveOPreview.Mediator.Handlers.Configuration
 			this._storage = storage;
 		}
 
-		public Task Handle(SaveConfiguration message, CancellationToken cancellationToken)
+		public Task<Unit> Handle(SaveConfiguration message, CancellationToken cancellationToken)
 		{
 			this._storage.Save();
 
-			return Task.CompletedTask;
+			return Unit.Task;
 		}
 	}
 }

@@ -7,7 +7,7 @@ namespace EveOPreview.Services.Implementation
 	sealed class ProcessMonitor : IProcessMonitor
 	{
 		#region Private constants
-		private const string DefaultProcessName = "ExeFile";
+		private const string DEFAULT_PROCESS_NAME = "ExeFile";
 		#endregion
 
 		#region Private fields
@@ -22,7 +22,7 @@ namespace EveOPreview.Services.Implementation
 		private bool IsMonitoredProcess(string processName)
 		{
 			// This is a possible extension point
-			return String.Equals(processName, ProcessMonitor.DefaultProcessName, StringComparison.OrdinalIgnoreCase);
+			return String.Equals(processName, ProcessMonitor.DEFAULT_PROCESS_NAME, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public void GetUpdatedProcesses(out ICollection<IProcessInfo> addedProcesses, out ICollection<IProcessInfo> updatedProcesses, out ICollection<IProcessInfo> removedProcesses)
@@ -62,7 +62,7 @@ namespace EveOPreview.Services.Implementation
 					if (cachedTitle != mainWindowTitle)
 					{
 						this._processCache[mainWindowHandle] = mainWindowTitle;
-						updatedProcesses.Add((IProcessInfo)new ProcessInfo(mainWindowHandle, mainWindowTitle));
+						updatedProcesses.Add(new ProcessInfo(mainWindowHandle, mainWindowTitle));
 					}
 
 					knownProcesses.Remove(mainWindowHandle);

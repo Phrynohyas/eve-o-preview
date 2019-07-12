@@ -5,7 +5,7 @@ namespace EveOPreview.Configuration.Implementation
 {
 	class ConfigurationStorage : IConfigurationStorage
 	{
-		private const string ConfigurationFileName = "EVE-O Preview.json";
+		private const string CONFIGURATION_FILE_NAME = "EVE-O Preview.json";
 
 		private readonly IAppConfig _appConfig;
 		private readonly IThumbnailConfiguration _thumbnailConfiguration;
@@ -50,7 +50,7 @@ namespace EveOPreview.Configuration.Implementation
 
 		private string GetConfigFileName()
 		{
-			return string.IsNullOrEmpty(this._appConfig.ConfigFileName) ? ConfigurationStorage.ConfigurationFileName : this._appConfig.ConfigFileName;
+			return string.IsNullOrEmpty(this._appConfig.ConfigFileName) ? ConfigurationStorage.CONFIGURATION_FILE_NAME : this._appConfig.ConfigFileName;
 		}
 	}
 }
