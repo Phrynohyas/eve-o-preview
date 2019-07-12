@@ -137,14 +137,15 @@ This setting allows to enable an alternate thumbnail render. This render doesn't
 
 # Credits
 
+## Maintained by
+
+* Phrynohyas Tig-Rah
+
+
 ## Created by
 
 * StinkRay
 
-
-## Maintained by
-
-* Phrynohyas Tig-Rah
 
 
 ## Previous maintainers
