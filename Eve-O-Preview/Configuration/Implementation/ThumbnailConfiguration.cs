@@ -34,6 +34,8 @@ namespace EveOPreview.Configuration.Implementation
 			this.ShowThumbnailsAlwaysOnTop = true;
 			this.HideThumbnailsOnLostFocus = false;
 			this.EnablePerClientThumbnailLayouts = false;
+            this.HideThumbnailBeforeLogin = false;
+
 
 			this.ThumbnailSize = new Size(384, 216);
 			this.ThumbnailMinimumSize = new Size(192, 108);
@@ -80,6 +82,7 @@ namespace EveOPreview.Configuration.Implementation
 		public bool MinimizeInactiveClients { get; set; }
 		public bool ShowThumbnailsAlwaysOnTop { get; set; }
 		public bool HideThumbnailsOnLostFocus { get; set; }
+        public bool HideThumbnailBeforeLogin { get; set; }
 
 		public bool EnablePerClientThumbnailLayouts
 		{
