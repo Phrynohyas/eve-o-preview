@@ -458,27 +458,7 @@ namespace EveOPreview.View
 
 		private void MouseDown_Handler(object sender, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Left)
-			{
-				if (Control.ModifierKeys == Keys.Control)
-				{
-					this.ThumbnailDeactivated?.Invoke(this.Id, false);
-				}
-				else
-				if (Control.ModifierKeys == (Keys.Control | Keys.Shift))
-				{
-					this.ThumbnailDeactivated?.Invoke(this.Id, true);
-				}
-				else
-				{
-					this.ThumbnailActivated?.Invoke(this.Id);
-				}
-			}
-
-			if ((e.Button == MouseButtons.Right) || (e.Button == (MouseButtons.Left | MouseButtons.Right)))
-			{
-				this.EnterCustomMouseMode();
-			}
+			this.MouseDownEventHandler(e.Button, Control.ModifierKeys);
 		}
 
 		private void MouseMove_Handler(object sender, MouseEventArgs e)
@@ -558,6 +538,28 @@ namespace EveOPreview.View
 		private void ExitCustomMouseMode()
 		{
 			this._isCustomMouseModeActive = false;
+		}
+		#endregion
+
+		#region Custom GUI events
+		protected virtual void MouseDownEventHandler(MouseButtons mouseButtons, Keys modifierKeys)
+		{
+			switch (mouseButtons)
+			{
+				case MouseButtons.Left when modifierKeys == Keys.Control:
+					this.ThumbnailDeactivated?.Invoke(this.Id, false);
+					break;
+				case MouseButtons.Left when modifierKeys == (Keys.Control | Keys.Shift):
+					this.ThumbnailDeactivated?.Invoke(this.Id, true);
+					break;
+				case MouseButtons.Left:
+					this.ThumbnailActivated?.Invoke(this.Id);
+					break;
+				case MouseButtons.Right:
+				case MouseButtons.Left | MouseButtons.Right:
+					this.EnterCustomMouseMode();
+					break;
+			}
 		}
 		#endregion
 	}
