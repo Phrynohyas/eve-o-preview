@@ -15,9 +15,6 @@ namespace EveOPreview.Services.Interop
 		public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
 		[DllImport("User32.dll")]
-		public static extern bool ReleaseCapture();
-
-		[DllImport("User32.dll")]
 		public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
 		[DllImport("user32.dll", SetLastError = true)]
@@ -25,9 +22,6 @@ namespace EveOPreview.Services.Interop
 
 		[DllImport("user32.dll")]
 		public static extern int GetWindowRect(IntPtr hWnd, out RECT rect);
-
-		[DllImport("user32.dll")]
-		public static extern bool GetClientRect(IntPtr hWnd, out RECT rect);
 
 		[DllImport("user32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -45,14 +39,5 @@ namespace EveOPreview.Services.Interop
 
 		[DllImport("user32.dll")]
 		public static extern bool IsZoomed(IntPtr hWnd);
-
-		[DllImport("user32.dll")]
-		public static extern IntPtr GetWindowDC(IntPtr hWnd);
-
-		[DllImport("user32.dll")]
-		public static extern IntPtr GetDC(IntPtr hWnd);
-
-		[DllImport("user32.dll")]
-		public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hdc);
 	}
 }

@@ -24,8 +24,6 @@ namespace EveOPreview.Configuration.Implementation
 			this.MinimizeToTray = false;
 			this.ThumbnailRefreshPeriod = 500;
 
-			this.EnableCompatibilityMode = false;
-
 			this.ThumbnailOpacity = 0.5;
 
 			this.EnableClientLayoutTracking = false;
@@ -55,9 +53,6 @@ namespace EveOPreview.Configuration.Implementation
 
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
-
-		[JsonProperty("CompatibilityMode")]
-		public bool EnableCompatibilityMode { get; set; }
 
 		[JsonProperty("ThumbnailsOpacity")]
 		public double ThumbnailOpacity { get; set; }
@@ -150,8 +145,7 @@ namespace EveOPreview.Configuration.Implementation
 			// If there is no layout too then use the default one
 			if (this.EnablePerClientThumbnailLayouts && !string.IsNullOrEmpty(activeClient))
 			{
-				Dictionary<string, Point> layoutSource;
-				if (this.PerClientLayout.TryGetValue(activeClient, out layoutSource) && layoutSource.TryGetValue(currentClient, out location))
+				if (this.PerClientLayout.TryGetValue(activeClient, out Dictionary<string, Point> layoutSource) && layoutSource.TryGetValue(currentClient, out location))
 				{
 					return location;
 				}
@@ -187,8 +181,7 @@ namespace EveOPreview.Configuration.Implementation
 
 		public ClientLayout GetClientLayout(string currentClient)
 		{
-			ClientLayout layout;
-			this.ClientLayout.TryGetValue(currentClient, out layout);
+			this.ClientLayout.TryGetValue(currentClient, out ClientLayout layout);
 
 			return layout;
 		}
@@ -200,8 +193,7 @@ namespace EveOPreview.Configuration.Implementation
 
 		public Keys GetClientHotkey(string currentClient)
 		{
-			string hotkey;
-			if (this.ClientHotkey.TryGetValue(currentClient, out hotkey))
+			if (this.ClientHotkey.TryGetValue(currentClient, out string hotkey))
 			{
 				// Protect from incorrect values
 				object rawValue = (new KeysConverter()).ConvertFromInvariantString(hotkey);

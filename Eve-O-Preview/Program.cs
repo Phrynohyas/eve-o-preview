@@ -99,7 +99,6 @@ namespace EveOPreview
 			IApplicationController controller = new ApplicationController(container);
 
 			// UI classes
-			controller.RegisterView<StaticThumbnailView, StaticThumbnailView>();
 			controller.RegisterView<LiveThumbnailView, LiveThumbnailView>();
 
 			controller.RegisterView<IMainFormView, MainForm>();

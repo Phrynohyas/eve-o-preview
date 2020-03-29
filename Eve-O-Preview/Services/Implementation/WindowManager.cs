@@ -14,7 +14,7 @@ namespace EveOPreview.Services.Implementation
 		public WindowManager()
 		{
 			// Composition is always enabled for Windows 8+
-			this.IsCompositionEnabled = 
+			this.IsCompositionEnabled =
 				((Environment.OSVersion.Version.Major == 6) && (Environment.OSVersion.Version.Minor >= 2)) // Win 8 and Win 8.1
 				|| (Environment.OSVersion.Version.Major >= 10) // Win 10
 				|| DwmNativeMethods.DwmIsCompositionEnabled(); // In case of Win 7 an API call is requiredWin 7
@@ -88,36 +88,6 @@ namespace EveOPreview.Services.Implementation
 			thumbnail.Register(destination, source);
 
 			return thumbnail;
-		}
-
-		public Image GetStaticThumbnail(IntPtr source)
-		{
-			var sourceContext = User32NativeMethods.GetDC(source);
-
-			User32NativeMethods.GetClientRect(source, out RECT windowRect);
-
-			var width = windowRect.Right - windowRect.Left;
-			var height = windowRect.Bottom - windowRect.Top;
-
-			// Check if there is anything to make thumbnail of
-			if ((width < WINDOW_SIZE_THRESHOLD) || (height < WINDOW_SIZE_THRESHOLD))
-			{
-				return null;
-			}
-
-			var destContext = Gdi32NativeMethods.CreateCompatibleDC(sourceContext);
-			var bitmap = Gdi32NativeMethods.CreateCompatibleBitmap(sourceContext, width, height);
-
-			var oldBitmap = Gdi32NativeMethods.SelectObject(destContext, bitmap);
-			Gdi32NativeMethods.BitBlt(destContext, 0, 0, width, height, sourceContext, 0, 0, Gdi32NativeMethods.SRCCOPY);
-			Gdi32NativeMethods.SelectObject(destContext, oldBitmap);
-			Gdi32NativeMethods.DeleteDC(destContext);
-			User32NativeMethods.ReleaseDC(source, sourceContext);
-
-			Image image = Image.FromHbitmap(bitmap);
-			Gdi32NativeMethods.DeleteObject(bitmap);
-
-			return image;
 		}
 	}
 }

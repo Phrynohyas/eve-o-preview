@@ -91,7 +91,6 @@ Some of the application options are not exposed in the GUI. They can be adjusted
 | Option | Description |
 | --- | --- |
 | **ActiveClientHighlightThickness** | Thickness of the border used to highlight the active client's thumbnail.<br />Allowed values are **1**...**6**.<br />The default value is **3**<br />For example: **"ActiveClientHighlightThickness": 3** |
-| **CompatibilityMode** | Enables the alternative render mode (see below)<br />The default value is **false**<br />For example: **"CompatibilityMode": true** |
 | **EnableThumbnailSnap** | Allows to disable thumbnails snap feature by setting its value to **false**<br />The default value is **true**<br />For example: **"EnableThumbnailSnap": true** |
 | **PriorityClients** | Allows to set a list of clients that are not auto-minimized on inactivity even if the **Minimize inactive EVE clients** option is enabled. Listed clients still can be minimized using Windows hotkeys or via _Ctrl+Click_ on the corresponding thumbnail<br />The default value is empty list **[]**<br />For example: **"PriorityClients": [ "EVE - Phrynohyas Tig-Rah", "EVE - Ondatra Patrouette" ]** |
 | **ThumbnailMinimumSize** | Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is written in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80"** |
@@ -124,14 +123,6 @@ The following hotkey is described as `modifier+key` where `modifier` can be **Co
     }
 
 **Note:** Do not set hotkeys to use the key combinations already used by EVE. It won't work as "_I set hotkey for my DPS char to F1 and when I'll press F1 it will automatically open the DPS char's window and activate guns_". Key combination will be swallowed by EVE-O Preview and NOT retranslated to EVE window. So it will be only "_it will automatically open the DPS char's window_".
-
-## Compatibility Mode
-
-This setting allows to enable an alternate thumbnail render. This render doesn't use advanced DWM API to create live previews. Instead it is a screenshot-based render with the following pros and cons:
-* `+`  Should work even in remote desktop environments
-* `-`  Consumes significantly more memory. In the testing environment EVE-O Preview did consume around 180 MB to manage 3 thumbnails using this render. At the same time the primary render did consume around 50 MB when run in the same environment.
-* `-`  Thumbnail images are refreshed at 1 FPS rate
-* `-`  Possible short mouse cursor freezes
 
 ---
 
