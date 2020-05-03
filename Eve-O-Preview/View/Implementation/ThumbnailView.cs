@@ -216,7 +216,6 @@ namespace EveOPreview.View
 				return;
 			}
 
-			this.TopLevel = enableTopmost;
 			this.TopMost = enableTopmost;
 			this._overlay.TopMost = enableTopmost;
 
