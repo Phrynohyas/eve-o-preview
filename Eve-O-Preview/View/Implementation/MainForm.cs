@@ -87,6 +87,12 @@ namespace EveOPreview.View
 			set => this.HideThumbnailsOnLostFocusCheckBox.Checked = value;
 		}
 
+        public bool HideThumbnailsBeforeLogin
+        {
+            get => this.EnableHideAtLoginThumbnailsLayoutsCheckBox.Checked;
+            set => this.EnableHideAtLoginThumbnailsLayoutsCheckBox.Checked = value;
+        }
+
 		public bool EnablePerClientThumbnailLayouts
 		{
 			get => this.EnablePerClientThumbnailsLayoutsCheckBox.Checked;

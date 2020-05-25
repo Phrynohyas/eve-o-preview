@@ -13,13 +13,14 @@ namespace EveOPreview.View
 		bool MinimizeToTray { get; set; }
 
 		double ThumbnailOpacity { get; set; }
-
+        
 		bool EnableClientLayoutTracking { get; set; }
 		bool HideActiveClientThumbnail { get; set; }
 		bool MinimizeInactiveClients { get; set; }
 		bool ShowThumbnailsAlwaysOnTop { get; set; }
 		bool HideThumbnailsOnLostFocus { get; set; }
 		bool EnablePerClientThumbnailLayouts { get; set; }
+        bool HideThumbnailsBeforeLogin { get; set; }
 
 		Size ThumbnailSize { get; set; }
 
