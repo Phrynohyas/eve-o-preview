@@ -89,10 +89,9 @@ namespace EveOPreview.Presenters
 
 		private async void UpdateThumbnailsSize()
 		{
-			this.SaveApplicationSettings();
-
 			if (!this._suppressSizeNotifications)
 			{
+				this.SaveApplicationSettings();
 				await this._mediator.Publish(new ThumbnailConfiguredSizeUpdated());
 			}
 		}
