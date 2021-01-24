@@ -49,6 +49,7 @@ namespace EveOPreview.Presenters
 
 		private void Activate()
 		{
+			this._suppressSizeNotifications = true;
 			this.LoadApplicationSettings();
 			this.View.SetDocumentationUrl(MainFormPresenter.FORUM_URL);
 			this.View.SetVersionInfo(this.GetApplicationVersion());
@@ -58,6 +59,7 @@ namespace EveOPreview.Presenters
 			}
 
 			this._mediator.Send(new StartService());
+			this._suppressSizeNotifications = false;
 		}
 
 		private void Minimize()
