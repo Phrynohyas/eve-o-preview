@@ -147,6 +147,7 @@
     <Compile Include="Services\Interop\DWM_THUMBNAIL_PROPERTIES.cs" />
     <Compile Include="Services\Interop\DWM_TNP_CONSTANTS.cs" />
     <Compile Include="Services\Interface\IWindowManager.cs" />
+    <Compile Include="Services\Interop\Gdi32NativeMethods.cs" />
     <Compile Include="Services\Interop\MARGINS.cs" />
     <Compile Include="Services\Interop\RECT.cs" />
     <Compile Include="Configuration\Interface\ClientLayout.cs" />
@@ -162,6 +163,9 @@
     </Compile>
     <Compile Include="View\Implementation\StaticThumbnailImage.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="View\Implementation\StaticThumbnailView.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\Interface\IThumbnailViewFactory.cs" />
     <Compile Include="Services\Interface\IThumbnailManager.cs" />
