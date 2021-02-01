@@ -1,9 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 14.00
-# Visual Studio 2015
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eve-O-Preview", "Eve-O-Preview\Eve-O-Preview.csproj", "{6CA62DF3-8589-484C-8BC8-F763CA66BBB1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eve-O-Mock", "Eve-O-Mock\Eve-O-Mock.csproj", "{BE2C3A13-CC19-4525-895F-381DD71C5833}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "build\Build.csproj", "{68083BCC-92B8-4A73-BFD2-0DE619873F86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,8 +23,13 @@ Global
 		{BE2C3A13-CC19-4525-895F-381DD71C5833}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE2C3A13-CC19-4525-895F-381DD71C5833}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE2C3A13-CC19-4525-895F-381DD71C5833}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68083BCC-92B8-4A73-BFD2-0DE619873F86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68083BCC-92B8-4A73-BFD2-0DE619873F86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {157D7AB8-ED90-4599-BD45-ECE31A4226A8}
 	EndGlobalSection
 EndGlobal
