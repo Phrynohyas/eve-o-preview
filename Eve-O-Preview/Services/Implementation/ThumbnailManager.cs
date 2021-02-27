@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows.Forms;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -7,6 +9,7 @@ using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
 using EveOPreview.View;
 using MediatR;
+using EveOPreview.UI.Hotkeys;
 
 namespace EveOPreview.Services
 {
@@ -20,6 +23,7 @@ namespace EveOPreview.Services
 		private const int DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY = 2;
 
 		private const string DEFAULT_CLIENT_TITLE = "EVE";
+		private HotkeyHandler _hotkeyHandler;
 		#endregion
 
 		#region Private fields
@@ -71,8 +75,35 @@ namespace EveOPreview.Services
 		public void Start()
 		{
 			this._thumbnailUpdateTimer.Start();
-
+			GlobalHotKey.RegisterHotKey("Ctrl + Tab", () => HotkeyPressed_Handler());
 			this.RefreshThumbnails();
+		}
+
+		private void HotkeyPressed_Handler()
+		{
+			var activeWindowTagged = false;
+			var windowActivated = false;
+
+			foreach (KeyValuePair<IntPtr, IThumbnailView> kvp in this._thumbnailViews)
+			{
+				if (activeWindowTagged)
+				{
+					// activate another window //
+					ThumbnailActivated(kvp.Key);
+					windowActivated = true;
+					break;
+				}
+				if (kvp.Key == this._activeClient.Handle)
+				{
+					activeWindowTagged = true;
+				}
+			}
+			if (!windowActivated)
+            {
+				var k = this._thumbnailViews.Keys.GetEnumerator();
+				k.MoveNext();
+				ThumbnailActivated(k.Current);
+            }
 		}
 
 		public void Stop()
@@ -398,9 +429,9 @@ namespace EveOPreview.Services
 			IThumbnailView view = this._thumbnailViews[id];
 
 			Task.Run(() =>
-				{
-					this._windowManager.ActivateWindow(view.Id);
-				})
+			{
+				this._windowManager.ActivateWindow(view.Id);
+			})
 				.ContinueWith((task) =>
 				{
 					// This code should be executed on UI thread
