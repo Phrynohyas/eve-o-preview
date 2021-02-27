@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -98,11 +96,11 @@ namespace EveOPreview.Services
 				}
 			}
 			if (!windowActivated)
-            {
+			{
 				var k = this._thumbnailViews.Keys.GetEnumerator();
 				k.MoveNext();
 				ThumbnailActivated(k.Current);
-            }
+			}
 		}
 
 		public void Stop()
