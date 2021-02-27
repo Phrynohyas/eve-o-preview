@@ -89,6 +89,7 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -119,6 +120,7 @@
     <Compile Include="Configuration\Interface\IAppConfig.cs" />
     <Compile Include="Configuration\Interface\IThumbnailConfiguration.cs" />
     <Compile Include="Configuration\Interface\ZoomAnchor.cs" />
+    <Compile Include="Hotkeys\GlobalHotKey.cs" />
     <Compile Include="Mediator\Handlers\Configuration\SaveConfigurationHandler.cs" />
     <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailFrameSettingsUpdatedHandler.cs" />
     <Compile Include="Mediator\Handlers\Thumbnails\ThumbnailConfiguredSizeUpdatedHandler.cs" />
