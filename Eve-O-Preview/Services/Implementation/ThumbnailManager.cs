@@ -23,7 +23,6 @@ namespace EveOPreview.Services
 		private const int DEFAULT_LOCATION_CHANGE_NOTIFICATION_DELAY = 2;
 
 		private const string DEFAULT_CLIENT_TITLE = "EVE";
-		private HotkeyHandler _hotkeyHandler;
 		#endregion
 
 		#region Private fields
