@@ -85,7 +85,7 @@ namespace EveOPreview.Services
 			{
 				if (activeWindowTagged)
 				{
-					// activate another window //
+					// activate next window //
 					ThumbnailActivated(kvp.Key);
 					windowActivated = true;
 					break;
@@ -95,6 +95,7 @@ namespace EveOPreview.Services
 					activeWindowTagged = true;
 				}
 			}
+			// window was not activated, meaning it was last in the list, cycle restart from 1st.
 			if (!windowActivated)
 			{
 				var k = this._thumbnailViews.Keys.GetEnumerator();
