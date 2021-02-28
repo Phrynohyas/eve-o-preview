@@ -58,8 +58,8 @@ namespace EveOPreview.Configuration.Implementation
 		}
 		public string NextWindowShortcut { get; set; }
 		public string NextAnyWindowShortcut { get; set; }
-
 		public IList<string> NextWindowIgnoredTitles { get; set; }
+
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
 
