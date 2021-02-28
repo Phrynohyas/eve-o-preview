@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace EveOPreview.Configuration
@@ -10,6 +11,7 @@ namespace EveOPreview.Configuration
 
 		bool EnableCompatibilityMode { get; set; }
 		string NextWindowShortcut { get; set; }
+		IList<string> NextWindowIgnoredTitles { get; set; }
 
 		double ThumbnailOpacity { get; set; }
 

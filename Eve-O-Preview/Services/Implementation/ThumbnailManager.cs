@@ -31,6 +31,7 @@ namespace EveOPreview.Services
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
+		private readonly Dictionary<IntPtr, IThumbnailView> _cyclableThumbnailViews;
 
 		private (IntPtr Handle, string Title) _activeClient;
 		private IntPtr _externalApplication;
@@ -62,7 +63,7 @@ namespace EveOPreview.Services
 			this._enqueuedLocationChangeNotification = (IntPtr.Zero, null, null, Point.Empty, -1);
 
 			this._thumbnailViews = new Dictionary<IntPtr, IThumbnailView>();
-
+			this._cyclableThumbnailViews = new Dictionary<IntPtr, IThumbnailView>();
 			//  DispatcherTimer setup
 			this._thumbnailUpdateTimer = new DispatcherTimer();
 			this._thumbnailUpdateTimer.Tick += ThumbnailUpdateTimerTick;
@@ -72,36 +73,24 @@ namespace EveOPreview.Services
 		public void Start()
 		{
 			this._thumbnailUpdateTimer.Start();
-			GlobalHotKey.RegisterHotKey(_configuration.NextWindowShortcut, HotkeyPressed_Handler);
+			GlobalHotKey.RegisterHotKey(_configuration.NextWindowShortcut, NextWindowHandler);
 			this.RefreshThumbnails();
 		}
 
-		private void HotkeyPressed_Handler()
+		private void NextWindowHandler()
 		{
-			var activeWindowTagged = false;
-			var windowActivated = false;
-
-			foreach (KeyValuePair<IntPtr, IThumbnailView> kvp in this._thumbnailViews)
-			{
-				if (activeWindowTagged)
-				{
-					// activate next window //
-					ThumbnailActivated(kvp.Key);
-					windowActivated = true;
-					break;
-				}
-				if (kvp.Key == this._activeClient.Handle)
-				{
-					activeWindowTagged = true;
-				}
+			var windows = new List<IntPtr>(this._cyclableThumbnailViews.Keys);
+			var activeWindowIndex = windows.IndexOf(this._activeClient.Handle);
+			if (activeWindowIndex == -1)
+            {
+				activeWindowIndex = 0;
+            }
+			activeWindowIndex++;
+			if (activeWindowIndex >= this._cyclableThumbnailViews.Count)
+            {
+				activeWindowIndex = 0;
 			}
-			// window was not activated, meaning it was last in the list, cycle restart from 1st.
-			if (!windowActivated)
-			{
-				var k = this._thumbnailViews.Keys.GetEnumerator();
-				k.MoveNext();
-				ThumbnailActivated(k.Current);
-			}
+			this.ThumbnailActivated(windows[activeWindowIndex]);
 		}
 
 		public void Stop()
@@ -137,7 +126,11 @@ namespace EveOPreview.Services
 											: this._configuration.GetDefaultThumbnailLocation();
 
 				this._thumbnailViews.Add(view.Id, view);
-
+				// Window doesnt have to be ignored for next window shortcut.
+				if (this._configuration.NextWindowIgnoredTitles.IndexOf(view.Title) == -1)
+                {
+					this._cyclableThumbnailViews.Add(view.Id, view);
+                }
 				view.ThumbnailResized = this.ThumbnailViewResized;
 				view.ThumbnailMoved = this.ThumbnailViewMoved;
 				view.ThumbnailFocused = this.ThumbnailViewFocused;
