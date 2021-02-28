@@ -92,6 +92,10 @@ namespace EveOPreview.Services
             {
 				activeWindowIndex = 0;
 			}
+			if (this._configuration.MinimizeInactiveClients && !this._configuration.IsPriorityClient(this._activeClient.Title))
+			{
+				this._windowManager.MinimizeWindow(this._activeClient.Handle, false);
+			}
 			this.ThumbnailActivated(this._sortedCyclableThumbnailViews[activeWindowIndex]);
 		}
 
@@ -106,6 +110,10 @@ namespace EveOPreview.Services
 			if (activeWindowIndex >= this._sortedThumbnailViews.Count)
 			{
 				activeWindowIndex = 0;
+			}
+			if (this._configuration.MinimizeInactiveClients && !this._configuration.IsPriorityClient(this._activeClient.Title))
+			{
+				this._windowManager.MinimizeWindow(this._activeClient.Handle, false);
 			}
 			this.ThumbnailActivated(this._sortedThumbnailViews[activeWindowIndex]);
 		}
