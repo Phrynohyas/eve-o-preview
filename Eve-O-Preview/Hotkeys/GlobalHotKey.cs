@@ -26,10 +26,10 @@ namespace EveOPreview.UI.Hotkeys
 
         public static bool RegisterHotKey(ModifierKeys aModifier, Key aKey, Action aAction)
         {
-            if (aModifier == ModifierKeys.None)
+/*            if (aModifier == ModifierKeys.None)
             {
                 throw new ArgumentException("Modifier must not be ModifierKeys.None");
-            }
+            } */
             if (aAction is null)
             {
                 throw new ArgumentNullException(nameof(aAction));

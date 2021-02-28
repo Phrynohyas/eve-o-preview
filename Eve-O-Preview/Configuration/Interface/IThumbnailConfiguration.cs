@@ -9,6 +9,7 @@ namespace EveOPreview.Configuration
 		int ThumbnailRefreshPeriod { get; set; }
 
 		bool EnableCompatibilityMode { get; set; }
+		string NextWindowShortcut { get; set; }
 
 		double ThumbnailOpacity { get; set; }
 

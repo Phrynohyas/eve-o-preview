@@ -51,8 +51,10 @@ namespace EveOPreview.Configuration.Implementation
 			this.EnableActiveClientHighlight = false;
 			this.ActiveClientHighlightColor = Color.GreenYellow;
 			this.ActiveClientHighlightThickness = 3;
-		}
 
+			this.NextWindowShortcut = "Ctrl + Tab";
+		}
+		public string NextWindowShortcut { get; set; }
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
 
