@@ -15,11 +15,7 @@ The program does NOT (and will NOT ever) do the following things:
 
 If you have find out that some of the features or their combination of EVE-O Preview might cause actions that can be considered as breaking EULA or ToS of EVE Online you should consider them as a bug and immediately notify the Developer ( Phrynohyas Tig-Rah ) via in-game mail.
 
-## System Requirements
-
-* Windows 7, Windows 8/8.1, Windows 10
-* Microsoft .NET Framework 4.7+
-* EVE clients Display Mode should be set to **Fixed Window** or **Window Mode**. **Fullscreen** mode is not supported.
+<div style="page-break-after: always;"></div>
 
 ## How To Install & Use
 
@@ -27,6 +23,14 @@ If you have find out that some of the features or their combination of EVE-O Pre
 ..* **Note**: Please do not install the application into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described below
+
+## System Requirements
+
+* Windows 7, Windows 8/8.1, Windows 10
+* Microsoft .NET Framework 4.7+
+* EVE clients Display Mode should be set to **Fixed Window** or **Window Mode**. **Fullscreen** mode is not supported.
+
+<div style="page-break-after: always;"></div>
 
 ## EVE Online EULA/ToS
 
@@ -50,26 +54,43 @@ CCP Grimmi wrote:
 
 ### Application Options Available Via GUI
 
-| Tab | Option | Description |
-| --- | --- | --- |
-| **General** | Minimize to System Tray | Determines whether the main window form be minimized to windows tray when it is closed |
-| General | Track client locations | Determines whether the client's window position should be restored when it is activated or started |
-| General | Hide preview of active EVE client | Determines whether the thumbnail corresponding to the active EVE client is not displayed |
-| General | Minimize inactive EVE clients | Allows to auto-minimize inactive EVE clients to save CPU and GPU |
-| General | Previews always on top | Determines whether EVE client thumbnails should stay on top of all other windows |
-| General | Hide previews when EVE client is not active | Determines whether all thumbnails should be visible only when an EVE client is active |
-| General | Unique layout for each EVE client | Determines whether thumbnails positions are different depending on the EVE client being active (f.e. links char have thumbnails of the Falcon and DPS char in the right bottom corner while DPS and Falcon alts have them placed at the top of the main EVE window ) |
-| **Thumbnail** | Opacity | Determines the inactive EVE thumbnails opacity (from almost invisible 20% to 100% solid) |
-| Thumbnail | Thumbnail Width | Thumbnails width. Can be set to any value from **100** to **640** points |
-| Thumbnail | Thumbnail Height | Thumbnails Height. Can be set to any value from **80** to **400** points |
-| **Zoom** | Zoom on hover | Determines whether a thumbnail should be zoomed when the mouse pointer is over it  |
-| Zoom | Zoom factor | Thumbnail zoom factor. Can be set to any value from **2** to **10** |
-| Zoom | Zoom anchor | Sets the starting point of the thumbnail zoom |
-| **Overlay** | Show overlay | Determines whether a name of the corresponding EVE client should be displayed on the thumbnail |
-| Overlay | Show frames | Determines whether thumbnails should be displays with window caption and borders |
-| Overlay | Highlight active client | Determines whether the thumbnail of the active EVE client should be highlighted with a bright border |
-| Overlay | Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
-| **Active Clients** | Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
+#### **General** Tab
+| Option | Description |
+| --- | --- |
+| Minimize to System Tray | Determines whether the main window form be minimized to windows tray when it is closed |
+| Track client locations | Determines whether the client's window position should be restored when it is activated or started |
+| Hide preview of active EVE client | Determines whether the thumbnail corresponding to the active EVE client is not displayed |
+| Minimize inactive EVE clients | Allows to auto-minimize inactive EVE clients to save CPU and GPU |
+| Previews always on top | Determines whether EVE client thumbnails should stay on top of all other windows |
+| Hide previews when EVE client is not active | Determines whether all thumbnails should be visible only when an EVE client is active |
+| Unique layout for each EVE client | Determines whether thumbnails positions are different depending on the EVE client being active |
+
+#### **Thumbnail** Tab
+| Option | Description |
+| --- | --- |
+| Opacity | Determines the inactive EVE thumbnails opacity (from almost invisible 20% to 100% solid) |
+| Thumbnail Width | Thumbnails width. Can be set to any value from **100** to **640** points |
+| Thumbnail Height | Thumbnails Height. Can be set to any value from **80** to **400** points |
+
+#### **Zoom** Tab
+| Option | Description |
+| --- | --- |
+| Zoom on hover | Determines whether a thumbnail should be zoomed when the mouse pointer is over it  |
+| Zoom factor | Thumbnail zoom factor. Can be set to any value from **2** to **10** |
+| Zoom anchor | Sets the starting point of the thumbnail zoom |
+
+#### **Overlay** Tab
+| Option | Description |
+| --- | --- |
+| Show overlay | Determines whether a name of the corresponding EVE client should be displayed on the thumbnail |
+| Show frames | Determines whether thumbnails should be displays with window caption and borders |
+| Highlight active client | Determines whether the thumbnail of the active EVE client should be highlighted with a bright border |
+| Color | Color used to highlight the active client's thumbnail in case the corresponding option is set |
+
+#### **Active Clients** Tab
+| Option | Description |
+| --- | --- |
+| Thumbnails list | List of currently active EVE client thumbnails. Checking an element in this list will hide the corresponding thumbnail. However these checks are not persisted and on the next EVE client or EVE-O Preview run the thumbnail will be visible again |
 
 <div style="page-break-after: always;"></div>
 
@@ -96,12 +117,12 @@ Some of the application options are not exposed in the GUI. They can be adjusted
 
 | Option | Description |
 | --- | --- |
-| **ActiveClientHighlightThickness** | Thickness of the border used to highlight the active client's thumbnail.<br />Allowed values are **1**...**6**.<br />The default value is **3**<br />For example: **"ActiveClientHighlightThickness": 3** |
-| **CompatibilityMode** | Enables the alternative render mode (see below)<br />The default value is **false**<br />For example: **"CompatibilityMode": true** |
-| **EnableThumbnailSnap** | Allows to disable thumbnails snap feature by setting its value to **false**<br />The default value is **true**<br />For example: **"EnableThumbnailSnap": true** |
-| **PriorityClients** | Allows to set a list of clients that are not auto-minimized on inactivity even if the **Minimize inactive EVE clients** option is enabled. Listed clients still can be minimized using Windows hotkeys or via _Ctrl+Click_ on the corresponding thumbnail<br />The default value is empty list **[]**<br />For example: **"PriorityClients": [ "EVE - Phrynohyas Tig-Rah", "EVE - Ondatra Patrouette" ]** |
-| **ThumbnailMinimumSize** | Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is written in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80"** |
-| **ThumbnailMaximumSize** | Maximum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is written in the form "width, height"<br />The default value is **"640, 400"**.<br />For example: **"ThumbnailMaximumSize": "640, 400"** |
+| **ActiveClientHighlightThickness** | <div style="font-size: small">Thickness of the border used to highlight the active client's thumbnail.<br />Allowed values are **1**...**6**.<br />The default value is **3**<br />For example: **"ActiveClientHighlightThickness": 3**</div> |
+| **CompatibilityMode** | <div style="font-size: small">Enables the alternative render mode (see below)<br />The default value is **false**<br />For example: **"CompatibilityMode": true**</div> |
+| **EnableThumbnailSnap** | <div style="font-size: small">Allows to disable thumbnails snap feature by setting its value to **false**<br />The default value is **true**<br />For example: **"EnableThumbnailSnap": true**</div> |
+| **PriorityClients** | <div style="font-size: small">Allows to set a list of clients that are not auto-minimized on inactivity even if the **Minimize inactive EVE clients** option is enabled. Listed clients still can be minimized using Windows hotkeys or via _Ctrl+Click_ on the corresponding thumbnail<br />The default value is empty list **[]**<br />For example: **"PriorityClients": [ "EVE - Phrynohyas Tig-Rah", "EVE - Ondatra Patrouette" ]**</div> |
+| **ThumbnailMinimumSize** | <div style="font-size: small">Minimum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is written in the form "width, height"<br />The default value is **"100, 80"**.<br />For example: **"ThumbnailMinimumSize": "100, 80"**</div> |
+| **ThumbnailMaximumSize** | <div style="font-size: small">Maximum thumbnail size that can be set either via GUI or by resizing a thumbnail window. Value is written in the form "width, height"<br />The default value is **"640, 400"**.<br />For example: **"ThumbnailMaximumSize": "640, 400"**</div> |
 
 <div style="page-break-after: always;"></div>
 
