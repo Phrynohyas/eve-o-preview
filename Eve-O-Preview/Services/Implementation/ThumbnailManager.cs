@@ -31,7 +31,8 @@ namespace EveOPreview.Services
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
-		private readonly Dictionary<IntPtr, IThumbnailView> _cyclableThumbnailViews;
+		private readonly IList<IntPtr> _sortedThumbnailViews;
+		private readonly IList<IntPtr> _sortedCyclableThumbnailViews;
 
 		private (IntPtr Handle, string Title) _activeClient;
 		private IntPtr _externalApplication;
@@ -63,7 +64,8 @@ namespace EveOPreview.Services
 			this._enqueuedLocationChangeNotification = (IntPtr.Zero, null, null, Point.Empty, -1);
 
 			this._thumbnailViews = new Dictionary<IntPtr, IThumbnailView>();
-			this._cyclableThumbnailViews = new Dictionary<IntPtr, IThumbnailView>();
+			this._sortedThumbnailViews = new List<IntPtr>();
+			this._sortedCyclableThumbnailViews = new List<IntPtr>();
 			//  DispatcherTimer setup
 			this._thumbnailUpdateTimer = new DispatcherTimer();
 			this._thumbnailUpdateTimer.Tick += ThumbnailUpdateTimerTick;
@@ -80,34 +82,32 @@ namespace EveOPreview.Services
 
 		private void NextWindowHandler()
 		{
-			var windows = new List<IntPtr>(this._cyclableThumbnailViews.Keys);
-			var activeWindowIndex = windows.IndexOf(this._activeClient.Handle);
+			var activeWindowIndex = this._sortedCyclableThumbnailViews.IndexOf(this._activeClient.Handle);
 			if (activeWindowIndex == -1)
             {
 				activeWindowIndex = 0;
             }
 			activeWindowIndex++;
-			if (activeWindowIndex >= this._cyclableThumbnailViews.Count)
+			if (activeWindowIndex >= this._sortedCyclableThumbnailViews.Count)
             {
 				activeWindowIndex = 0;
 			}
-			this.ThumbnailActivated(windows[activeWindowIndex]);
+			this.ThumbnailActivated(this._sortedCyclableThumbnailViews[activeWindowIndex]);
 		}
 
 		private void NextAnyWindowHandler()
 		{
-			var windows = new List<IntPtr>(this._thumbnailViews.Keys);
-			var activeWindowIndex = windows.IndexOf(this._activeClient.Handle);
+			var activeWindowIndex = this._sortedThumbnailViews.IndexOf(this._activeClient.Handle);
 			if (activeWindowIndex == -1)
 			{
 				activeWindowIndex = 0;
 			}
 			activeWindowIndex++;
-			if (activeWindowIndex >= this._thumbnailViews.Count)
+			if (activeWindowIndex >= this._sortedThumbnailViews.Count)
 			{
 				activeWindowIndex = 0;
 			}
-			this.ThumbnailActivated(windows[activeWindowIndex]);
+			this.ThumbnailActivated(this._sortedThumbnailViews[activeWindowIndex]);
 		}
 
 		public void Stop()
@@ -143,11 +143,7 @@ namespace EveOPreview.Services
 											: this._configuration.GetDefaultThumbnailLocation();
 
 				this._thumbnailViews.Add(view.Id, view);
-				// Window doesnt have to be ignored for next window shortcut.
-				if (this._configuration.NextWindowIgnoredTitles.IndexOf(view.Title) == -1)
-                {
-					this._cyclableThumbnailViews.Add(view.Id, view);
-                }
+
 				view.ThumbnailResized = this.ThumbnailViewResized;
 				view.ThumbnailMoved = this.ThumbnailViewMoved;
 				view.ThumbnailFocused = this.ThumbnailViewFocused;
@@ -211,6 +207,33 @@ namespace EveOPreview.Services
 
 			if ((viewsAdded.Count > 0) || (viewsRemoved.Count > 0))
 			{
+				this._sortedThumbnailViews.Clear();
+				this._sortedCyclableThumbnailViews.Clear();
+				foreach (string title in this._configuration.NextWindowOrdering)
+                {
+					foreach (KeyValuePair<IntPtr,IThumbnailView>kvp in this._thumbnailViews)
+                    {
+						if (kvp.Value.Title == title)
+                        {
+							this._sortedThumbnailViews.Add(kvp.Key);
+							if (this._configuration.NextWindowIgnoredTitles.IndexOf(title) == -1)
+                            {
+								this._sortedCyclableThumbnailViews.Add(kvp.Key);
+							}
+                        }
+                    }
+                }
+				foreach (KeyValuePair<IntPtr, IThumbnailView> kvp in this._thumbnailViews)
+                {
+					if (this._sortedThumbnailViews.IndexOf(kvp.Key) == -1)
+                    {
+						this._sortedThumbnailViews.Add(kvp.Key);
+						if (this._configuration.NextWindowIgnoredTitles.IndexOf(kvp.Value.Title) == -1)
+						{
+							this._sortedCyclableThumbnailViews.Add(kvp.Key);
+						}
+					}
+				}
 				await this._mediator.Publish(new ThumbnailListUpdated(viewsAdded, viewsRemoved));
 			}
 		}

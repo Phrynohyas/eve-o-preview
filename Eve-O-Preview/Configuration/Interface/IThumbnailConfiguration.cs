@@ -14,6 +14,7 @@ namespace EveOPreview.Configuration
 		string NextWindowShortcut { get; set; }
 		string NextAnyWindowShortcut { get; set; }
 		IList<string> NextWindowIgnoredTitles { get; set; }
+		IList<string> NextWindowOrdering { get; set; }
 
 		double ThumbnailOpacity { get; set; }
 

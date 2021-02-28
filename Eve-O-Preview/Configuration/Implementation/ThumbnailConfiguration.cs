@@ -55,10 +55,12 @@ namespace EveOPreview.Configuration.Implementation
 			this.NextWindowShortcut = "Ctrl + Tab";
 			this.NextAnyWindowShortcut = "Ctrl + Shift + Tab";
 			this.NextWindowIgnoredTitles = new List<string>();
+			this.NextWindowOrdering = new List<string>();
 		}
 		public string NextWindowShortcut { get; set; }
 		public string NextAnyWindowShortcut { get; set; }
 		public IList<string> NextWindowIgnoredTitles { get; set; }
+		public IList<string> NextWindowOrdering { get; set; }
 
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
