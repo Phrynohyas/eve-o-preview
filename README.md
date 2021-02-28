@@ -11,15 +11,17 @@ The program does NOT (and will NOT ever) do the following things:
 * broadcast any keyboard or mouse events
 * anyhow interact with EVE Online except of bringing its main window to foreground or resizing/minimizing it
 
-**Under any conditions you should NOT use EVE-O Preview for any actions that break EULA or ToS of EVE Online.**
-
-If you have find out that some of the features or their combination of EVE-O Preview might cause actions that can be considered as breaking EULA or ToS of EVE Online you should consider them as a bug and immediately notify the Developer ( Phrynohyas Tig-Rah ) via in-game mail.
-
 <div style="text-align: center;">
 
 ![EVE Partner](https://github.com/Phrynohyas/eve-o-preview/blob/develop/assets/PartnerBadge.png?raw=true)
 
 </div>
+
+<div style="page-break-after: always;"></div>
+
+**Under any conditions you should NOT use EVE-O Preview for any actions that break EULA or ToS of EVE Online.**
+
+If you have find out that some of the features or their combination of EVE-O Preview might cause actions that can be considered as breaking EULA or ToS of EVE Online you should consider them as a bug and immediately notify the Developer ( Phrynohyas Tig-Rah ) via in-game mail.
 
 <div style="page-break-after: always;"></div>
 
