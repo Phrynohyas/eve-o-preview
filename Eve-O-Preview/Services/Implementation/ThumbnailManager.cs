@@ -74,6 +74,7 @@ namespace EveOPreview.Services
 		{
 			this._thumbnailUpdateTimer.Start();
 			GlobalHotKey.RegisterHotKey(_configuration.NextWindowShortcut, NextWindowHandler);
+			GlobalHotKey.RegisterHotKey(_configuration.NextAnyWindowShortcut, NextAnyWindowHandler);
 			this.RefreshThumbnails();
 		}
 
@@ -88,6 +89,22 @@ namespace EveOPreview.Services
 			activeWindowIndex++;
 			if (activeWindowIndex >= this._cyclableThumbnailViews.Count)
             {
+				activeWindowIndex = 0;
+			}
+			this.ThumbnailActivated(windows[activeWindowIndex]);
+		}
+
+		private void NextAnyWindowHandler()
+		{
+			var windows = new List<IntPtr>(this._thumbnailViews.Keys);
+			var activeWindowIndex = windows.IndexOf(this._activeClient.Handle);
+			if (activeWindowIndex == -1)
+			{
+				activeWindowIndex = 0;
+			}
+			activeWindowIndex++;
+			if (activeWindowIndex >= this._thumbnailViews.Count)
+			{
 				activeWindowIndex = 0;
 			}
 			this.ThumbnailActivated(windows[activeWindowIndex]);

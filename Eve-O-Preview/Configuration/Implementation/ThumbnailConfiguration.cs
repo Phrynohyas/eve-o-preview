@@ -53,9 +53,12 @@ namespace EveOPreview.Configuration.Implementation
 			this.ActiveClientHighlightThickness = 3;
 
 			this.NextWindowShortcut = "Ctrl + Tab";
+			this.NextAnyWindowShortcut = "Ctrl + Shift + Tab";
 			this.NextWindowIgnoredTitles = new List<string>();
 		}
 		public string NextWindowShortcut { get; set; }
+		public string NextAnyWindowShortcut { get; set; }
+
 		public IList<string> NextWindowIgnoredTitles { get; set; }
 		public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
