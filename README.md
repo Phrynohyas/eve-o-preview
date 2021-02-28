@@ -15,6 +15,12 @@ The program does NOT (and will NOT ever) do the following things:
 
 If you have find out that some of the features or their combination of EVE-O Preview might cause actions that can be considered as breaking EULA or ToS of EVE Online you should consider them as a bug and immediately notify the Developer ( Phrynohyas Tig-Rah ) via in-game mail.
 
+<div style="text-align: center;">
+
+![EVE Partner](https://github.com/Phrynohyas/eve-o-preview/blob/develop/assets/PartnerBadge.png?raw=true)
+
+</div>
+
 <div style="page-break-after: always;"></div>
 
 ## How To Install & Use
