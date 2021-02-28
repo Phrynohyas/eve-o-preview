@@ -72,7 +72,7 @@ namespace EveOPreview.Services
 		public void Start()
 		{
 			this._thumbnailUpdateTimer.Start();
-			GlobalHotKey.RegisterHotKey("Ctrl + Tab", () => HotkeyPressed_Handler());
+			GlobalHotKey.RegisterHotKey("Ctrl + Tab", HotkeyPressed_Handler);
 			this.RefreshThumbnails();
 		}
 
