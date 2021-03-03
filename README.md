@@ -32,6 +32,13 @@ If you have find out that some of the features or their combination of EVE-O Pre
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described below
 
+Video Guides:
+
+* [EVE-O Preview настройка с пояснениями](https://youtu.be/IW1-pzJzb80)
+
+* [Eve online , How To : Eve-O Preview (multiboxing; legal)](https://youtu.be/2r0NMKbogXU)
+
+
 ## System Requirements
 
 * Windows 7, Windows 8/8.1, Windows 10
