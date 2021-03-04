@@ -183,7 +183,7 @@ namespace EveOPreview.Services
 			string foregroundWindowTitle = null;
 
 			// Check if the foreground window handle is one of the known handles for client windows or their thumbnails
-			bool isClientWindow = this.IsClientWindowActive(foregroundWindowHandle);
+			bool isClientWindow = this.IsClientWindowActive(foregroundWindowHandle) || foregroundWindowHandle == IntPtr.Zero;
 
 			if (foregroundWindowHandle == this._activeClient.Handle)
 			{
