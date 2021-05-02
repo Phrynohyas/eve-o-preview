@@ -25,10 +25,18 @@ If you have find out that some of the features or their combination of EVE-O Pre
 
 <div style="page-break-after: always;"></div>
 
+<<<<<<< HEAD
 ## How To Install & Use
+=======
+* Windows 7, Windows 8/8.1, Windows 10
+* Microsoft .NET Framework 4.6.2+
+* EVE clients Display Mode should be set to **Fixed Window** or **Window Mode**. **Fullscreen** mode is not supported.
+
+# How To Install & Use
+>>>>>>> master
 
 1. Download and extract the contents of the .zip archive to a location of your choice (ie: Desktop, CCP folder, etc)
-..* **Note**: Please do not install the application into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
+..**Note**: Please do not install the application into the *Program Files* or *Program files (x86)* folders. These folders in general do not allow applications to write anything there while EVE-O Preview now stores its configuration file next to its executable, thus requiring the write access to the folder it is installed into.
 2. Start up both EVE-O Preview and your EVE Clients (the order does not matter)
 3. Adjust settings as you see fit. Program options are described below
 
