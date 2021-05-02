@@ -32,8 +32,10 @@ namespace EveOPreview.Configuration.Implementation
 			this.HideActiveClientThumbnail = false;
 			this.MinimizeInactiveClients = false;
 			this.ShowThumbnailsAlwaysOnTop = true;
-			this.HideThumbnailsOnLostFocus = false;
 			this.EnablePerClientThumbnailLayouts = false;
+
+			this.HideThumbnailsOnLostFocus = false;
+			this.HideThumbnailsDelay = 2; // 2 thumbnails refresh cycles (1.0 sec)
 
 			this.ThumbnailSize = new Size(384, 216);
 			this.ThumbnailMinimumSize = new Size(192, 108);
@@ -79,7 +81,6 @@ namespace EveOPreview.Configuration.Implementation
 		public bool HideActiveClientThumbnail { get; set; }
 		public bool MinimizeInactiveClients { get; set; }
 		public bool ShowThumbnailsAlwaysOnTop { get; set; }
-		public bool HideThumbnailsOnLostFocus { get; set; }
 
 		public bool EnablePerClientThumbnailLayouts
 		{
@@ -94,6 +95,9 @@ namespace EveOPreview.Configuration.Implementation
 				this._enablePerClientThumbnailLayouts = value;
 			}
 		}
+
+		public bool HideThumbnailsOnLostFocus { get; set; }
+		public int HideThumbnailsDelay { get; set; }
 
 		public Size ThumbnailSize { get; set; }
 		public Size ThumbnailMaximumSize { get; set; }
