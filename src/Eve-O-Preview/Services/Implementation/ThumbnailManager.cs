@@ -615,6 +615,12 @@ namespace EveOPreview.Services
 				return;
 			}
 
+			// No need to apply layout for not yet logged-in clients
+			if (clientTitle == ThumbnailManager.DEFAULT_CLIENT_TITLE)
+			{
+				return;
+			}
+
 			ClientLayout clientLayout = this._configuration.GetClientLayout(clientTitle);
 
 			if (clientLayout == null)
@@ -642,6 +648,13 @@ namespace EveOPreview.Services
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				IThumbnailView view = entry.Value;
+
+				// No need to save layout for not yet logged-in clients
+				if (view.Title == ThumbnailManager.DEFAULT_CLIENT_TITLE)
+				{
+					continue;
+				}
+
 				(int Left, int Top, int Right, int Bottom) position = this._windowManager.GetWindowPosition(view.Id);
 				int width = Math.Abs(position.Right - position.Left);
 				int height = Math.Abs(position.Bottom - position.Top);
