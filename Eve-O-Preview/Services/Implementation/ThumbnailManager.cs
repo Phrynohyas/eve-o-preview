@@ -7,6 +7,7 @@ using EveOPreview.Configuration;
 using EveOPreview.Mediator.Messages;
 using EveOPreview.View;
 using MediatR;
+using EveOPreview.UI.Hotkeys;
 
 namespace EveOPreview.Services
 {
@@ -30,6 +31,8 @@ namespace EveOPreview.Services
 		private readonly DispatcherTimer _thumbnailUpdateTimer;
 		private readonly IThumbnailViewFactory _thumbnailViewFactory;
 		private readonly Dictionary<IntPtr, IThumbnailView> _thumbnailViews;
+		private readonly IList<IntPtr> _sortedThumbnailViews;
+		private readonly IList<IntPtr> _sortedCyclableThumbnailViews;
 
 		private (IntPtr Handle, string Title) _activeClient;
 		private IntPtr _externalApplication;
@@ -61,7 +64,8 @@ namespace EveOPreview.Services
 			this._enqueuedLocationChangeNotification = (IntPtr.Zero, null, null, Point.Empty, -1);
 
 			this._thumbnailViews = new Dictionary<IntPtr, IThumbnailView>();
-
+			this._sortedThumbnailViews = new List<IntPtr>();
+			this._sortedCyclableThumbnailViews = new List<IntPtr>();
 			//  DispatcherTimer setup
 			this._thumbnailUpdateTimer = new DispatcherTimer();
 			this._thumbnailUpdateTimer.Tick += ThumbnailUpdateTimerTick;
@@ -71,8 +75,47 @@ namespace EveOPreview.Services
 		public void Start()
 		{
 			this._thumbnailUpdateTimer.Start();
-
+			GlobalHotKey.RegisterHotKey(_configuration.NextWindowShortcut, NextWindowHandler);
+			GlobalHotKey.RegisterHotKey(_configuration.NextAnyWindowShortcut, NextAnyWindowHandler);
 			this.RefreshThumbnails();
+		}
+
+		private void NextWindowHandler()
+		{
+			var activeWindowIndex = this._sortedCyclableThumbnailViews.IndexOf(this._activeClient.Handle);
+			if (activeWindowIndex == -1)
+            {
+				activeWindowIndex = 0;
+            }
+			activeWindowIndex++;
+			if (activeWindowIndex >= this._sortedCyclableThumbnailViews.Count)
+            {
+				activeWindowIndex = 0;
+			}
+			if (this._configuration.MinimizeInactiveClients && !this._configuration.IsPriorityClient(this._activeClient.Title))
+			{
+				this._windowManager.MinimizeWindow(this._activeClient.Handle, false);
+			}
+			this.ThumbnailActivated(this._sortedCyclableThumbnailViews[activeWindowIndex]);
+		}
+
+		private void NextAnyWindowHandler()
+		{
+			var activeWindowIndex = this._sortedThumbnailViews.IndexOf(this._activeClient.Handle);
+			if (activeWindowIndex == -1)
+			{
+				activeWindowIndex = 0;
+			}
+			activeWindowIndex++;
+			if (activeWindowIndex >= this._sortedThumbnailViews.Count)
+			{
+				activeWindowIndex = 0;
+			}
+			if (this._configuration.MinimizeInactiveClients && !this._configuration.IsPriorityClient(this._activeClient.Title))
+			{
+				this._windowManager.MinimizeWindow(this._activeClient.Handle, false);
+			}
+			this.ThumbnailActivated(this._sortedThumbnailViews[activeWindowIndex]);
 		}
 
 		public void Stop()
@@ -172,6 +215,33 @@ namespace EveOPreview.Services
 
 			if ((viewsAdded.Count > 0) || (viewsRemoved.Count > 0))
 			{
+				this._sortedThumbnailViews.Clear();
+				this._sortedCyclableThumbnailViews.Clear();
+				foreach (string title in this._configuration.NextWindowOrdering)
+                {
+					foreach (KeyValuePair<IntPtr,IThumbnailView>kvp in this._thumbnailViews)
+                    {
+						if (kvp.Value.Title == title)
+                        {
+							this._sortedThumbnailViews.Add(kvp.Key);
+							if (this._configuration.NextWindowIgnoredTitles.IndexOf(title) == -1)
+                            {
+								this._sortedCyclableThumbnailViews.Add(kvp.Key);
+							}
+                        }
+                    }
+                }
+				foreach (KeyValuePair<IntPtr, IThumbnailView> kvp in this._thumbnailViews)
+                {
+					if (this._sortedThumbnailViews.IndexOf(kvp.Key) == -1)
+                    {
+						this._sortedThumbnailViews.Add(kvp.Key);
+						if (this._configuration.NextWindowIgnoredTitles.IndexOf(kvp.Value.Title) == -1)
+						{
+							this._sortedCyclableThumbnailViews.Add(kvp.Key);
+						}
+					}
+				}
 				await this._mediator.Publish(new ThumbnailListUpdated(viewsAdded, viewsRemoved));
 			}
 		}
@@ -398,9 +468,9 @@ namespace EveOPreview.Services
 			IThumbnailView view = this._thumbnailViews[id];
 
 			Task.Run(() =>
-				{
-					this._windowManager.ActivateWindow(view.Id);
-				})
+			{
+				this._windowManager.ActivateWindow(view.Id);
+			})
 				.ContinueWith((task) =>
 				{
 					// This code should be executed on UI thread
