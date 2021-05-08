@@ -8,7 +8,7 @@ namespace EveOPreview.Configuration
 		bool MinimizeToTray { get; set; }
 		int ThumbnailRefreshPeriod { get; set; }
 
-		bool EnableCompatibilityMode { get; set; }
+		bool EnableWineCompatibilityMode { get; set; }
 
 		double ThumbnailOpacity { get; set; }
 
