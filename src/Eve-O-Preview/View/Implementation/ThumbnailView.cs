@@ -91,10 +91,7 @@ namespace EveOPreview.View
 			get => this.Location;
 			set
 			{
-				if ((value.X > 0) || (value.Y > 0))
-				{
-					this.StartPosition = FormStartPosition.Manual;
-				}
+				this.StartPosition = FormStartPosition.Manual;
 				this.Location = value;
 			}
 		}
