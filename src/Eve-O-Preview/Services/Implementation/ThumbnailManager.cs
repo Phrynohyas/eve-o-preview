@@ -41,6 +41,7 @@ namespace EveOPreview.Services
 		private bool _isHoverEffectActive;
 
 		private int _refreshCycleCount;
+		private int _hideThumbnailsDelay;
 		#endregion
 
 		public ThumbnailManager(IMediator mediator, IThumbnailConfiguration configuration, IProcessMonitor processMonitor, IWindowManager windowManager, IThumbnailViewFactory factory)
@@ -66,6 +67,8 @@ namespace EveOPreview.Services
 			this._thumbnailUpdateTimer = new DispatcherTimer();
 			this._thumbnailUpdateTimer.Tick += ThumbnailUpdateTimerTick;
 			this._thumbnailUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, configuration.ThumbnailRefreshPeriod);
+
+			this._hideThumbnailsDelay = this._configuration.HideThumbnailsDelay;
 		}
 
 		public void Start()
@@ -180,10 +183,19 @@ namespace EveOPreview.Services
 		{
 			// TODO Split this method
 			IntPtr foregroundWindowHandle = this._windowManager.GetForegroundWindowHandle();
+
+			// The foreground window can be NULL in certain circumstances, such as when a window is losing activation.
+			// It is safer to just skip this refresh round than to do something while the system state is undefined
+			if (foregroundWindowHandle == IntPtr.Zero)
+			{
+				return;
+			}
+
 			string foregroundWindowTitle = null;
 
 			// Check if the foreground window handle is one of the known handles for client windows or their thumbnails
 			bool isClientWindow = this.IsClientWindowActive(foregroundWindowHandle);
+			bool isMainWindowActive = this.IsMainWindowActive(foregroundWindowHandle);
 
 			if (foregroundWindowHandle == this._activeClient.Handle)
 			{
@@ -196,12 +208,7 @@ namespace EveOPreview.Services
 			}
 			else if (!isClientWindow)
 			{
-				// Under some circumstances Foreground WindowHandle can be zero
-				// (f.e. when Thumbnail is silently stealing focus from the currently open app)
-				if (foregroundWindowHandle != IntPtr.Zero)
-				{
-					this._externalApplication = foregroundWindowHandle;
-				}
+				this._externalApplication = foregroundWindowHandle;
 			}
 
 			// No need to minimize EVE clients when switching out to non-EVE window (like thumbnail)
@@ -210,7 +217,25 @@ namespace EveOPreview.Services
 				this.SwitchActiveClient(foregroundWindowHandle, foregroundWindowTitle);
 			}
 
-			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !isClientWindow;
+			bool hideAllThumbnails = this._configuration.HideThumbnailsOnLostFocus && !(isClientWindow || isMainWindowActive);
+
+			// Wait for some time before hiding all previews
+			if (hideAllThumbnails)
+			{
+				this._hideThumbnailsDelay--;
+				if (this._hideThumbnailsDelay > 0)
+				{
+					hideAllThumbnails = false; // Postpone the 'hide all' operation
+				}
+				else
+				{
+					this._hideThumbnailsDelay = 0; // Stop the counter
+				}
+			}
+			else
+			{
+				this._hideThumbnailsDelay = this._configuration.HideThumbnailsDelay; // Reset the counter
+			}
 
 			this._refreshCycleCount++;
 
@@ -456,6 +481,7 @@ namespace EveOPreview.Services
 			this.EnqueueLocationChange(view);
 		}
 
+		// Checks whether currently active window belongs to an EVE client or its thumbnail
 		private bool IsClientWindowActive(IntPtr windowHandle)
 		{
 			if (windowHandle == IntPtr.Zero)
@@ -474,6 +500,12 @@ namespace EveOPreview.Services
 			}
 
 			return false;
+		}
+
+		// Check whether the currently active window belongs to EVE-O Preview itself
+		private bool IsMainWindowActive(IntPtr windowHandle)
+		{
+			return (this._processMonitor.GetMainProcess().Handle == windowHandle);
 		}
 
 		private void ThumbnailZoomIn(IThumbnailView view)
@@ -583,6 +615,12 @@ namespace EveOPreview.Services
 				return;
 			}
 
+			// No need to apply layout for not yet logged-in clients
+			if (clientTitle == ThumbnailManager.DEFAULT_CLIENT_TITLE)
+			{
+				return;
+			}
+
 			ClientLayout clientLayout = this._configuration.GetClientLayout(clientTitle);
 
 			if (clientLayout == null)
@@ -610,6 +648,13 @@ namespace EveOPreview.Services
 			foreach (KeyValuePair<IntPtr, IThumbnailView> entry in this._thumbnailViews)
 			{
 				IThumbnailView view = entry.Value;
+
+				// No need to save layout for not yet logged-in clients
+				if (view.Title == ThumbnailManager.DEFAULT_CLIENT_TITLE)
+				{
+					continue;
+				}
+
 				(int Left, int Top, int Right, int Bottom) position = this._windowManager.GetWindowPosition(view.Id);
 				int width = Math.Abs(position.Right - position.Left);
 				int height = Math.Abs(position.Bottom - position.Top);

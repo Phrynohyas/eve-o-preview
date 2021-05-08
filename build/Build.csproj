@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+
+    <!-- Make sure start same folder .NET Core CLI and Visual Studio -->
+    <RunWorkingDirectory>$(MSBuildProjectDirectory)</RunWorkingDirectory>
+    <Configurations>Debug;Release;Build</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Themes\Github\Theme.css" />
+    <None Remove="Themes\Github\Theme.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Themes\Github\Theme.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\Github\Theme.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cake.Frosting" Version="1.0.0-rc0002" />
+    <PackageReference Include="Cake.MarkdownToPdf" Version="2.5.2" />
+  </ItemGroup>
+
+</Project>
