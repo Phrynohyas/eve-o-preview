@@ -36,8 +36,6 @@ If you have find out that some of the features or their combination of EVE-O Pre
 
 Video Guides:
 
-* [EVE-O Preview настройка с пояснениями](https://youtu.be/IW1-pzJzb80)
-
 * [Eve online , How To : Eve-O Preview (multiboxing; legal)](https://youtu.be/2r0NMKbogXU)
 
 
