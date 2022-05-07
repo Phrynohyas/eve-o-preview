@@ -1,11 +1,26 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace EveOPreview.Configuration
 {
 	public interface IThumbnailConfiguration
-	{
-		bool MinimizeToTray { get; set; }
+    {
+        string CycleForwardHotkey { get; set; }
+        string CycleForwardHotkey2 { get; set; }
+        string CycleBackwardHotkey { get; set; }
+        string CycleBackwardHotkey2 { get; set; }
+        Dictionary<string, string> CycleClientsOrder { get; set; }
+
+        string CycleGroup2ForwardHotkey { get; set; }
+        string CycleGroup2ForwardHotkey2 { get; set; }
+        string CycleGroup2BackwardHotkey { get; set; }
+        string CycleGroup2BackwardHotkey2 { get; set; }
+        Dictionary<string, string> CycleGroup2ClientsOrder { get; set; }
+
+        Dictionary<string, Color> PerClientActiveClientHighlightColor { get; set; }        
+
+        bool MinimizeToTray { get; set; }
 		int ThumbnailRefreshPeriod { get; set; }
 
 		bool EnableCompatibilityMode { get; set; }
@@ -46,7 +61,8 @@ namespace EveOPreview.Configuration
 		void SetClientLayout(string currentClient, ClientLayout layout);
 
 		Keys GetClientHotkey(string currentClient);
-		void SetClientHotkey(string currentClient, Keys hotkey);
+		Keys StringToKey(string hotkey);
+        void SetClientHotkey(string currentClient, Keys hotkey);
 
 		bool IsPriorityClient(string currentClient);
 

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Windows.Input;
 using EveOPreview.Services.Interop;
 
 namespace EveOPreview.Services.Implementation
 {
-	sealed class WindowManager : IWindowManager
+	public class WindowManager : IWindowManager
 	{
 		#region Private constants
 		private const int WINDOW_SIZE_THRESHOLD = 300;
@@ -29,9 +32,15 @@ namespace EveOPreview.Services.Implementation
 
 		public void ActivateWindow(IntPtr handle)
 		{
-			User32NativeMethods.SetForegroundWindow(handle);
+            FinishActiveKeyStrokes();
 
-			int style = User32NativeMethods.GetWindowLong(handle, InteropConstants.GWL_STYLE);
+			User32NativeMethods.SetForegroundWindow(handle);
+            User32NativeMethods.SetFocus(handle);
+            //User32NativeMethods.EnableWindow(handle, false);
+            //System.Windows.Forms.SendKeys.Send("{ENTER}");
+            //User32NativeMethods.EnableWindow(handle, true);
+
+            int style = User32NativeMethods.GetWindowLong(handle, InteropConstants.GWL_STYLE);
 
 			if ((style & InteropConstants.WS_MINIMIZE) == InteropConstants.WS_MINIMIZE)
 			{
@@ -39,7 +48,20 @@ namespace EveOPreview.Services.Implementation
 			}
 		}
 
-		public void MinimizeWindow(IntPtr handle, bool enableAnimation)
+        public void FinishActiveKeyStrokes()
+        {
+            var sw = Stopwatch.StartNew();
+
+            bool isDown = false;
+            do
+            {
+                //isDown = Keyboard.IsKeyDown(Key.LeftCtrl) ||
+                //    Keyboard.IsKeyDown(Key.RightCtrl);
+            }
+            while (isDown && sw.ElapsedMilliseconds < 1000);
+        }
+        
+        public void MinimizeWindow(IntPtr handle, bool enableAnimation)
 		{
 			if (enableAnimation)
 			{

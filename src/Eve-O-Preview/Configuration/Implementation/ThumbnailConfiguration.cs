@@ -14,7 +14,21 @@ namespace EveOPreview.Configuration.Implementation
 
 		public ThumbnailConfiguration()
 		{
-			this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
+            this.CycleForwardHotkey = "F14";
+            this.CycleForwardHotkey2 = "Control+F14";
+            this.CycleBackwardHotkey = "F13";
+            this.CycleBackwardHotkey2 = "Control+F13";
+            this.CycleClientsOrder = new Dictionary<string, string>();
+
+            this.CycleGroup2ForwardHotkey = "F16";
+            this.CycleGroup2ForwardHotkey2 = "Control+F16";
+            this.CycleGroup2BackwardHotkey = "F15";
+            this.CycleGroup2BackwardHotkey2 = "Control+F15";
+            this.CycleGroup2ClientsOrder = new Dictionary<string, string>();
+
+            this.PerClientActiveClientHighlightColor = new Dictionary<string, Color>();
+
+            this.PerClientLayout = new Dictionary<string, Dictionary<string, Point>>();
 			this.FlatLayout = new Dictionary<string, Point>();
 			this.ClientLayout = new Dictionary<string, ClientLayout>();
 			this.ClientHotkey = new Dictionary<string, string>();
@@ -55,7 +69,38 @@ namespace EveOPreview.Configuration.Implementation
 			this.ActiveClientHighlightThickness = 3;
 		}
 
-		public bool MinimizeToTray { get; set; }
+		[JsonProperty("CycleForwardHotkey")]
+        public string CycleForwardHotkey { get; set; }
+        [JsonProperty("CycleForwardHotkey2")]
+        public string CycleForwardHotkey2 { get; set; }
+
+        [JsonProperty("CycleBackwardHotkey")]
+        public string CycleBackwardHotkey { get; set; }
+        [JsonProperty("CycleBackwardHotkey2")]
+        public string CycleBackwardHotkey2 { get; set; }
+
+        [JsonProperty("CycleClientsOrder")]
+        public Dictionary<string, string> CycleClientsOrder { get; set; }
+
+
+        [JsonProperty("CycleGroup2ForwardHotkey")]
+        public string CycleGroup2ForwardHotkey { get; set; }
+        [JsonProperty("CycleGroup2ForwardHotkey2")]
+        public string CycleGroup2ForwardHotkey2 { get; set; }
+
+        [JsonProperty("CycleGroup2BackwardHotkey")]
+        public string CycleGroup2BackwardHotkey { get; set; }
+        [JsonProperty("CycleGroup2BackwardHotkey2")]
+        public string CycleGroup2BackwardHotkey2 { get; set; }
+
+        [JsonProperty("CycleGroup2ClientsOrder")]
+        public Dictionary<string, string> CycleGroup2ClientsOrder { get; set; }
+
+
+        [JsonProperty("PerClientActiveClientHighlightColor")]
+        public Dictionary<string, Color> PerClientActiveClientHighlightColor { get; set; }
+
+        public bool MinimizeToTray { get; set; }
 		public int ThumbnailRefreshPeriod { get; set; }
 
 		[JsonProperty("CompatibilityMode")]
@@ -215,7 +260,13 @@ namespace EveOPreview.Configuration.Implementation
 			return Keys.None;
 		}
 
-		public void SetClientHotkey(string currentClient, Keys hotkey)
+        public Keys StringToKey(string hotkey)
+        {
+            object rawValue = (new KeysConverter()).ConvertFromInvariantString(hotkey);
+            return rawValue != null ? (Keys)rawValue : Keys.None;
+        }
+
+        public void SetClientHotkey(string currentClient, Keys hotkey)
 		{
 			this.ClientHotkey[currentClient] = (new KeysConverter()).ConvertToInvariantString(hotkey);
 		}

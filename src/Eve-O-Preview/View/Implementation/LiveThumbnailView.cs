@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using EveOPreview.Configuration;
 using EveOPreview.Services;
 
 namespace EveOPreview.View
@@ -10,14 +11,17 @@ namespace EveOPreview.View
 		private IDwmThumbnail _thumbnail;
 		private Point _startLocation;
 		private Point _endLocation;
-		#endregion
+        private IThumbnailConfiguration _config;
+        #endregion
 
-		public LiveThumbnailView(IWindowManager windowManager)
-			: base(windowManager)
+        public LiveThumbnailView(IWindowManager windowManager, IThumbnailConfiguration config, IThumbnailManager thumbnailManager)
+			: base(windowManager, config, thumbnailManager)
 		{
 			this._startLocation = new Point(0, 0);
 			this._endLocation = new Point(this.ClientSize);
-		}
+            this._config = config;
+
+        }
 
 		protected override void RefreshThumbnail(bool forceRefresh)
 		{
