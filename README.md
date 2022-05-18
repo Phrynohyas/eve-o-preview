@@ -1,4 +1,14 @@
-[![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
+EVE-O-Preview has new maintainer.
+
+New forum thread: https://forums.eveonline.com/t/361804
+
+New repository location: https://github.com/EveOPlus/eve-o-preview
+
+Farewell Reddit post: https://www.reddit.com/r/Eve/comments/ujzlq5/eveo_preview_new_developer_needed/
+
+**So Long, and Thanks for All the Fish**
+
+---
 
 ## Overview
 
