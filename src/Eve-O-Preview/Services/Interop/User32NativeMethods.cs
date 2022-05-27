@@ -11,7 +11,13 @@ namespace EveOPreview.Services.Interop
 		[DllImport("user32.dll")]
 		public static extern bool SetForegroundWindow(IntPtr window);
 
-		[DllImport("user32.dll")]
+        [DllImport("user32.dll")]
+        public static extern void SetFocus(IntPtr window);
+
+        [DllImport("user32.dll")]
+        public static extern void EnableWindow(IntPtr window, bool isEnabled);
+
+        [DllImport("user32.dll")]
 		public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
 		[DllImport("User32.dll")]

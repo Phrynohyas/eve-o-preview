@@ -1,7 +1,9 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using EveOPreview.Configuration;
 using EveOPreview.Services;
 using EveOPreview.UI.Hotkeys;
 
@@ -40,37 +42,59 @@ namespace EveOPreview.View
 		private Size _baseZoomMaximumSize;
 
 		private HotkeyHandler _hotkeyHandler;
-		#endregion
+        private IThumbnailConfiguration _config;
+        private Lazy<Color> _myBorderColor;
+        private IThumbnailManager _thumbnailManager;
+        #endregion
 
-		protected ThumbnailView(IWindowManager windowManager)
-		{
-			this.SuppressResizeEvent();
+        protected ThumbnailView(IWindowManager windowManager, IThumbnailConfiguration config, IThumbnailManager thumbnailManager)
+        {
+            this.SuppressResizeEvent();
 
-			this.WindowManager = windowManager;
+            this.WindowManager = windowManager;
 
-			this.IsActive = false;
+            this.IsActive = false;
 
-			this.IsOverlayEnabled = false;
-			this._isOverlayVisible = false;
-			this._isTopMost = false;
-			this._isHighlightEnabled = false;
-			this._isHighlightRequested = false;
+            this.IsOverlayEnabled = false;
+            this._isOverlayVisible = false;
+            this._isTopMost = false;
+            this._isHighlightEnabled = false;
+            this._isHighlightRequested = false;
 
-			this._isLocationChanged = true;
-			this._isSizeChanged = true;
+            this._isLocationChanged = true;
+            this._isSizeChanged = true;
 
-			this._isCustomMouseModeActive = false;
+            this._isCustomMouseModeActive = false;
 
-			this._opacity = 0.1;
+            this._opacity = 0.1;
 
-			InitializeComponent();
+            InitializeComponent();
 
-			this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
-		}
+            this._overlay = new ThumbnailOverlay(this, this.MouseDown_Handler);
+            this._config = config;
+            SetDefaultBorderColor();
 
-		protected IWindowManager WindowManager { get; }
+            this._thumbnailManager = thumbnailManager;
+        }
+
+		public IWindowManager WindowManager { get; }
 
 		public IntPtr Id { get; set; }
+
+        public void SetDefaultBorderColor()
+        {
+            this._myBorderColor = new Lazy<Color>(() =>
+            {
+                if (this._config.PerClientActiveClientHighlightColor.Any(x => x.Key == this.Title))
+                {
+                    return this._config.PerClientActiveClientHighlightColor[Title];
+                }
+                else
+                {
+                    return _config.ActiveClientHighlightColor;
+                }
+            });
+        }
 
 		public string Title
 		{
@@ -78,8 +102,9 @@ namespace EveOPreview.View
 			set
 			{
 				this.Text = value;
-				this._overlay.SetOverlayLabel(value);
-			}
+				this._overlay.SetOverlayLabel(value.Replace("EVE - ", ""));
+                SetDefaultBorderColor();
+            }
 		}
 
 		public bool IsActive { get; set; }
@@ -219,7 +244,12 @@ namespace EveOPreview.View
 			this._isTopMost = enableTopmost;
 		}
 
-		public void SetHighlight(bool enabled, Color color, int width)
+        public void SetHighlight()
+        {
+            SetHighlight(_config.EnableActiveClientHighlight, _config.ActiveClientHighlightThickness);
+        }
+
+		public void SetHighlight(bool enabled, int width)
 		{
 			if (this._isHighlightRequested == enabled)
 			{
@@ -230,7 +260,7 @@ namespace EveOPreview.View
 			{
 				this._isHighlightRequested = true;
 				this._highlightWidth = width;
-				this.BackColor = color;
+				this.BackColor = _myBorderColor.Value;
 			}
 			else
 			{
@@ -336,6 +366,12 @@ namespace EveOPreview.View
 
 			this._isSizeChanged = false;
 		}
+
+        public void ClearBorder()
+        {
+            this.SetHighlight(false, 0);
+            this.Refresh(true);
+        }
 
 		protected abstract void RefreshThumbnail(bool forceRefresh);
 
@@ -475,6 +511,7 @@ namespace EveOPreview.View
 
 		private void HotkeyPressed_Handler(object sender, HandledEventArgs e)
 		{
+            this.SetHighlight();
 			this.ThumbnailActivated?.Invoke(this.Id);
 
 			e.Handled = true;
@@ -549,8 +586,14 @@ namespace EveOPreview.View
 					this.ThumbnailDeactivated?.Invoke(this.Id, true);
 					break;
 				case MouseButtons.Left:
-					this.ThumbnailActivated?.Invoke(this.Id);
-					break;
+                    var oldWindow = this._thumbnailManager.GetActiveClient();
+
+                    this.ThumbnailActivated?.Invoke(this.Id);
+                    this.SetHighlight();
+                    this.Refresh(true);
+
+                    oldWindow?.ClearBorder();
+                    break;
 				case MouseButtons.Right:
 				case MouseButtons.Left | MouseButtons.Right:
 					this.EnterCustomMouseMode();
